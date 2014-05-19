@@ -1,0 +1,17 @@
+xpress project is a mathematical expressions tests game.
+
+The program will create the expression to be solved by the player.
+Analyse the created expression to know every possible way of solution for it.
+Present the expression to the player so he can choose the first operations to be solved
+in a two step process where the player selects the operations and then pushes the "GO" button.
+If every selected operation can be solved in a same solution posibilty:
+   The game will then present the individual operations so the player can solve it.
+When not:
+   The game will alert that those operations can't be solved.
+After the player solve the individual operations the game shows the new expression
+and works recursively untill there are not operations left.
+
+At this moment the game is intended to work with the basic "operations" only,
+by that I mean: sum, subtraction, multiplication and division.
+
+Every number in the game will be an integer.
