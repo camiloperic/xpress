@@ -9,7 +9,7 @@ If every selected operation can be solved in a same solution posibilty:
 When not:
    The game will alert that those operations can't be solved.
 After the player solve the individual operations the game shows the new expression
-and works recursively untill there are not operations left.
+and works recursively until there are not operations left.
 
 At this moment the game is intended to work with the basic "operations" only,
 by that I mean: sum, subtraction, multiplication and division.
