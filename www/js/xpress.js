@@ -16,8 +16,9 @@ ERROR: {
 },
 
 CONTEXT: {
-   opNodes: [],
-   selected: []
+   tree: null,
+   solutionTrees: [],
+   opNodes: []
 },
 
 //Xps Methods
@@ -46,7 +47,15 @@ startDB: function() {
 	subtraction.setRight(four);
 	expression.tree = division;
 	//This wont be here for long
-	Xps.toContext(expression.tree);
+	var queue = [division];
+	var id = 0;
+	while(queue.length > 0) {
+		var curr = queue.pop();
+		if (curr.left.isOperation()) queue.push(curr.left);
+		if (curr.right.isOperation()) queue.push(curr.right);
+                curr.ctxid = id++;
+		expression.opNodes.push(curr);
+   	}
 	expression.solutionTrees.push({
 		transformations: [],
 		order: [
@@ -81,33 +90,24 @@ startDB: function() {
 			[division.ctxid],
 			[subtraction.ctxid, sum.ctxid]
 		]
-	});
+	});	
+	Xps.toContext(expression);
+	document.getElementById('main').innerHTML += Xps.htmlfy(division);
 // 	expression.solutionTrees.push(division.rotate(false));
 // 	Xps.EXPRESSIONS.push(expression);
 },
 
 makeExp: function (lvl) {
    var root = Xps.makeOps(lvl);
-   Xps.fillWithInts(root);
+   Xps.fillWithInts(root);2
    Xps.toContext(root);
    return root;
 },
 
-toContext: function (root) {
-   var queue = [root];
-   var list = [];
-   var id = 0;
-   while(queue.length > 0) {
-      var curr = queue.pop();
-      if (curr.left.isOperation()) queue.push(curr.left);
-      if (curr.right.isOperation()) queue.push(curr.right);
-      curr.ctxid = id++;
-      curr.selected = false;
-      list.push(curr);
-   }
-   console.log(this);
-   this.CONTEXT.opNodes = list;
-   this.CONTEXT.selected = [];
+toContext: function (expression) {
+   this.CONTEXT.tree = expression.tree;
+   this.CONTEXT.solutionTrees = expression.solutionTrees;
+   this.CONTEXT.opNodes = expression.opNodes;
 },
 
 makeOps: function (lvl) {
@@ -255,6 +255,19 @@ stringfy: function (node) {
    return (node.nature == Xps.NATURE.MULT && node.left.nature == Xps.NATURE.SUM ? "(" : "") + Xps.stringfy(node.left) + (node.nature == Xps.NATURE.MULT && node.left.nature == Xps.NATURE.SUM ? ")" : "") + node.value + (node.nature == Xps.NATURE.MULT && node.right.nature == Xps.NATURE.SUM ? "(" : "") + Xps.stringfy(node.right) + (node.nature == Xps.NATURE.MULT && node.right.nature == Xps.NATURE.SUM ? ")" : "");
 },
 
+treefy: function(node, lvl) {
+	var retTree = '';
+	var count = lvl;
+	while(count-- > 0) {
+		if (count == 0) retTree += '|__';
+		else retTree += '   ';
+	}
+	retTree += node.value + '\n';
+	if (node.left != null) retTree += Xps.treefy(node.left,lvl+1);
+	if (node.right != null) retTree += Xps.treefy(node.right,lvl+1);
+	return retTree;
+},
+
 testfy: function(elid) {
    var main = document.getElementById(elid);
    var xp = Xps.makeExp(6);
@@ -264,7 +277,104 @@ testfy: function(elid) {
 
 opClick: function(opid) {
    var opEl = document.getElementById('xpsop'+opid);
+	var opNodes = Xps.CONTEXT.opNodes;
    var opNode = Xps.CONTEXT.opNodes[opid];
+   var solvable = false;
+	var solutionTrees = Xps.CONTEXT.solutionTrees;
+   var solutionTreesToPop = [];
+	var indice = [];
+   for (var i = 0; i < solutionTrees.length; i++) {
+		var solutionTreeRoot = Xps.CONTEXT.tree;
+		var solutionTree = solutionTrees[i];
+		var order = solutionTree.order;
+		var firstLevel = order[order.length-1];
+		var orderIndex = firstLevel.indexOf(opid);
+      if (orderIndex != -1) {
+			solvable = true;
+			var transformations = solutionTree.transformations;
+			var distransformations = [];
+			for (var j = transformations.length -1; j >= 0; j--) {
+				var transformation = transformations[j];
+				var transNode = opNodes[transformation.id];
+				console.log('transNode', transNode);
+				console.log('Transforming: ', transformation);
+				if (transformation.mirror) {
+					transNode.mirror();
+					distransformations.push({
+						id: transNode.ctxid,
+						mirror: true
+					});
+				} else {
+					var switchRoot = (transNode.parent == null);
+					var newRoot = transNode.rotate(transformation.ccw);
+					if (switchRoot) {
+						solutionTreeRoot = newRoot;
+						console.log('Switching root to ', newRoot.ctxid);
+					}
+					distransformations.push({
+						id: transNode.parent.ctxid,
+						mirror: false,
+						ccw: !transformation.ccw
+					});
+				}
+				console.log('Transformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
+			}
+			while (distransformations.length > 0) {
+				console.log('Distransforming: ', distransformation);
+				var distransformation = distransformations.pop();
+				var transNode = opNodes[distransformation.id];
+				if (distransformation.mirror) {
+					transNode.mirror();
+				} else {
+					transNode.rotate(distransformation.ccw);
+				}
+			}
+			solutionTreeRoot = Xps.CONTEXT.tree;
+			console.log('Distransformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
+			var currIndx = opNode.left.ctxid + '|' + opNode.ctxid + '|' + opNode.right.ctxid;
+			if (indice.indexOf(currIndx) == -1) {
+				document.getElementById('main').innerHTML += Xps.htmlfy(opNode);
+				indice.push(currIndx);
+			}
+			if (orderIndex != firstLevel.length-1) {
+				var toLast = firstLevel[orderIndex];
+				firstLevel[orderIndex] = firstLevel[firstLevel.length-1];
+				firstLevel[firstLevel.length-1] = toLast;
+			}
+			firstLevel.pop();
+			if (firstLevel.length == 0) {
+				order.pop();
+			}
+      } else {
+         solutionTreesToPop.push(i);
+      }
+   }
+   if (solvable) {
+		while(solutionTreesToPop.length > 0) {
+			var idToPop = solutionTreesToPop.pop();
+			if (idToPop != solutionTrees.length) {
+				var toLast = solutionTrees[idToPop];
+				solutionTrees[idToPop] = solutionTrees[solutionTrees.length-1];
+				solutionTrees[solutionTrees.length-1] = toLast;
+			}
+			solutionTrees.pop();
+		}
+		var solution = eval(opNode.left.value+opNode.value+opNode.right.value);
+		console.log('solution', solution);
+		var solutionNode = new Xps.Node(solution);
+		if (opNode.parent != null && opNode.ctxid == opNode.parent.left.ctxid) {
+			opNode.parent.left = solutionNode;
+		} else if (opNode.parent != null && opNode.ctxid == opNode.parent.right.ctxid) {
+			opNode.parent.right = solutionNode;
+		} else {
+			Xps.CONTEXT.tree = solutionNode;
+		}
+		document.getElementById('main').innerHTML += Xps.htmlfy(Xps.CONTEXT.tree);
+	} else {
+		
+	}
+   console.log('Solvable: ', solvable);
+   /**
    if (opNode.selected) {
       opEl.className = opEl.className.substring(0, opEl.className.length-3);
       opNode.selected = false;
@@ -280,6 +390,7 @@ opClick: function(opid) {
       opNode.selected = true;
       Xps.CONTEXT.selected.push(opid);
    }
+   **/
 },
 
 //Not prime for now
@@ -329,8 +440,8 @@ Node: function Node(value){
 				!this.inverse
 			) {
 				var toRight = this.left;
-				this.left = this.right;
-				this.right = toRight;
+				this.setLeft(this.right);
+				this.setRight(toRight);
 			}
 		},
       this.rotate = function(ccw) {
@@ -348,8 +459,9 @@ Node: function Node(value){
 				) {
 					//Rotate it
 					var pivot = this.right;
-					this.right = pivot.left;
-					pivot.left = this;
+					this.setRight(pivot.left);
+					pivot.parent = this.parent;
+					pivot.setLeft(this);
 					return pivot;
 				} else {
 					console.error('Can\'t rotate node ccw');
@@ -369,8 +481,9 @@ Node: function Node(value){
 				) {
 					//Rotate it
 					var pivot = this.left;
-					this.left = pivot.right;
-					pivot.right = this;
+					this.setLeft(pivot.right);
+					pivot.parent = this.parent;
+					pivot.setRight(this);
 					return pivot;
 				} else {
 					console.error('Can\'t rotate node cw');

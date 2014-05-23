@@ -16,8 +16,9 @@ ERROR: {
 },
 
 CONTEXT: {
-   opNodes: [],
-   selected: []
+   tree: null,
+   solutionTrees: [],
+   opNodes: []
 },
 
 //Xps Methods
@@ -46,7 +47,15 @@ startDB: function() {
 	subtraction.setRight(four);
 	expression.tree = division;
 	//This wont be here for long
-	Xps.toContext(expression.tree);
+	var queue = [division];
+	var id = 0;
+	while(queue.length > 0) {
+		var curr = queue.pop();
+		if (curr.left.isOperation()) queue.push(curr.left);
+		if (curr.right.isOperation()) queue.push(curr.right);
+                curr.ctxid = id++;
+		expression.opNodes.push(curr);
+   	}
 	expression.solutionTrees.push({
 		transformations: [],
 		order: [
@@ -81,7 +90,9 @@ startDB: function() {
 			[division.ctxid],
 			[subtraction.ctxid, sum.ctxid]
 		]
-	});
+	});	
+	Xps.toContext(expression);
+	document.getElementById('main').innerHTML += Xps.htmlfy(division);
 // 	expression.solutionTrees.push(division.rotate(false));
 // 	Xps.EXPRESSIONS.push(expression);
 },
@@ -93,21 +104,10 @@ makeExp: function (lvl) {
    return root;
 },
 
-toContext: function (root) {
-   var queue = [root];
-   var list = [];
-   var id = 0;
-   while(queue.length > 0) {
-      var curr = queue.pop();
-      if (curr.left.isOperation()) queue.push(curr.left);
-      if (curr.right.isOperation()) queue.push(curr.right);
-      curr.ctxid = id++;
-      curr.selected = false;
-      list.push(curr);
-   }
-   console.log(this);
-   this.CONTEXT.opNodes = list;
-   this.CONTEXT.selected = [];
+toContext: function (expression) {
+   this.CONTEXT.tree = expression.tree;
+   this.CONTEXT.solutionTrees = expression.solutionTrees;
+   this.CONTEXT.opNodes = expression.opNodes;
 },
 
 makeOps: function (lvl) {
@@ -265,6 +265,17 @@ testfy: function(elid) {
 opClick: function(opid) {
    var opEl = document.getElementById('xpsop'+opid);
    var opNode = Xps.CONTEXT.opNodes[opid];
+   var solvable = false;
+   var solutionTreesToPop = [];
+   for (var i = 0; i < Xps.CONTEXT.solutionTrees.length; i++) {
+      if (Xps.CONTEXT.solutionTrees[i].order[Xps.CONTEXT.solutionTrees[i].order.length-1].indexOf(opid) != -1) {
+         solvable = true;
+      } else {
+         solutionTreesToPop.push(i);
+      }
+   }
+   console.log('Solvable: ', solvable);
+   /**
    if (opNode.selected) {
       opEl.className = opEl.className.substring(0, opEl.className.length-3);
       opNode.selected = false;
@@ -280,6 +291,7 @@ opClick: function(opid) {
       opNode.selected = true;
       Xps.CONTEXT.selected.push(opid);
    }
+   **/
 },
 
 //Not prime for now
