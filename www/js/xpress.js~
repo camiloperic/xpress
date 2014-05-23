@@ -13,9 +13,34 @@ ERROR: {
    "02": 'Root is null, impossible to fill tree with integers.'
 },
 
+CONTEXT: {
+   opNodes: [],
+   selected: []
+},
+
 //Xps Methods
 makeExp: function (lvl) {
-   
+   var root = Xps.makeOps(lvl);
+   Xps.fillWithInts(root);
+   Xps.toContext(root);
+   return root;
+},
+
+toContext: function (root) {
+   var queue = [root];
+   var list = [];
+   var id = 0;
+   while(queue.length > 0) {
+      var curr = queue.pop();
+      if (curr.left.isOperation()) queue.push(curr.left);
+      if (curr.right.isOperation()) queue.push(curr.right);
+      curr.ctxid = id++;
+      curr.selected = false;
+      list.push(curr);
+   }
+   console.log(this);
+   this.CONTEXT.opNodes = list;
+   this.CONTEXT.selected = [];
 },
 
 makeOps: function (lvl) {
@@ -117,7 +142,7 @@ htmlfy: function (node) {
          htmlRet += '</td>';
          htmlRet += '</tr>';
          htmlRet += '<tr>';
-         htmlRet += '<td class="divisionSymbol">';
+         htmlRet += '<td id="xpsop'+node.ctxid+'" class="divisionSymbol" onclick="Xps.opClick('+node.ctxid+')">';
          htmlRet += '</td>';
          htmlRet += '</tr>';
          htmlRet += '<tr>';
@@ -128,7 +153,7 @@ htmlfy: function (node) {
          htmlRet += '</table>';
       } else {
          //node.value will be an image
-         htmlRet += '<table><tr><td>'+Xps.htmlfy(node.left)+'</td><td>'+'<div class="'+Xps.OPCLASSES[node.value]+'"/>'+'</td><td>'+Xps.htmlfy(node.right)+'</td></tr></table>';
+         htmlRet += '<table><tr><td>'+Xps.htmlfy(node.left)+'</td><td>'+'<div id = "xpsop'+node.ctxid+'" class="'+Xps.OPCLASSES[node.value]+'" onclick="Xps.opClick('+node.ctxid+')"/>'+'</td><td>'+Xps.htmlfy(node.right)+'</td></tr></table>';
          //htmlRet += Xps.htmlfy(node.left)+node.value+Xps.htmlfy(node.right);
       }
       if (node.parent != null && node.parent instanceof Xps.Node && node.nature == Xps.NATURE.SUM && node.parent.value == Xps.OPERATION.MULT) {
@@ -151,6 +176,26 @@ testfy: function(elid) {
       Xps.fillWithInts(x, i);
       main.innerHTML += Xps.htmlfy(x);
       main.innerHTML += Xps.stringfy(x);
+   }
+},
+
+opClick: function(opid) {
+   var opEl = document.getElementById('xpsop'+opid);
+   var opNode = Xps.CONTEXT.opNodes[opid];
+   if (opNode.selected) {
+      opEl.className = opEl.className.substring(0, opEl.className.length-3);
+      opNode.selected = false;
+      var nodePos = Xps.CONTEXT.selected.indexOf(opid);
+      if (nodePos != Xps.CONTEXT.selected.length-1) {
+         var toPop = Xps.CONTEXT.selected[nodePos];
+         Xps.CONTEXT.selected[nodePos] = Xps.CONTEXT.selected[Xps.CONTEXT.selected.length-1];
+         Xps.CONTEXT.selected[Xps.CONTEXT.selected.length-1] = toPop;
+      }
+      Xps.CONTEXT.selected.pop();
+   } else {
+      opEl.className += 'Sel';
+      opNode.selected = true;
+      Xps.CONTEXT.selected.push(opid);
    }
 },
 

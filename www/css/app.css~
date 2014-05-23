@@ -19,7 +19,7 @@ vertical-align: middle;
 }
 
 .number{
-font-size: 48px;
+font-size: 32px;
 font-family: "Arial Black", Gadget, sans-serif;
 font-weight: bold;
 margin: 0px;
@@ -28,28 +28,52 @@ margin: 0px;
 .sumSymbol
 {
 background-image: url('../img/sumSymbol.png');
-width: 32px;
-height: 32px;
+width: 24px;
+height: 24px;
 }
 
 .subSymbol
 {
 background-image: url('../img/subSymbol.png');
-width: 32px;
-height: 32px;
+width: 24px;
+height: 24px;
+}
+
+.subSymbolSel
+{
+background-image: url('../img/subSymbolSel.png');
+width: 24px;
+height: 24px;
 }
 
 .multSymbol
 {
 background-image: url('../img/multSymbol.png');
-width: 32px;
-height: 32px;
+width: 24px;
+height: 24px;
+}
+
+.multSymbolSel
+{
+background-image: url('../img/multSymbolSel.png');
+width: 24px;
+height: 24px;
 }
 
 .divisionSymbol
 {
-background-color: yellow;
-height: 10px;
+background-color: #d29400;
+height: 4px;
+-moz-border-radius: 2px;
+-webkit-border-radius: 2px;
+}
+
+.divisionSymbolSel
+{
+background-color: #FF9900;
+height: 4px;
+-moz-border-radius: 2px;
+-webkit-border-radius: 2px;
 }
 
 .parentesis
