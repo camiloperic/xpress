@@ -1,5 +1,7 @@
 Xps = {
 
+EXPRESSIONS: [],
+
 PRIMENUMBERS: {
    SET:[2, 3, 5, 7, 11, 13, 17, 19, 23, 29],
    PROBABILITIES:[55,89,110,123,131,136,139,141,142,143]
@@ -19,6 +21,71 @@ CONTEXT: {
 },
 
 //Xps Methods
+startDB: function() {
+	var expression = {
+		tree: null,
+		solutionTrees: [],
+		opNodes: []
+	};
+	var division = new Xps.Node('/');
+	var multiplication = new Xps.Node('*');
+	var sum = new Xps.Node('+');
+	var subtraction = new Xps.Node('-');
+	var thirteen = new Xps.Node(13);
+	var four = new Xps.Node(4);
+	var six = new Xps.Node(6);
+	var two = new Xps.Node(2);
+	var one = new Xps.Node(1);
+	division.setLeft(multiplication);
+	division.setRight(sum);
+	multiplication.setLeft(subtraction);
+	multiplication.setRight(six);
+	sum.setLeft(two);
+	sum.setRight(one);
+	subtraction.setLeft(thirteen);
+	subtraction.setRight(four);
+	expression.tree = division;
+	//This wont be here for long
+	Xps.toContext(expression.tree);
+	expression.solutionTrees.push({
+		transformations: [],
+		order: [
+			[division.ctxid],
+			[multiplication.ctxid],
+			[subtraction.ctxid, sum.ctxid]
+		]
+	});
+	expression.solutionTrees.push({
+		transformations: [{
+			id: division.ctxid,
+			mirror: false,
+			ccw: false
+		}],
+		order: [
+			[multiplication.ctxid],
+			[division.ctxid],
+			[subtraction.ctxid, sum.ctxid]
+		]
+	});
+	expression.solutionTrees.push({
+		transformations: [{
+			id: division.ctxid,
+			mirror: false,
+			ccw: false
+		},{
+			id: multiplication.ctxid,
+			mirror: true
+		}],
+		order: [
+			[multiplication.ctxid],
+			[division.ctxid],
+			[subtraction.ctxid, sum.ctxid]
+		]
+	});
+// 	expression.solutionTrees.push(division.rotate(false));
+// 	Xps.EXPRESSIONS.push(expression);
+},
+
 makeExp: function (lvl) {
    var root = Xps.makeOps(lvl);
    Xps.fillWithInts(root);
@@ -105,6 +172,25 @@ makeOps: function (lvl) {
    }
    return root;
 },
+
+/**
+fillWithInts: function (root, lvl) {
+   if (root == null) {
+       console.error(Xps.ERROR["02"]);
+       return;
+   }
+   var queue = [root];
+   while(queue.length > 0){
+      var currNode = queue.pop();
+      if(currNode.left instanceof Xps.Node) queue.push(currNode.left);
+		else currNode.left = new Xps.Node(0);
+      if(currNode.right instanceof Xps.Node) queue.push(currNode.right);
+		else currNode.right = new Xps.Node(0);
+      if (currNode.value == Xps.OPERATION.DIV) currNode.left.factors.push([currNode, currNode.right]);
+		else currNode.factors.push([currNode.left, currNode.right]);
+   }
+},
+**/
 
 fillWithInts: function (root, lvl) {
    if (root == null) {
@@ -233,30 +319,64 @@ Node: function Node(value){
          console.log('value must be +,-,*,/ or an integer');
          return null;
       }
+      this.factors = [];
       this.parent = null;
       this.left = null;
       this.right = null;
-      this.rotate = function() {
-         //Rotate the tree ccw
-         /**
-         Is this node an operation?
-         Is the right child an operation node with the same nature?
-         **/
-         if (
-            this.operation && 
-            this.right != null && 
-            this.right.operation &&
-            this.nature == this.right.nature
-         ) {
-            //Rotate it
-            var pivot = this.right;
-            this.right = pivot.left;
-            pivot.left = this;
-            return pivot;
-         } else {
-            console.error('Can\'t rotate node');
-            return null;
-         }
+		this.mirror = function() {
+			if (
+				this.operation && 
+				!this.inverse
+			) {
+				var toRight = this.left;
+				this.left = this.right;
+				this.right = toRight;
+			}
+		},
+      this.rotate = function(ccw) {
+			if (ccw) {
+				//Rotate the tree ccw
+				/**
+				Is this node an operation?
+				Is the right child an operation node with the same nature?
+				**/
+				if (
+					this.operation && 
+					this.right != null && 
+					this.right.operation &&
+					this.nature == this.right.nature
+				) {
+					//Rotate it
+					var pivot = this.right;
+					this.right = pivot.left;
+					pivot.left = this;
+					return pivot;
+				} else {
+					console.error('Can\'t rotate node ccw');
+					return null;
+				}
+			} else {
+				//Rotate the tree cw
+				/**
+				Is this node an operation?
+				Is the left child an operation node with the same nature?
+				**/
+				if (
+					this.operation && 
+					this.left != null && 
+					this.left.operation &&
+					this.nature == this.left.nature
+				) {
+					//Rotate it
+					var pivot = this.left;
+					this.left = pivot.right;
+					pivot.right = this;
+					return pivot;
+				} else {
+					console.error('Can\'t rotate node cw');
+					return null;
+				}
+			}
       };
       //set methods
       this.setLeft = function(node) {
