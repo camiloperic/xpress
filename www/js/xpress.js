@@ -171,12 +171,9 @@ stringfy: function (node) {
 
 testfy: function(elid) {
    var main = document.getElementById(elid);
-   for (var i = 1; i <= 12; i++) {
-      var x = Xps.makeOps(i);
-      Xps.fillWithInts(x, i);
-      main.innerHTML += Xps.htmlfy(x);
-      main.innerHTML += Xps.stringfy(x);
-   }
+   var xp = Xps.makeExp(6);
+   main.innerHTML += Xps.htmlfy(xp);
+   main.innerHTML += Xps.stringfy(xp);
 },
 
 opClick: function(opid) {
