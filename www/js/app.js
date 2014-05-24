@@ -45,7 +45,7 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         if (id == 'deviceready') {
-            Xps.testfy('main');
+            Xps.play();
         }
     }
 };
