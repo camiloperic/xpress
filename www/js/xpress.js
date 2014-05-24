@@ -19,7 +19,7 @@ CONTEXT: {
    tree: null,
    solutionTrees: [],
    opNodes: [],
-	state: "INITIAL"
+	state: 'INITIAL'
 },
 
 //Xps Methods
@@ -124,7 +124,7 @@ toContext: function (expression) {
    this.CONTEXT.tree = expression.tree;
    this.CONTEXT.solutionTrees = expression.solutionTrees;
    this.CONTEXT.opNodes = expression.opNodes;
-	this.CONTEXT.state = 'SELECTION';
+	this.CONTEXT.state = 'SELECTING';
 },
 
 changeState: function(state) {
@@ -302,9 +302,10 @@ askForSolution: function(opid) {
 	questionHtml += '<table><tr><td>';
 	questionHtml += Xps.htmlfy(op);
 	questionHtml += '</td><td><p>=</p></td><td>';
-	questionHtml += '<input id= "controlable" type="text"></input>';
+	questionHtml += '<input id= "controlable" type="number" onsubmit="Xps.solSubmit('+opid+')" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 	questionHtml += '</td></tr></table>';
 	document.getElementById('main').innerHTML += questionHtml;
+	document.getElementById('controlable').focus();
 },
 
 select: function(opid) {
@@ -403,6 +404,23 @@ opClick: function(opid) {
 	} else {
 		//Send WRONG message
 	}
+},
+
+solSubmit: function(opid) {
+	var op = Xps.CONTEXT.opNodes[opid];
+	var isOpRoot = (op.parent == null);
+	if (op.solve(parseInt(event.target.value))) {
+		Xps.changeState('SELECTING');
+		console.log('event',event);
+		if (isOpRoot) Xps.CONTEXT.tree = Xps.CONTEXT.opNodes[opid];
+		event.target.parentNode.innerHTML = '<p class="number">'+parseInt(event.target.value)+'</p>';
+		Xps.printXp();
+	}
+},
+
+solEnter: function(event, opid) {
+	if (event.keyCode != 13) return;
+	this.solSubmit(opid);
 },
 
 //Not prime for now
@@ -537,17 +555,14 @@ Node: function Node(value){
 			if (result != solution) return false;
 			console.log('solution, result', solution, result);
 			var solutionNode = new Xps.Node(solution);
-			this = solutionNode;
-			return true;
-			/**
+			solutionNode.ctxid = this.ctxid;
 			if (this.parent != null && this.ctxid == this.parent.left.ctxid) {
 				this.parent.left = solutionNode;
 			} else if (this.parent != null && this.ctxid == this.parent.right.ctxid) {
 				this.parent.right = solutionNode;
-			} else {
-				Xps.CONTEXT.tree = solutionNode;
 			}
-			**/
+			Xps.CONTEXT.opNodes[this.ctxid] = solutionNode;
+			return true;
 		},		
       this.isSum = function() {
          if (!this.operation) return null;

@@ -18,6 +18,22 @@ text-align: center;
 vertical-align: middle;
 }
 
+input[type="text"]
+{
+width: 75px;
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+}
+
+input[type="number"]
+{
+width: 75px;
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+}
+
 .number{
 font-size: 32px;
 font-family: "Arial Black", Gadget, sans-serif;
@@ -28,6 +44,13 @@ margin: 0px;
 .sumSymbol
 {
 background-image: url('../img/sumSymbol.png');
+width: 24px;
+height: 24px;
+}
+
+.sumSymbolSel
+{
+background-image: url('../img/sumSymbolSel.png');
 width: 24px;
 height: 24px;
 }
