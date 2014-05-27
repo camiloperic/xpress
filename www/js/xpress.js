@@ -322,7 +322,7 @@ askForSolution: function(opid, solutionKey) {
 	questionHtml += '<tr id="opLine'+solutionKey+'"><td class="'+this.getOpNsName(opid)+'Line"><table><tr><td>';
 	questionHtml += Xps.htmlfy(op, true);
 	questionHtml += '</td><td>';
-	questionHtml += '<input id= "op'+solutionKey+'" type="number" onsubmit="Xps.solSubmit('+opid+')" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
+	questionHtml += '<input id= "op'+solutionKey+'" type="number" onblur="Xps.solSubmit(event,'+opid+')" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 	questionHtml += '</td></tr></table></td></tr>';
 	document.getElementById('xpTable').innerHTML += questionHtml;
 	document.getElementById('op'+solutionKey).focus();
@@ -392,7 +392,7 @@ opClick: function(opid) {
 	}
 },
 
-solSubmit: function(opid) {
+solSubmit: function(event, opid) {
 	var key = event.target.id.substring(2, event.target.id.length)
 	var opSolution = this.CONTEXT.opSolutions[key];
 	var solutionTree = this.CONTEXT.solutionTrees[opSolution[0]];
@@ -466,7 +466,7 @@ transform: function(transformations) {
 
 solEnter: function(event, opid) {
 	if (event.keyCode != 13) return;
-	this.solSubmit(opid);
+	this.solSubmit(event, opid);
 },
 
 //Not prime for now
