@@ -19,6 +19,7 @@ CONTEXT: {
    tree: null,
    solutionTrees: [],
    opNodes: [],
+	opSolutions: null,
 	state: 'INITIAL'
 },
 
@@ -58,6 +59,7 @@ startDB: function() {
 		expression.opNodes.push(curr);
    	}
 	expression.solutionTrees.push({
+		tree: division.ctxid,
 		transformations: [],
 		order: [
 			[division.ctxid],
@@ -66,6 +68,7 @@ startDB: function() {
 		]
 	});
 	expression.solutionTrees.push({
+		tree: multiplication.ctxid,
 		transformations: [{
 			id: division.ctxid,
 			mirror: false,
@@ -78,6 +81,7 @@ startDB: function() {
 		]
 	});
 	expression.solutionTrees.push({
+		tree: multiplication.ctxid,
 		transformations: [{
 			id: division.ctxid,
 			mirror: false,
@@ -101,7 +105,8 @@ play: function() {
 	Xps.startDB();
 	//This is the time to choose the expression
 	Xps.newXp();
-	Xps.printXp();
+// 	Xps.printXp();
+	this.appendXp(Xps.CONTEXT.tree);
 },
 
 newXp: function() {
@@ -109,6 +114,7 @@ newXp: function() {
 	Xps.toContext(xp);
 },
 
+//Deprecated
 printXp: function() {
 	document.getElementById('main').innerHTML += Xps.htmlfy(Xps.CONTEXT.tree);
 },
@@ -123,6 +129,8 @@ makeExp: function (lvl) {
 toContext: function (expression) {
    this.CONTEXT.tree = expression.tree;
    this.CONTEXT.solutionTrees = expression.solutionTrees;
+	for (var i = 0; i < this.CONTEXT.solutionTrees.length; i++)
+		this.CONTEXT.solutionTrees[i].valid = true;
    this.CONTEXT.opNodes = expression.opNodes;
 	this.CONTEXT.state = 'SELECTING';
 },
@@ -204,10 +212,10 @@ fillWithInts: function (root, lvl) {
    while(queue.length > 0){
       var currNode = queue.pop();
       if(currNode.left instanceof Xps.Node) queue.push(currNode.left);
-		else currNode.left = new Xps.Node(0);
+		else currNode.left = new Xps.solutionTree.transformationsNode(0);
       if(currNode.right instanceof Xps.Node) queue.push(currNode.right);
 		else currNode.right = new Xps.Node(0);
-      if (currNode.value == Xps.OPERATION.DIV) currNode.left.factors.push([currNode, currNode.right]);
+      if (currNode.value == Xps.OPERATION.DIV) currNode.left.factors.push([currNode, solutionTree.transformationscurrNode.right]);
 		else currNode.factors.push([currNode.left, currNode.right]);
    }
 },solvable
@@ -235,7 +243,7 @@ fillWithInts: function (root, lvl) {
    
 },
 
-htmlfy: function (node) {
+htmlfy: function (node, withEq) {
    if (!(node instanceof Xps.Node)) return null;
    if (!node.isOperation()) {
       return '<p class="number">'+node.value+'</p>';
@@ -245,22 +253,25 @@ htmlfy: function (node) {
          htmlRet += '<table>';
          htmlRet += '<tr>';
          htmlRet += '<td>';
-         htmlRet += Xps.htmlfy(node.left);
+         htmlRet += Xps.htmlfy(node.left, false);
          htmlRet += '</td>';
+			if (withEq) {
+				htmlRet += '<td rowspan=3><p>=</p></td>';
+			}
          htmlRet += '</tr>';
          htmlRet += '<tr>';
-         htmlRet += '<td id="xpsop'+node.ctxid+'" class="divisionSymbol" onclick="Xps.opClick('+node.ctxid+')">';
+         htmlRet += '<td id="xpsop'+node.ctxid+'" class="divSymbol" onclick="Xps.opClick('+node.ctxid+')">';
          htmlRet += '</td>';
          htmlRet += '</tr>';
          htmlRet += '<tr>';
          htmlRet += '<td>';
-         htmlRet += Xps.htmlfy(node.right);
+         htmlRet += Xps.htmlfy(node.right, false);
          htmlRet += '</td>';
          htmlRet += '</tr>';
          htmlRet += '</table>';
       } else {
          //node.value will be an image
-         htmlRet += '<table><tr><td>'+Xps.htmlfy(node.left)+'</td><td>'+'<div id = "xpsop'+node.ctxid+'" class="'+Xps.OPCLASSES[node.value]+'" onclick="Xps.opClick('+node.ctxid+')"/>'+'</td><td>'+Xps.htmlfy(node.right)+'</td></tr></table>';
+         htmlRet += '<table><tr><td>'+Xps.htmlfy(node.left, false)+'</td><td>'+'<div id = "xpsop'+node.ctxid+'" class="'+Xps.OPCLASSES[node.value]+'" onclick="Xps.opClick('+node.ctxid+')"/>'+'</td><td>'+Xps.htmlfy(node.right, false)+'</td>'+(withEq ? '<td>=</td>' : '')+'</tr></table>';
          //htmlRet += Xps.htmlfy(node.left)+node.value+Xps.htmlfy(node.right);
       }
       if (node.parent != null && node.parent instanceof Xps.Node && node.nature == Xps.NATURE.SUM && node.parent.value == Xps.OPERATION.MULT) {
@@ -268,6 +279,14 @@ htmlfy: function (node) {
       }
       return htmlRet;
    }
+},
+
+appendXp: function (node) {
+	var xpTable = document.getElementById('xpTable');
+	var toAppend = '<tr><td>';
+	toAppend += this.htmlfy(node, true);
+	toAppend += '</td></td>';
+	xpTable.innerHTML += toAppend;
 },
 
 stringfy: function (node) {
@@ -289,6 +308,7 @@ treefy: function(node, lvl) {
 	return retTree;
 },
 
+//Deprecated
 testfy: function(elid) {
    var main = document.getElementById(elid);
    var xp = Xps.makeExp(6);
@@ -296,16 +316,29 @@ testfy: function(elid) {
    main.innerHTML += Xps.stringfy(xp);
 },
 
-askForSolution: function(opid) {
+askForSolution: function(opid, solutionKey) {
 	var op = Xps.CONTEXT.opNodes[opid];
 	var questionHtml = '';
-	questionHtml += '<table><tr><td>';
-	questionHtml += Xps.htmlfy(op);
-	questionHtml += '</td><td><p>=</p></td><td>';
-	questionHtml += '<input id= "controlable" type="number" onsubmit="Xps.solSubmit('+opid+')" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
-	questionHtml += '</td></tr></table>';
-	document.getElementById('main').innerHTML += questionHtml;
-	document.getElementById('controlable').focus();
+	questionHtml += '<tr id="opLine'+solutionKey+'"><td class="'+this.getOpNsName(opid)+'Line"><table><tr><td>';
+	questionHtml += Xps.htmlfy(op, true);
+	questionHtml += '</td><td>';
+	questionHtml += '<input id= "op'+solutionKey+'" type="number" onsubmit="Xps.solSubmit('+opid+')" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
+	questionHtml += '</td></tr></table></td></tr>';
+	document.getElementById('xpTable').innerHTML += questionHtml;
+	document.getElementById('op'+solutionKey).focus();
+},
+
+getOpNsName: function(opid) {
+	var op = Xps.CONTEXT.opNodes[opid].value;
+	if (op == Xps.OPERATION.SUM) {
+		return 'sum';
+	} else if (op == Xps.OPERATION.SUB) {
+		return 'sub';
+	} else if (op == Xps.OPERATION.MULT) {
+		return 'mult';
+	} else if (op == Xps.OPERATION.DIV) {
+		return 'div';
+	}
 },
 
 select: function(opid) {
@@ -315,84 +348,37 @@ select: function(opid) {
    var solvable = false;
 	var solutionTrees = Xps.CONTEXT.solutionTrees;
    var solutionTreesToPop = [];
-	var indice = [];
+	var notValid = [];
+	var indice = {};
    for (var i = 0; i < solutionTrees.length; i++) {
-		var solutionTreeRoot = Xps.CONTEXT.tree;
 		var solutionTree = solutionTrees[i];
-		var order = solutionTree.order;
-		var firstLevel = order[order.length-1];
-		var orderIndex = firstLevel.indexOf(opid);
-      if (orderIndex != -1) {
+		if (!solutionTree.valid) continue;
+		var distransformations = this.transform(solutionTree.transformations);
+		if (!opNode.left.isOperation() && !opNode.right.isOperation()) {
 			solvable = true;
-			var transformations = solutionTree.transformations;
-			var distransformations = [];
-			for (var j = transformations.length -1; j >= 0; j--) {
-				var transformation = transformations[j];
-				var transNode = opNodes[transformation.id];
-				console.log('transNode', transNode);
-				console.log('Transforming: ', transformation);
-				if (transformation.mirror) {
-					transNode.mirror();
-					distransformations.push({
-						id: transNode.ctxid,
-						mirror: true
-					});
-				} else {
-					var switchRoot = (transNode.parent == null);
-					var newRoot = transNode.rotate(transformation.ccw);
-					if (switchRoot) {
-						solutionTreeRoot = newRoot;
-						console.log('Switching root to ', newRoot.ctxid);
-					}
-					distransformations.push({
-						id: transNode.parent.ctxid,
-						mirror: false,
-						ccw: !transformation.ccw
-					});
-				}
-				console.log('Transformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
+			var currIndx = opNode.left.value+'op'+opNode.right.value;
+			console.log('indice', indice);
+			console.log('!typeof indice['+currIndx+'] == \'undefined\'',!typeof indice[currIndx] == 'undefined');
+			if (typeof indice[currIndx] == 'undefined')
+				indice[currIndx] = [i];
+			else {
+				indice[currIndx].push(i);
 			}
-			while (distransformations.length > 0) {
-				console.log('Distransforming: ', distransformation);
-				var distransformation = distransformations.pop();
-				var transNode = opNodes[distransformation.id];
-				if (distransformation.mirror) {
-					transNode.mirror();
-				} else {solvable
-					transNode.rotate(distransformation.ccw);
-				}
-			}
-			solutionTreeRoot = Xps.CONTEXT.tree;
-			console.log('Distransformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
-			var currIndx = opNode.left.ctxid + '|' + opNode.ctxid + '|' + opNode.right.ctxid;
-			if (indice.indexOf(currIndx) == -1) {
-				indice.push(currIndx);
-			}
-			if (orderIndex != firstLevel.length-1) {
-				var toLast = firstLevel[orderIndex];
-				firstLevel[orderIndex] = firstLevel[firstLevel.length-1];
-				firstLevel[firstLevel.length-1] = toLast;
-			}
-			firstLevel.pop();
-			if (firstLevel.length == 0) {
-				order.pop();
-			}
-      } else {
-         solutionTreesToPop.push(i);
-      }
+		} else notValid.push(i);
+		this.transform(distransformations);
    }
    if (solvable) {
-		while(solutionTreesToPop.length > 0) {
-			var idToPop = solutionTreesToPop.pop();
-			if (idToPop != solutionTrees.length) {
-				var toLast = solutionTrees[idToPop];
-				solutionTrees[idToPop] = solutionTrees[solutionTrees.length-1];
-				solutionTrees[solutionTrees.length-1] = toLast;
-			}
-			solutionTrees.pop();
-		}	
+		Xps.CONTEXT.opSolutions = indice;
+		for (var key in indice) {
+			var solutionTree = solutionTrees[indice[key][0]];
+			var distransformations = this.transform(solutionTree.transformations);
+			this.askForSolution(opid, key);
+			this.transform(distransformations);
+		}
+		for (var i = 0; i < notValid.length; i++) {
+			solutionTrees[notValid[i]].valid = false;
+		}
 	}
-   console.log('Solvable: ', solvable);
    return solvable;
 },
 
@@ -400,22 +386,82 @@ opClick: function(opid) {
 	if (Xps.CONTEXT.state == 'SOLVING') return;
    if (Xps.select(opid)) {
 		Xps.changeState('SOLVING');
-		Xps.askForSolution(opid);
+// 		Xps.askForSolution(opid);
 	} else {
 		//Send WRONG message
 	}
 },
 
 solSubmit: function(opid) {
+	var key = event.target.id.substring(2, event.target.id.length)
+	var opSolution = this.CONTEXT.opSolutions[key];
+	var solutionTree = this.CONTEXT.solutionTrees[opSolution[0]];
+	var distransformations = this.transform(solutionTree.transformations);
 	var op = Xps.CONTEXT.opNodes[opid];
 	var isOpRoot = (op.parent == null);
+	console.log('key is ', key);
+	console.log('opSolution is ', opSolution);
 	if (op.solve(parseInt(event.target.value))) {
+		this.CONTEXT.tree = this.CONTEXT.opNodes[solutionTree.tree];
 		Xps.changeState('SELECTING');
 		console.log('event',event);
 		if (isOpRoot) Xps.CONTEXT.tree = Xps.CONTEXT.opNodes[opid];
 		event.target.parentNode.innerHTML = '<p class="number">'+parseInt(event.target.value)+'</p>';
-		Xps.printXp();
+// 		Xps.printXp();
+		for (var currKey in this.CONTEXT.opSolutions) {
+			if (currKey != key) {
+				var toDestroy = document.getElementById('opLine'+currKey);
+				toDestroy.deleteCell();
+				var notValid = this.CONTEXT.opSolutions[currKey];
+				for (var i = 0; i < notValid.length; i++) {
+					if (this.CONTEXT.solutionTrees[notValid[i]].valid)
+						this.CONTEXT.solutionTrees[notValid[i]].valid = false;
+				}
+			}
+		}
+		for (var i = 0; i < this.CONTEXT.solutionTrees.length; i++) {
+			if (!this.CONTEXT.solutionTrees[i].valid || i == opSolution[0]) continue;
+			for (var j = 0; j < distransformations.length; j++) {
+				this.CONTEXT.solutionTrees[i].transformations.push(distransformations[j]);
+			}
+		}
+		solutionTree.transformations = [];
+		this.appendXp(Xps.CONTEXT.tree);
+	} else {
+		this.transform(distransformations);
 	}
+},
+
+transform: function(transformations) {
+	var distransformations = [];
+	for (var j = transformations.length -1; j >= 0; j--) {
+		var transformation = transformations[j];
+		var transNode = Xps.CONTEXT.opNodes[transformation.id];
+		console.log('transNode', transNode);
+		console.log('Transforming: ', transformation);
+		if (transformation.mirror) {
+			transNode.mirror();
+			distransformations.push({
+				id: transNode.ctxid,
+				mirror: true
+			});
+		} else {
+			//Not here, switch root elsewhere
+			var switchRoot = (transNode.parent == null);
+			var newRoot = transNode.rotate(transformation.ccw);
+			if (switchRoot) {
+				solutionTreeRoot = newRoot;
+				console.log('Switching root to ', newRoot.ctxid);
+			}
+			distransformations.push({
+				id: transNode.parent.ctxid,
+				mirror: false,
+				ccw: !transformation.ccw
+			});
+		}
+		console.log('Transformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
+	}
+	return distransformations;
 },
 
 solEnter: function(event, opid) {
@@ -497,7 +543,7 @@ Node: function Node(value){
 					console.error('Can\'t rotate node ccw');
 					return null;
 				}
-			} else {
+			} else {		
 				//Rotate the tree cw
 				/**
 				Is this node an operation?
