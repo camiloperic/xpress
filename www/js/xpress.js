@@ -249,14 +249,24 @@ htmlfy: function (node, withEq) {
       return '<p class="number">'+node.value+'</p>';
    } else {
       var htmlRet = '';
+		var withParentesis = node.parent != null 
+									&& node.parent instanceof Xps.Node 
+									&& node.nature == Xps.NATURE.SUM 
+									&& node.parent.value == Xps.OPERATION.MULT;
       if (node.value == Xps.OPERATION.DIV) {
          htmlRet += '<table>';
          htmlRet += '<tr>';
+			if (withParentesis) {
+				htmlRet += '<td rowspan=3 class="parentesis"></td>'
+			}
          htmlRet += '<td>';
          htmlRet += Xps.htmlfy(node.left, false);
          htmlRet += '</td>';
+			if (withParentesis) {
+				htmlRet += '<td rowspan=3 class="parentesis"></td>'
+			}
 			if (withEq) {
-				htmlRet += '<td rowspan=3><p>=</p></td>';
+				htmlRet += '<td rowspan=3><p class="number">=</p></td>';
 			}
          htmlRet += '</tr>';
          htmlRet += '<tr>';
@@ -271,11 +281,8 @@ htmlfy: function (node, withEq) {
          htmlRet += '</table>';
       } else {
          //node.value will be an image
-         htmlRet += '<table><tr><td>'+Xps.htmlfy(node.left, false)+'</td><td>'+'<div id = "xpsop'+node.ctxid+'" class="'+Xps.OPCLASSES[node.value]+'" onclick="Xps.opClick('+node.ctxid+')"/>'+'</td><td>'+Xps.htmlfy(node.right, false)+'</td>'+(withEq ? '<td>=</td>' : '')+'</tr></table>';
+         htmlRet += '<table><tr>'+(withParentesis ? '<td class="parentesis"></td>' : '')+'<td>'+Xps.htmlfy(node.left, false)+'</td><td>'+'<div id = "xpsop'+node.ctxid+'" class="'+Xps.OPCLASSES[node.value]+'" onclick="Xps.opClick('+node.ctxid+')"/>'+'</td><td>'+Xps.htmlfy(node.right, false)+'</td>'+(withParentesis ? '<td class="parentesis"></td>' : '')+(withEq ? '<td><p class="number">=</p></td>' : '')+'</tr></table>';
          //htmlRet += Xps.htmlfy(node.left)+node.value+Xps.htmlfy(node.right);
-      }
-      if (node.parent != null && node.parent instanceof Xps.Node && node.nature == Xps.NATURE.SUM && node.parent.value == Xps.OPERATION.MULT) {
-         htmlRet = '<table><tr><td class="parentesis"></td><td>'+htmlRet+'</td><td class="parentesis"></td></tr></table>';
       }
       return htmlRet;
    }
@@ -323,6 +330,7 @@ askForSolution: function(opid, solutionKey) {
 	questionHtml += Xps.htmlfy(op, true);
 	questionHtml += '</td><td>';
 	questionHtml += '<input id= "op'+solutionKey+'" type="number" onblur="Xps.solSubmit(event,'+opid+')" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
+// 	questionHtml += '<input id= "op'+solutionKey+'" type="number" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 	questionHtml += '</td></tr></table></td></tr>';
 	document.getElementById('xpTable').innerHTML += questionHtml;
 	document.getElementById('op'+solutionKey).focus();
@@ -342,6 +350,7 @@ getOpNsName: function(opid) {
 },
 
 select: function(opid) {
+	console.log('OPERATION SELECTED: ', opid);
 	var opEl = document.getElementById('xpsop'+opid);
 	var opNodes = Xps.CONTEXT.opNodes;
    var opNode = Xps.CONTEXT.opNodes[opid];
@@ -351,25 +360,31 @@ select: function(opid) {
 	var notValid = [];
 	var indice = {};
    for (var i = 0; i < solutionTrees.length; i++) {
+		console.log('   SOLUTION TREE: ', i);
 		var solutionTree = solutionTrees[i];
 		if (!solutionTree.valid) continue;
+		console.log('      VALID SOLUTION TREE! ');
 		var distransformations = this.transform(solutionTree.transformations);
 		if (!opNode.left.isOperation() && !opNode.right.isOperation()) {
+			console.log('      OPERATION VALID FOR TREE');
 			solvable = true;
 			var currIndx = opNode.left.value+'op'+opNode.right.value;
-			console.log('indice', indice);
-			console.log('!typeof indice['+currIndx+'] == \'undefined\'',!typeof indice[currIndx] == 'undefined');
+			console.log('      SOLUTION KEY: ', currIndx);
 			if (typeof indice[currIndx] == 'undefined')
 				indice[currIndx] = [i];
 			else {
 				indice[currIndx].push(i);
 			}
+			console.log('      SOLUTION KEYS: ', indice);
 		} else notValid.push(i);
 		this.transform(distransformations);
    }
+   console.log('   ANALISIS IS DONE FOR SOLUTION TREE: ', i);
    if (solvable) {
 		Xps.CONTEXT.opSolutions = indice;
 		for (var key in indice) {
+			console.log(   'SOLUTION KEY IS ', key);
+			console.log(   'SOLUTION FIRST IS ', indice[key][0]);
 			var solutionTree = solutionTrees[indice[key][0]];
 			var distransformations = this.transform(solutionTree.transformations);
 			this.askForSolution(opid, key);
@@ -379,6 +394,7 @@ select: function(opid) {
 			solutionTrees[notValid[i]].valid = false;
 		}
 	}
+	console.log('OPERATION SELECTION ENDED');
    return solvable;
 },
 
@@ -393,11 +409,12 @@ opClick: function(opid) {
 },
 
 solSubmit: function(event, opid) {
+	var op = this.CONTEXT.opNodes[opid];
+	if (!op.isOperation()) return;
 	var key = event.target.id.substring(2, event.target.id.length)
 	var opSolution = this.CONTEXT.opSolutions[key];
 	var solutionTree = this.CONTEXT.solutionTrees[opSolution[0]];
 	var distransformations = this.transform(solutionTree.transformations);
-	var op = Xps.CONTEXT.opNodes[opid];
 	var isOpRoot = (op.parent == null);
 	console.log('key is ', key);
 	console.log('opSolution is ', opSolution);
@@ -437,7 +454,6 @@ transform: function(transformations) {
 	for (var j = transformations.length -1; j >= 0; j--) {
 		var transformation = transformations[j];
 		var transNode = Xps.CONTEXT.opNodes[transformation.id];
-		console.log('transNode', transNode);
 		console.log('Transforming: ', transformation);
 		if (transformation.mirror) {
 			transNode.mirror();
@@ -479,12 +495,12 @@ Node: function Node(value){
    value = ''+value;
    if (this instanceof Node) {
       if (value == undefined) {
-         console.log('undefined');         
+//          console.log('undefined');         
       } else if (value == null) {
-         console.log('null');
+//          console.log('null');
       } else if (value.length == 1 && (Xps.OPERATION.SUM+Xps.OPERATION.SUB).indexOf(value) != -1) {
          //Sum and subtraction
-         console.log('sum');
+//          console.log('sum');
          this.value = value;
          this.operation = true;
          this.nature = Xps.NATURE.SUM;
@@ -492,14 +508,14 @@ Node: function Node(value){
          else this.inverse = true;
       } else if (value.length == 1 && (Xps.OPERATION.MULT+Xps.OPERATION.DIV).indexOf(value) != -1) {
          //Multiplication and division
-         console.log('mul');
+//          console.log('mul');
          this.value = value;
          this.operation = true;
          this.nature = Xps.NATURE.MULT;
          if (value == Xps.OPERATION.MULT) this.inverse = false;
          else this.inverse = true;
       } else if (Xps.RE.NUMBERS.test(value)) {
-         console.log('integer');
+//          console.log('integer');
          this.value = parseInt(value);
          this.operation = false;
       } else {
@@ -540,7 +556,7 @@ Node: function Node(value){
 					pivot.setLeft(this);
 					return pivot;
 				} else {
-					console.error('Can\'t rotate node ccw');
+					console.error('Can\'t rotate node ccw', this);
 					return null;
 				}
 			} else {		
@@ -562,7 +578,7 @@ Node: function Node(value){
 					pivot.setRight(this);
 					return pivot;
 				} else {
-					console.error('Can\'t rotate node cw');
+					console.error('Can\'t rotate node cw', this);
 					return null;
 				}
 			}
@@ -596,7 +612,9 @@ Node: function Node(value){
       this.isOperation = function() {
          return this.operation
       };
+		
 		this.solve = function(result) {
+			if (!this.isOperation()) return false;
 			var solution = eval(this.left.value+this.value+this.right.value);
 			if (result != solution) return false;
 			console.log('solution, result', solution, result);
@@ -610,6 +628,7 @@ Node: function Node(value){
 			Xps.CONTEXT.opNodes[this.ctxid] = solutionNode;
 			return true;
 		},		
+		
       this.isSum = function() {
          if (!this.operation) return null;
          return this.nature == 'SUM' ? true : false;

@@ -1,3 +1,8 @@
+#xpTable {
+width: 320px;
+background-color:gray;
+}
+
 #main{
 margin: 0 auto;
 text-align: center;
@@ -20,6 +25,7 @@ vertical-align: middle;
 
 input[type="text"]
 {
+text-align: center;
 width: 75px;
 font-size: 32px;
 font-family: "Arial Black", Gadget, sans-serif;
@@ -28,6 +34,7 @@ font-weight: bold;
 
 input[type="number"]
 {
+text-align: center;
 width: 75px;
 font-size: 32px;
 font-family: "Arial Black", Gadget, sans-serif;
@@ -55,6 +62,12 @@ width: 24px;
 height: 24px;
 }
 
+.sumLine{
+background-color:red;
+-moz-border-radius: 25px;
+-webkit-border-radius: 25px;
+}
+
 .subSymbol
 {
 background-image: url('../img/subSymbol.png');
@@ -67,6 +80,12 @@ height: 24px;
 background-image: url('../img/subSymbolSel.png');
 width: 24px;
 height: 24px;
+}
+
+.subLine{
+background-color:blue;
+-moz-border-radius: 25px;
+-webkit-border-radius: 25px;
 }
 
 .multSymbol
@@ -83,7 +102,13 @@ width: 24px;
 height: 24px;
 }
 
-.divisionSymbol
+.multLine{
+background-color:green;
+-moz-border-radius: 25px;
+-webkit-border-radius: 25px;
+}
+
+.divSymbol
 {
 background-color: #d29400;
 height: 4px;
@@ -91,12 +116,18 @@ height: 4px;
 -webkit-border-radius: 2px;
 }
 
-.divisionSymbolSel
+.divSymbolSel
 {
 background-color: #FF9900;
 height: 4px;
 -moz-border-radius: 2px;
 -webkit-border-radius: 2px;
+}
+
+.divLine{
+background-color:yellow;
+-moz-border-radius: 25px;
+-webkit-border-radius: 25px;
 }
 
 .parentesis

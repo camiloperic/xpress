@@ -19,18 +19,15 @@
 var app = {
     // Application Constructor
     initialize: function(elId) {
-        console.log('Hey there');
         this.containerId = elId;
         this.xi = {};
         this.xi.CANVASID = 'mainCanvas';
-        console.log('Once more');
         this.bindEvents();
-        console.log('The last?');
         this.receivedEvent('any');
     },
     // Bind Event Listeners
     //
-    // Bind any events that are required on startup. Common events are:
+    // Bind any events that are required on startconsole.log('integer');up. Common events are:
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
