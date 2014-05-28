@@ -41,8 +41,8 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        if (id == 'deviceready') {
-            Xps.play();
-        }
+//         if (id == 'deviceready') {
+//             Xps.play();
+//         }
     }
 };
