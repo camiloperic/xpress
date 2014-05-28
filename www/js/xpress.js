@@ -25,78 +25,53 @@ CONTEXT: {
 
 //Xps Methods
 startDB: function() {
-	var expression = {
-		tree: null,
-		solutionTrees: [],
-		opNodes: []
-	};
-	var division = new Xps.Node('/');
-	var multiplication = new Xps.Node('*');
-	var sum = new Xps.Node('+');
-	var subtraction = new Xps.Node('-');
-	var thirteen = new Xps.Node(13);
-	var four = new Xps.Node(4);
-	var six = new Xps.Node(6);
-	var two = new Xps.Node(2);
-	var one = new Xps.Node(1);
-	division.setLeft(multiplication);
-	division.setRight(sum);
-	multiplication.setLeft(subtraction);
-	multiplication.setRight(six);
-	sum.setLeft(two);
-	sum.setRight(one);
-	subtraction.setLeft(thirteen);
-	subtraction.setRight(four);
-	expression.tree = division;
-	//This wont be here for long
-	var queue = [division];
-	var id = 0;
-	while(queue.length > 0) {
-		var curr = queue.pop();
-		if (curr.left.isOperation()) queue.push(curr.left);
-		if (curr.right.isOperation()) queue.push(curr.right);
-                curr.ctxid = id++;
-		expression.opNodes.push(curr);
-   	}
-	expression.solutionTrees.push({
-		tree: division.ctxid,
-		transformations: [],
-		order: [
-			[division.ctxid],
-			[multiplication.ctxid],
-			[subtraction.ctxid, sum.ctxid]
-		]
-	});
-	expression.solutionTrees.push({
-		tree: multiplication.ctxid,
-		transformations: [{
-			id: division.ctxid,
-			mirror: false,
-			ccw: false
-		}],
-		order: [
-			[multiplication.ctxid],
-			[division.ctxid],
-			[subtraction.ctxid, sum.ctxid]
-		]
-	});
-	expression.solutionTrees.push({
-		tree: multiplication.ctxid,
-		transformations: [{
-			id: division.ctxid,
-			mirror: false,
-			ccw: false
+	var opNode_0_0 = new Xps.Node('/');
+	var opNode_0_1 = new Xps.Node('*');
+	var opNode_0_2 = new Xps.Node('+');
+	var opNode_0_3 = new Xps.Node('-');
+	var intNode_0_0 = new Xps.Node(13);
+	var intNode_0_1 = new Xps.Node(4);
+	var intNode_0_2 = new Xps.Node(6);
+	var intNode_0_3 = new Xps.Node(2);
+	var intNode_0_4 = new Xps.Node(1);
+	opNode_0_0.setLeft(opNode_0_1);
+	opNode_0_0.setRight(opNode_0_2);
+	opNode_0_0.ctxid = 0;
+	opNode_0_1.setLeft(opNode_0_3);
+	opNode_0_1.setRight(intNode_0_2);
+	opNode_0_1.ctxid = 1;
+	opNode_0_2.setLeft(intNode_0_3);
+	opNode_0_2.setRight(intNode_0_4);
+	opNode_0_2.ctxid = 2;
+	opNode_0_3.setLeft(intNode_0_0);
+	opNode_0_3.setRight(intNode_0_1);
+	opNode_0_3.ctxid = 3;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_0_0,
+		opNodes: [opNode_0_0, opNode_0_1, opNode_0_2, opNode_0_3],
+		solutionTrees: [{
+			tree: opNode_0_0.ctxid,
+			transformations: []
 		},{
-			id: multiplication.ctxid,
-			mirror: true
-		}],
-		order: [
-			[multiplication.ctxid],
-			[division.ctxid],
-			[subtraction.ctxid, sum.ctxid]
-		]
+			tree: opNode_0_1.ctxid,
+			transformations: [{
+				id: opNode_0_0.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_0_1.ctxid,
+			transformations: [{
+				id: opNode_0_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_0_1.ctxid,
+				mirror: true
+			}]
+		}]		
 	});
-	Xps.EXPRESSIONS.push(expression);
+	
 	var opNode_1_0 = new Xps.Node('*');
 	var opNode_1_1 = new Xps.Node('-');
 	var intNode_1_0 = new Xps.Node(4);
@@ -116,6 +91,7 @@ startDB: function() {
 			transformations: []
 		}]		
 	});
+	
 	var opNode_2_0 = new Xps.Node('+');
 	var opNode_2_1 = new Xps.Node('/');
 	var intNode_2_0 = new Xps.Node(5);
@@ -135,6 +111,7 @@ startDB: function() {
 			transformations: []
 		}]		
 	});
+	
 	var opNode_3_0 = new Xps.Node('/');
 	var opNode_3_1 = new Xps.Node('*');
 	var intNode_3_0 = new Xps.Node(2);
@@ -184,7 +161,7 @@ play: function() {
 },
 
 newXp: function() {
-	var xp = Xps.EXPRESSIONS[3];
+	var xp = Xps.EXPRESSIONS[0];
 	Xps.toContext(xp);
 },
 
