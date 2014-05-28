@@ -97,6 +97,80 @@ startDB: function() {
 		]
 	});
 	Xps.EXPRESSIONS.push(expression);
+	var opNode_1_0 = new Xps.Node('*');
+	var opNode_1_1 = new Xps.Node('-');
+	var intNode_1_0 = new Xps.Node(4);
+	var intNode_1_1 = new Xps.Node(7);
+	var intNode_1_2 = new Xps.Node(2);
+	opNode_1_0.setLeft(intNode_1_0);
+	opNode_1_0.setRight(opNode_1_1);
+	opNode_1_0.ctxid = 0;
+	opNode_1_1.setLeft(intNode_1_1);
+	opNode_1_1.setRight(intNode_1_2);
+	opNode_1_1.ctxid = 1;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_1_0,
+		opNodes: [opNode_1_0, opNode_1_1],
+		solutionTrees: [{
+			tree: opNode_1_0.ctxid,
+			transformations: []
+		}]		
+	});
+	var opNode_2_0 = new Xps.Node('+');
+	var opNode_2_1 = new Xps.Node('/');
+	var intNode_2_0 = new Xps.Node(5);
+	var intNode_2_1 = new Xps.Node(12);
+	var intNode_2_2 = new Xps.Node(4);
+	opNode_2_0.setLeft(intNode_2_0);
+	opNode_2_0.setRight(opNode_2_1);
+	opNode_2_0.ctxid = 0;
+	opNode_2_1.setLeft(intNode_2_1);
+	opNode_2_1.setRight(intNode_2_2);
+	opNode_2_1.ctxid = 1;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_2_0,
+		opNodes: [opNode_2_0, opNode_2_1],
+		solutionTrees: [{
+			tree: opNode_2_0.ctxid,
+			transformations: []
+		}]		
+	});
+	var opNode_3_0 = new Xps.Node('/');
+	var opNode_3_1 = new Xps.Node('*');
+	var intNode_3_0 = new Xps.Node(2);
+	var intNode_3_1 = new Xps.Node(4);
+	var intNode_3_2 = new Xps.Node(14);
+	opNode_3_0.setLeft(opNode_3_1);
+	opNode_3_0.setRight(intNode_3_0);
+	opNode_3_0.ctxid = 0;
+	opNode_3_1.setLeft(intNode_3_1);
+	opNode_3_1.setRight(intNode_3_2);
+	opNode_3_1.ctxid = 1;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_3_0,
+		opNodes: [opNode_3_0, opNode_3_1],
+		solutionTrees: [{
+			tree: opNode_3_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_3_1.ctxid,
+			transformations: [{
+				id: opNode_3_0.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_3_1.ctxid,
+			transformations: [{
+				id: opNode_3_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_3_1.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
 // 	expression.solutionTrees.push(division.rotate(false));
 // 	Xps.EXPRESSIONS.push(expression);
 },
@@ -110,7 +184,7 @@ play: function() {
 },
 
 newXp: function() {
-	var xp = Xps.EXPRESSIONS[0];
+	var xp = Xps.EXPRESSIONS[3];
 	Xps.toContext(xp);
 },
 
@@ -121,7 +195,7 @@ printXp: function() {
 
 makeExp: function (lvl) {
    var root = Xps.makeOps(lvl);
-   Xps.fillWithInts(root);2
+   Xps.fillWithInts(root);
    Xps.toContext(root);
    return root;
 },
