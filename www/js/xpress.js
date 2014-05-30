@@ -222,6 +222,7 @@ exit: function() {
 		data: []
 	};
 	var total = 0;
+	var missing = 0;
 	for (var i = 4; i >= 0; i--) {
 		var count = this.CONTEXT.score.length-1-i;
 		if (count >= 0) {
@@ -232,10 +233,13 @@ exit: function() {
 			toScoreSerie.data.push(0);
 			totalScore.data.push(0);
 		} else {
-			scoredSerie.data.push(0);
-			toScoreSerie.data.push(5);
-			totalScore.data.push(0);
+			missing++;
 		}
+	}
+	for (var i = 0; i < missing; i++) {
+		scoredSerie.data.push(0);
+		toScoreSerie.data.push(5);
+		totalScore.data.push(0);
 	}
 	scoredSerie.data.push(0);
 	toScoreSerie.data.push(0);
@@ -250,7 +254,12 @@ exit: function() {
 			text: 'Stacked column chart'
 		},
 		xAxis: {
-			categories: ['1', '2', '3', '4', '5', 'TOTAL']
+			categories: ['1', '2', '3', '4', '5', 'TOTAL'],
+			plotBands: [{
+				color: '#FCFFC5',
+				from: 4.5-missing,
+				to: 4.5
+			}]
 		},
 		yAxis: [{
 			min: 0,
