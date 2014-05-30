@@ -214,18 +214,18 @@ margin: auto;
 }
 
 .animateInc {
--webkit-animation: white100glowblue0 4s; /* Chrome, Safari, Opera */
-animation: white100glowblue0 4s;
+-webkit-animation: white100glowblue0 1s; /* Chrome, Safari, Opera */
+animation: white100glowblue0 1s;
 }
 
 .animateDec {
--webkit-animation: white100glowred0 4s; /* Chrome, Safari, Opera */
-animation: white100glowred0 4s;
+-webkit-animation: white100glowred0 1s; /* Chrome, Safari, Opera */
+animation: white100glowred0 1s;
 }
 
 .animateNum {
--webkit-animation: white100white0 4s; /* Chrome, Safari, Opera */
-animation: white100white0 4s;
+-webkit-animation: white100white0 1s; /* Chrome, Safari, Opera */
+animation: white100white0 1s;
 }
 
 #xpTable {

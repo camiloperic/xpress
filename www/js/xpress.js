@@ -211,15 +211,15 @@ exit: function() {
 	var parent = document.getElementById(this.CONTAINERID);
 	var scoredSerie = {
 		name: 'Score',
-		serie: []
+		data: []
 	};
 	var toScoreSerie = {
 		name: 'To score',
-		serie: []
+		data: []
 	};
 	var totalScore = {
 		name: 'Total',
-		serie: []
+		data: []
 	};
 	var total = 0;
 	for (var i = 4; i >= 0; i--) {
@@ -227,19 +227,19 @@ exit: function() {
 		if (count >= 0) {
 			var score = this.CONTEXT.score[count];
 			var value = (score.select + score.solve)*10/(score.ops*2-1)
-			scoredSerie.serie.push(value);
+			scoredSerie.data.push(value);
 			total += value;
-			toScoreSerie.serie.push(0);
-			totalScore.serie.push(0);
+			toScoreSerie.data.push(0);
+			totalScore.data.push(0);
 		} else {
-			scoredSerie.serie.push(0);
-			toScoreSerie.serie.push(5);
-			totalScore.serie.push(0);
+			scoredSerie.data.push(0);
+			toScoreSerie.data.push(5);
+			totalScore.data.push(0);
 		}
 	}
-	scoredSerie.serie.push(0);
-	toScoreSerie.serie.push(0);
-	totalScore.serie.push(total/5);
+	scoredSerie.data.push(0);
+	toScoreSerie.data.push(0);
+	totalScore.data.push(total/5);
 	console.log('series are: ', {scored: scoredSerie, toScore: toScoreSerie, total: totalScore});
 	var hc = new Highcharts.Chart({
 		chart : {
@@ -250,12 +250,12 @@ exit: function() {
 			text: 'Stacked column chart'
 		},
 		xAxis: {
-			categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+			categories: ['1', '2', '3', '4', '5', 'TOTAL']
 		},
 		yAxis: [{
 			min: 0,
 			title: {
-				text: 'Total fruit consumption'
+				text: ''
 			},
 			stackLabels: {
 				enabled: true,
@@ -276,35 +276,20 @@ exit: function() {
 			borderWidth: 1,
 			shadow: false
 		},
-		tooltip: {
-			formatter: function() {
-				return '<b>'+ this.x +'</b><br/>'+
-				this.series.name +': '+ this.y +'<br/>'+
-				'Total: '+ this.point.stackTotal;
-			}
-		},
 		plotOptions: {
 			column: {
-				stacking: 'normal',
-				dataLabels: {
-					enabled: true,
-					color: 'white',
-					style: {
-						textShadow: '0 0 3px black, 0 0 3px black'
-					}
-				}
+				stacking: 'normal'/*,*/
+// 				dataLabels: {
+// 					enabled: true,
+// 					color: 'white',
+// 					style: {
+// 						textShadow: '0 0 3px black, 0 0 3px black'
+// 					}
+// 				}
 			}
 		},
-		series: [{
-			name: 'John',
-			data: [5, 3, 4, 7, 2]
-		}, {
-			name: 'Jane',
-			data: [2, 2, 3, 2, 1]
-		}, {
-			name: 'Joe',
-			data: [3, 4, 4, 2, 5]
-		}]
+// 		series: [{name:'la', data: [1,2,3,4,5,6]}]
+		series: [scoredSerie,toScoreSerie,totalScore]
 	});
 },
 
