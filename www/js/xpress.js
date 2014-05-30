@@ -20,6 +20,7 @@ CONTEXT: {
    solutionTrees: [],
    opNodes: [],
 	opSolutions: null,
+	score: [],
 	state: 'INITIAL'
 },
 
@@ -208,6 +209,103 @@ exit: function() {
 	var xpDiv = document.getElementById('xpDiv');
 	xpDiv.style.visibility = 'hidden';
 	var parent = document.getElementById(this.CONTAINERID);
+	var scoredSerie = {
+		name: 'Score',
+		serie: []
+	};
+	var toScoreSerie = {
+		name: 'To score',
+		serie: []
+	};
+	var totalScore = {
+		name: 'Total',
+		serie: []
+	};
+	var total = 0;
+	for (var i = 4; i >= 0; i--) {
+		var count = this.CONTEXT.score.length-1-i;
+		if (count >= 0) {
+			var score = this.CONTEXT.score[count];
+			var value = (score.select + score.solve)*10/(score.ops*2-1)
+			scoredSerie.serie.push(value);
+			total += value;
+			toScoreSerie.serie.push(0);
+			totalScore.serie.push(0);
+		} else {
+			scoredSerie.serie.push(0);
+			toScoreSerie.serie.push(5);
+			totalScore.serie.push(0);
+		}
+	}
+	scoredSerie.serie.push(0);
+	toScoreSerie.serie.push(0);
+	totalScore.serie.push(total/5);
+	console.log('series are: ', {scored: scoredSerie, toScore: toScoreSerie, total: totalScore});
+	var hc = new Highcharts.Chart({
+		chart : {
+			renderTo : Xps.CONTAINERID,
+			type     : 'column'
+		},
+		title: {
+			text: 'Stacked column chart'
+		},
+		xAxis: {
+			categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+		},
+		yAxis: [{
+			min: 0,
+			title: {
+				text: 'Total fruit consumption'
+			},
+			stackLabels: {
+				enabled: true,
+				style: {
+					fontWeight: 'bold',
+					color: 'gray'
+				}
+			}
+		}],
+		legend: {
+			align: 'right',
+			x: -70,
+			verticalAlign: 'top',
+			y: 20,
+			floating: true,
+			backgroundColor: 'white',
+			borderColor: '#CCC',
+			borderWidth: 1,
+			shadow: false
+		},
+		tooltip: {
+			formatter: function() {
+				return '<b>'+ this.x +'</b><br/>'+
+				this.series.name +': '+ this.y +'<br/>'+
+				'Total: '+ this.point.stackTotal;
+			}
+		},
+		plotOptions: {
+			column: {
+				stacking: 'normal',
+				dataLabels: {
+					enabled: true,
+					color: 'white',
+					style: {
+						textShadow: '0 0 3px black, 0 0 3px black'
+					}
+				}
+			}
+		},
+		series: [{
+			name: 'John',
+			data: [5, 3, 4, 7, 2]
+		}, {
+			name: 'Jane',
+			data: [2, 2, 3, 2, 1]
+		}, {
+			name: 'Joe',
+			data: [3, 4, 4, 2, 5]
+		}]
+	});
 },
 
 newXp: function() {
@@ -218,8 +316,8 @@ newXp: function() {
 		Xps.EXPRESSIONS[rdm] = Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1];
 		Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1] = toLast;
 	}
-	var xp = Xps.EXPRESSIONS.pop();
-	Xps.toContext(xp);
+	var xp = this.EXPRESSIONS.pop();
+	this.toContext(xp);
 },
 
 //Deprecated
@@ -241,6 +339,13 @@ toContext: function (expression) {
 		this.CONTEXT.solutionTrees[i].valid = true;
    this.CONTEXT.opNodes = expression.opNodes;
 	this.CONTEXT.state = 'SELECTING';
+	this.CONTEXT.score.push({
+		select: 0,
+		solve: 0,
+		ops: expression.opNodes.length
+	});
+	this.CONTEXT.opToSolve = expression.opNodes.length;
+	this.CONTEXT.currentScore = this.CONTEXT.opToSolve > 1 ? 1 : 0;
 },
 
 changeState: function(state) {
@@ -315,7 +420,7 @@ fillWithInts: function (root, lvl) {
    if (root == null) {
        console.error(Xps.ERROR["02"]);
        return;
-   }
+   }this.CONTEXT.currentScore = 1;
    var queue = [root];
    while(queue.length > 0){
       var currNode = queue.pop();
@@ -420,7 +525,7 @@ appendExitButton: function () {
 	xpTable.innerHTML += toAppend;
 },
 
-spanWarn: function(increase) {
+spanWarn: function(increase, value) {
 	var spanDiv = document.getElementById('spanDiv');
 	var spanWarnDiv = document.getElementById('spanWarnDiv');
 	spanDiv.style.visibility = 'visible';
@@ -431,10 +536,10 @@ spanWarn: function(increase) {
 	spanWarnDiv.addEventListener('MSAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
 	spanWarnDiv.className = '';
 	if (increase) {
-		spanWarnDiv.innerHTML = '<p class="text, animateNum">+1</p>';
+		spanWarnDiv.innerHTML = '<p class="text, animateNum">+'+value+'</p>';
 		spanWarnDiv.className = 'animateInc';
 	} else {
-		spanWarnDiv.innerHTML = '<p class="text, animateNum">-1</p>';
+		spanWarnDiv.innerHTML = '<p class="text, animateNum">-'+value+'</p>';
 		spanWarnDiv.className = 'animateDec';
 	}
 },
@@ -476,7 +581,7 @@ askForSolution: function(opid, solutionKey) {
 // 	questionHtml += '<input id= "op'+solutionKey+'" type="number" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 	questionHtml += '</td></tr></table></td></tr>';
 	document.getElementById('xpTable').innerHTML += questionHtml;
-	document.getElementById('op'+solutionKey).focus();
+// 	document.getElementById('op'+solutionKey).focus();
 },
 
 getOpNsName: function(opid) {
@@ -541,15 +646,40 @@ select: function(opid) {
    return solvable;
 },
 
+score: function(right) {
+	var variation = this.CONTEXT.currentScore;
+	if (this.CONTEXT.state == 'SELECTING') {
+		if (right) {
+			this.CONTEXT.score[this.CONTEXT.score.length-1].select += variation;
+			this.CONTEXT.currentScore = 1;
+			this.CONTEXT.opToSolve--;
+		} else {
+		   variation = variation/2;
+			this.CONTEXT.currentScore = variation;
+		}
+	} else if (this.CONTEXT.state == 'SOLVING') {
+		if (right) {
+			this.CONTEXT.score[this.CONTEXT.score.length-1].solve += variation;
+			this.CONTEXT.currentScore = this.CONTEXT.opToSolve > 1 ? 1 : 0;
+		} else {
+			variation = variation/2;
+			this.CONTEXT.currentScore = variation;
+		}
+	}
+	return variation;
+},
+
 opClick: function(opid) {
 	if (Xps.CONTEXT.state == 'SOLVING') return;
    if (Xps.select(opid)) {
+		var scored = this.score(true);
+		this.spanWarn(true, scored);
 		Xps.changeState('SOLVING');
-		this.spanWarn(true);
 // 		Xps.askForSolution(opid);
 	} else {
+		var scored = this.score(false);
+		this.spanWarn(false, scored);
 		//Send WRONG message
-		this.spanWarn(false);
 	}
 },
 
@@ -565,7 +695,6 @@ solSubmit: function(event, opid) {
 	console.log('opSolution is ', opSolution);
 	if (op.solve(parseInt(event.target.value))) {
 		this.CONTEXT.tree = this.CONTEXT.opNodes[solutionTree.tree];
-		Xps.changeState('SELECTING');
 		console.log('event',event);
 		if (isOpRoot) Xps.CONTEXT.tree = Xps.CONTEXT.opNodes[opid];
 		event.target.parentNode.innerHTML = '<p class="number">'+parseInt(event.target.value)+'</p>';
@@ -589,14 +718,17 @@ solSubmit: function(event, opid) {
 		}
 		solutionTree.transformations = [];
 		this.appendXp(Xps.CONTEXT.tree);
-		this.spanWarn(true);
-		if (!Xps.CONTEXT.tree.isOperation()) {
+		var increase = this.score(true);
+		this.spanWarn(true, increase);
+		this.changeState('SELECTING');
+		if (!this.CONTEXT.tree.isOperation()) {
 			console.log('!!!   !!!   !!!   FINISHED');
 			if(this.EXPRESSIONS.length > 0)this.appendNextButton();
 			this.appendExitButton();
 		}
 	} else {
-		this.spanWarn(false);
+		var decrease = this.score(false);
+		this.spanWarn(false, decrease);
 		this.transform(distransformations);
 	}
 },
