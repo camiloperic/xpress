@@ -6,6 +6,22 @@ position: absolute;
 vertical-align: middle;
 }
 
+#spanDiv {
+text-align: center;
+width: 100%;
+height: 100%;
+position: absolute;
+vertical-align: middle;
+}
+
+#xpDiv {
+text-align: center;
+width: 100%;
+height: 100%;
+position: absolute;
+vertical-align: middle;
+}
+
 #startTable {
 width: 100%;
 height: 100%;
@@ -33,6 +49,172 @@ background-color: red;
 -webkit-border-radius: 25px;
 width: 150px;
 margin: auto;
+}
+
+@-webkit-keyframes white100white0
+{
+0% {
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: rgba(255,255,255,1);
+}
+10% {
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: rgba(255,255,255,1);
+}
+55% {
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: rgba(255,255,255,0.75);
+}
+100% {
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: rgba(255,255,255,0);
+}
+}
+
+/* Standard syntax */
+@keyframes white100white0
+{
+0% {
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: rgba(255,255,255,1);
+}
+10% {
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: rgba(255,255,255,1);
+}
+55% {
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: rgba(255,255,255,0.75);
+}
+100% {
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: rgba(255,255,255,0);
+}
+}
+
+@-webkit-keyframes white100glowblue0
+{
+0% {
+background: rgba(255,255,255,1);
+box-shadow: 0px 0px 32px #ffffff;
+}
+10% {
+background: rgba(0,0,255,1);
+box-shadow: 0px 0px 0px #ffffff;
+}
+55% {
+background: rgba(0,0,255,0.75);
+box-shadow: none;
+}
+100% {
+background: rgba(0,0,255,0);
+}
+}
+
+/* Standard syntax */
+@keyframes white100glowblue0
+{
+0% {
+background: rgba(255,255,255,1);
+box-shadow: 0px 0px 32px #ffffff;
+}
+10% {
+background: rgba(0,0,255,1);
+box-shadow: 0px 0px 0px #ffffff;
+}
+55% {
+background: rgba(0,0,255,0.75);
+box-shadow: none;
+}
+100% {
+background: rgba(0,0,255,0);
+}
+}
+
+@-webkit-keyframes white100glowred0
+{
+0% {
+background: rgba(255,255,255,1);
+box-shadow: 0px 0px 32px #ffffff;
+}
+10% {
+background: rgba(255,0,0,1);
+box-shadow: 0px 0px 0px #ffffff;
+}
+55% {
+background: rgba(255,0,0,0.75);
+box-shadow: none;
+}
+100% {
+background: rgba(255,0,0,0);
+}
+}
+
+/* Standard syntax */
+@keyframes white100glowred0
+{
+0% {
+background: rgba(255,255,255,1);
+box-shadow: 0px 0px 32px #ffffff;
+}
+10% {
+background: rgba(255,0,0,1);
+box-shadow: 0px 0px 0px #ffffff;
+}
+55% {
+background: rgba(255,0,0,0.75);
+box-shadow: none;
+}
+100% {
+background: rgba(255,0,0,0);
+}
+}
+
+#spanWarnDiv {
+-moz-border-radius: 32px;
+-webkit-border-radius: 32px;
+width: 64px;
+height: 64px;
+margin: auto;
+}
+
+.animateInc {
+-webkit-animation: white100glowblue0 4s; /* Chrome, Safari, Opera */
+animation: white100glowblue0 4s;
+}
+
+.animateDec {
+-webkit-animation: white100glowred0 4s; /* Chrome, Safari, Opera */
+animation: white100glowred0 4s;
+}
+
+.animateNum {
+-webkit-animation: white100white0 4s; /* Chrome, Safari, Opera */
+animation: white100white0 4s;
 }
 
 #xpTable {

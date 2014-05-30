@@ -158,6 +158,16 @@ start: function(parentId){
 	this.CONTAINERID = parentId;
 	var parent = document.getElementById(this.CONTAINERID);
 	var startHtml = '';
+	startHtml += '<div id="spanDiv">';
+	startHtml +=	'<table id="startTable">';
+	startHtml +=		'<tr class="startTableRow"><td></td></tr>';
+	startHtml +=		'<tr class="startTableRow"><td>';
+	startHtml +=			'<div id="spanWarnDiv"></div>';
+	startHtml +=		'</td></tr>';
+	startHtml +=	   '<tr class="startTableRow"><td></td></tr>';
+	startHtml +=	'</table>';
+	startHtml += '</div>';
+	startHtml += '<div id="xpDiv" visible="false"><table id="xpTable"></table></div>';
 	startHtml += '<div id="startDiv">';
 	startHtml +=	'<table id="startTable">';
 	startHtml +=		'<tr class="startTableRow"><td></td></tr>';
@@ -167,15 +177,16 @@ start: function(parentId){
 	startHtml +=	   '<tr class="startTableRow"><td></td></tr>';
 	startHtml +=	'</table>';
 	startHtml += '</div>';
-	startHtml += '<table id="xpTable" visible="false"></table>';
 	parent.innerHTML = startHtml;
 },
 
 play: function() {
 	var startDiv = document.getElementById('startDiv');
-	var xpTable = document.getElementById('xpTable');
+	var xpDiv = document.getElementById('xpDiv');
 	startDiv.style.visibility = 'hidden';
-	xpTable.style.visibility = 'visible';
+	startDiv.style.zIndex = 0;
+	xpDiv.style.visibility = 'visible';
+	xpDiv.style.zIndex = 100;
 	this.startDB();
 	//This is the time to choose the expression
 	this.newXp();
@@ -191,8 +202,8 @@ next: function() {
 },
 
 exit: function() {
-	var xpTable = document.getElementById('xpTable');
-	xpTable.style.visibility = 'hidden';
+	var xpDiv = document.getElementById('xpDiv');
+	xpDiv.style.visibility = 'hidden';
 	var parent = document.getElementById(this.CONTAINERID);
 },
 
@@ -406,6 +417,25 @@ appendExitButton: function () {
 	xpTable.innerHTML += toAppend;
 },
 
+spanWarn: function(increase) {]
+	var spanDiv = document.getElementById('spanDiv');
+	var spanWarnDiv = document.getElementById('spanWarnDiv');
+	spanDiv.style.visibility = 'visible';
+	spanDiv.style.zIndex = 300;
+	spanWarnDiv.addEventListener('animationend', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('webkitAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('oanimationend', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('MSAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.className = '';
+	if (increase) {
+		spanWarnDiv.innerHTML = '<p class="text, animateNum">+1</p>';
+		spanWarnDiv.className = 'animateInc';
+	} else {
+		spanWarnDiv.innerHTML = '<p class="text, animateNum">-1</p>';
+		spanWarnDiv.className = 'animateDec';
+	}
+},
+
 stringfy: function (node) {
    if (!(node instanceof Xps.Node)) return null;
    if (!node.operation) return node.value;
@@ -512,9 +542,11 @@ opClick: function(opid) {
 	if (Xps.CONTEXT.state == 'SOLVING') return;
    if (Xps.select(opid)) {
 		Xps.changeState('SOLVING');
+		this.spanWarn(true);
 // 		Xps.askForSolution(opid);
 	} else {
 		//Send WRONG message
+		this.spanWarn(false);
 	}
 },
 
@@ -554,12 +586,14 @@ solSubmit: function(event, opid) {
 		}
 		solutionTree.transformations = [];
 		this.appendXp(Xps.CONTEXT.tree);
+		this.spanWarn(true);
 		if (!Xps.CONTEXT.tree.isOperation()) {
 			console.log('!!!   !!!   !!!   FINISHED');
 			if(this.EXPRESSIONS.length > 0)this.appendNextButton();
 			this.appendExitButton();
 		}
 	} else {
+		this.spanWarn(false);
 		this.transform(distransformations);
 	}
 },
