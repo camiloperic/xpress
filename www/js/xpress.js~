@@ -158,6 +158,7 @@ start: function(parentId){
 	this.CONTAINERID = parentId;
 	var parent = document.getElementById(this.CONTAINERID);
 	var startHtml = '';
+	startHtml += '<div id="bgDiv"></div>';
 	startHtml += '<div id="spanDiv">';
 	startHtml +=	'<table id="startTable">';
 	startHtml +=		'<tr class="startTableRow"><td></td></tr>';
@@ -202,6 +203,8 @@ next: function() {
 },
 
 exit: function() {
+	var xpTable = document.getElementById('xpTable');
+	xpTable.innerHTML = '';
 	var xpDiv = document.getElementById('xpDiv');
 	xpDiv.style.visibility = 'hidden';
 	var parent = document.getElementById(this.CONTAINERID);
@@ -417,7 +420,7 @@ appendExitButton: function () {
 	xpTable.innerHTML += toAppend;
 },
 
-spanWarn: function(increase) {]
+spanWarn: function(increase) {
 	var spanDiv = document.getElementById('spanDiv');
 	var spanWarnDiv = document.getElementById('spanWarnDiv');
 	spanDiv.style.visibility = 'visible';
