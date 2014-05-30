@@ -1,16 +1,44 @@
-#xpTable {
-width: 320px;
-background-color:gray;
-border-spacing: 5px;
-}
-
-#main{
-margin: 0px;
+#startDiv {
 text-align: center;
 width: 100%;
 height: 100%;
 position: absolute;
-background-color: LightGray;
+vertical-align: middle;
+}
+
+#startTable {
+width: 100%;
+height: 100%;
+}
+
+#startButton {
+background-color: green;
+-moz-border-radius: 25px;
+-webkit-border-radius: 25px;
+width: 150px;
+margin: auto;
+}
+
+#nextButton {
+background-color: blue;
+-moz-border-radius: 25px;
+-webkit-border-radius: 25px;
+width: 150px;
+margin: auto;
+}
+
+#exitButton {
+background-color: red;
+-moz-border-radius: 25px;
+-webkit-border-radius: 25px;
+width: 150px;
+margin: auto;
+}
+
+#xpTable {
+width: 320px;
+background-color:gray;
+border-spacing: 5px;
 }
 
 table
@@ -42,6 +70,18 @@ width: 75px;
 font-size: 32px;
 font-family: "Arial Black", Gadget, sans-serif;
 font-weight: bold;
+}
+
+.startTableRow {
+height:33%
+}
+
+.text{
+font-size: 32px;
+font-family: "Arial Black", Gadget, sans-serif;
+font-weight: bold;
+margin: 10px;
+color: white;
 }
 
 .number{

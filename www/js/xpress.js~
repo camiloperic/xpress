@@ -23,94 +23,188 @@ CONTEXT: {
 	state: 'INITIAL'
 },
 
+CONTAINERID: '',
+
 //Xps Methods
 startDB: function() {
-	var expression = {
-		tree: null,
-		solutionTrees: [],
-		opNodes: []
-	};
-	var division = new Xps.Node('/');
-	var multiplication = new Xps.Node('*');
-	var sum = new Xps.Node('+');
-	var subtraction = new Xps.Node('-');
-	var thirteen = new Xps.Node(13);
-	var four = new Xps.Node(4);
-	var six = new Xps.Node(6);
-	var two = new Xps.Node(2);
-	var one = new Xps.Node(1);
-	division.setLeft(multiplication);
-	division.setRight(sum);
-	multiplication.setLeft(subtraction);
-	multiplication.setRight(six);
-	sum.setLeft(two);
-	sum.setRight(one);
-	subtraction.setLeft(thirteen);
-	subtraction.setRight(four);
-	expression.tree = division;
-	//This wont be here for long
-	var queue = [division];
-	var id = 0;
-	while(queue.length > 0) {
-		var curr = queue.pop();
-		if (curr.left.isOperation()) queue.push(curr.left);
-		if (curr.right.isOperation()) queue.push(curr.right);
-                curr.ctxid = id++;
-		expression.opNodes.push(curr);
-   	}
-	expression.solutionTrees.push({
-		tree: division.ctxid,
-		transformations: [],
-		order: [
-			[division.ctxid],
-			[multiplication.ctxid],
-			[subtraction.ctxid, sum.ctxid]
-		]
-	});
-	expression.solutionTrees.push({
-		tree: multiplication.ctxid,
-		transformations: [{
-			id: division.ctxid,
-			mirror: false,
-			ccw: false
-		}],
-		order: [
-			[multiplication.ctxid],
-			[division.ctxid],
-			[subtraction.ctxid, sum.ctxid]
-		]
-	});
-	expression.solutionTrees.push({
-		tree: multiplication.ctxid,
-		transformations: [{
-			id: division.ctxid,
-			mirror: false,
-			ccw: false
+	var opNode_0_0 = new Xps.Node('/');
+	var opNode_0_1 = new Xps.Node('*');
+	var opNode_0_2 = new Xps.Node('+');
+	var opNode_0_3 = new Xps.Node('-');
+	var intNode_0_0 = new Xps.Node(13);
+	var intNode_0_1 = new Xps.Node(4);
+	var intNode_0_2 = new Xps.Node(6);
+	var intNode_0_3 = new Xps.Node(2);
+	var intNode_0_4 = new Xps.Node(1);
+	opNode_0_0.setLeft(opNode_0_1);
+	opNode_0_0.setRight(opNode_0_2);
+	opNode_0_0.ctxid = 0;
+	opNode_0_1.setLeft(opNode_0_3);
+	opNode_0_1.setRight(intNode_0_2);
+	opNode_0_1.ctxid = 1;
+	opNode_0_2.setLeft(intNode_0_3);
+	opNode_0_2.setRight(intNode_0_4);
+	opNode_0_2.ctxid = 2;
+	opNode_0_3.setLeft(intNode_0_0);
+	opNode_0_3.setRight(intNode_0_1);
+	opNode_0_3.ctxid = 3;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_0_0,
+		opNodes: [opNode_0_0, opNode_0_1, opNode_0_2, opNode_0_3],
+		solutionTrees: [{
+			tree: opNode_0_0.ctxid,
+			transformations: []
 		},{
-			id: multiplication.ctxid,
-			mirror: true
-		}],
-		order: [
-			[multiplication.ctxid],
-			[division.ctxid],
-			[subtraction.ctxid, sum.ctxid]
-		]
+			tree: opNode_0_1.ctxid,
+			transformations: [{
+				id: opNode_0_0.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_0_1.ctxid,
+			transformations: [{
+				id: opNode_0_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_0_1.ctxid,
+				mirror: true
+			}]
+		}]		
 	});
-	Xps.EXPRESSIONS.push(expression);
+	
+	var opNode_1_0 = new Xps.Node('*');
+	var opNode_1_1 = new Xps.Node('-');
+	var intNode_1_0 = new Xps.Node(4);
+	var intNode_1_1 = new Xps.Node(7);
+	var intNode_1_2 = new Xps.Node(2);
+	opNode_1_0.setLeft(intNode_1_0);
+	opNode_1_0.setRight(opNode_1_1);
+	opNode_1_0.ctxid = 0;
+	opNode_1_1.setLeft(intNode_1_1);
+	opNode_1_1.setRight(intNode_1_2);
+	opNode_1_1.ctxid = 1;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_1_0,
+		opNodes: [opNode_1_0, opNode_1_1],
+		solutionTrees: [{
+			tree: opNode_1_0.ctxid,
+			transformations: []
+		}]		
+	});
+	
+	var opNode_2_0 = new Xps.Node('+');
+	var opNode_2_1 = new Xps.Node('/');
+	var intNode_2_0 = new Xps.Node(5);
+	var intNode_2_1 = new Xps.Node(12);
+	var intNode_2_2 = new Xps.Node(4);
+	opNode_2_0.setLeft(intNode_2_0);
+	opNode_2_0.setRight(opNode_2_1);
+	opNode_2_0.ctxid = 0;
+	opNode_2_1.setLeft(intNode_2_1);
+	opNode_2_1.setRight(intNode_2_2);
+	opNode_2_1.ctxid = 1;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_2_0,
+		opNodes: [opNode_2_0, opNode_2_1],
+		solutionTrees: [{
+			tree: opNode_2_0.ctxid,
+			transformations: []
+		}]		
+	});
+	
+	var opNode_3_0 = new Xps.Node('/');
+	var opNode_3_1 = new Xps.Node('*');
+	var intNode_3_0 = new Xps.Node(2);
+	var intNode_3_1 = new Xps.Node(4);
+	var intNode_3_2 = new Xps.Node(14);
+	opNode_3_0.setLeft(opNode_3_1);
+	opNode_3_0.setRight(intNode_3_0);
+	opNode_3_0.ctxid = 0;
+	opNode_3_1.setLeft(intNode_3_1);
+	opNode_3_1.setRight(intNode_3_2);
+	opNode_3_1.ctxid = 1;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_3_0,
+		opNodes: [opNode_3_0, opNode_3_1],
+		solutionTrees: [{
+			tree: opNode_3_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_3_1.ctxid,
+			transformations: [{
+				id: opNode_3_0.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_3_1.ctxid,
+			transformations: [{
+				id: opNode_3_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_3_1.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
 // 	expression.solutionTrees.push(division.rotate(false));
 // 	Xps.EXPRESSIONS.push(expression);
 },
 
+start: function(parentId){
+	this.CONTAINERID = parentId;
+	var parent = document.getElementById(this.CONTAINERID);
+	var startHtml = '';
+	startHtml += '<div id="startDiv">';
+	startHtml +=	'<table id="startTable">';
+	startHtml +=		'<tr class="startTableRow"><td></td></tr>';
+	startHtml +=		'<tr class="startTableRow"><td>';
+	startHtml +=			'<div id="startButton" onclick="Xps.play()"><p class="text">Play</p></div>';
+	startHtml +=		'</td></tr>';
+	startHtml +=	   '<tr class="startTableRow"><td></td></tr>';
+	startHtml +=	'</table>';
+	startHtml += '</div>';
+	startHtml += '<table id="xpTable" visible="false"></table>';
+	parent.innerHTML = startHtml;
+},
+
 play: function() {
-	Xps.startDB();
+	var startDiv = document.getElementById('startDiv');
+	var xpTable = document.getElementById('xpTable');
+	startDiv.style.visibility = 'hidden';
+	xpTable.style.visibility = 'visible';
+	this.startDB();
 	//This is the time to choose the expression
-	Xps.newXp();
+	this.newXp();
 // 	Xps.printXp();
 	this.appendXp(Xps.CONTEXT.tree);
 },
 
+next: function() {
+	var xpTable = document.getElementById('xpTable');
+	xpTable.innerHTML = '';
+	this.newXp();
+	this.appendXp(Xps.CONTEXT.tree);
+},
+
+exit: function() {
+	var xpTable = document.getElementById('xpTable');
+	xpTable.style.visibility = 'hidden';
+	var parent = document.getElementById(this.CONTAINERID);
+},
+
 newXp: function() {
-	var xp = Xps.EXPRESSIONS[0];
+	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
+	console.log('rdm is ', rdm);
+	if (rdm != Xps.EXPRESSIONS.legnth-1) {
+		var toLast = Xps.EXPRESSIONS[rdm];
+		Xps.EXPRESSIONS[rdm] = Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1];
+		Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1] = toLast;
+	}
+	var xp = Xps.EXPRESSIONS.pop();
 	Xps.toContext(xp);
 },
 
@@ -121,7 +215,7 @@ printXp: function() {
 
 makeExp: function (lvl) {
    var root = Xps.makeOps(lvl);
-   Xps.fillWithInts(root);2
+   Xps.fillWithInts(root);
    Xps.toContext(root);
    return root;
 },
@@ -296,6 +390,22 @@ appendXp: function (node) {
 	xpTable.innerHTML += toAppend;
 },
 
+appendNextButton: function () {
+	var xpTable = document.getElementById('xpTable');
+	var toAppend = '<tr><td>';
+	toAppend += '<div id="nextButton" onclick="Xps.next()"><p class="text">Next...</p></div>'
+	toAppend += '</td></td>';
+	xpTable.innerHTML += toAppend;
+},
+
+appendExitButton: function () {
+	var xpTable = document.getElementById('xpTable');
+	var toAppend = '<tr><td>';
+	toAppend += '<div id="exitButton" onclick="Xps.exit()"><p class="text">Exit</p></div>'
+	toAppend += '</td></td>';
+	xpTable.innerHTML += toAppend;
+},
+
 stringfy: function (node) {
    if (!(node instanceof Xps.Node)) return null;
    if (!node.operation) return node.value;
@@ -444,6 +554,11 @@ solSubmit: function(event, opid) {
 		}
 		solutionTree.transformations = [];
 		this.appendXp(Xps.CONTEXT.tree);
+		if (!Xps.CONTEXT.tree.isOperation()) {
+			console.log('!!!   !!!   !!!   FINISHED');
+			if(this.EXPRESSIONS.length > 0)this.appendNextButton();
+			this.appendExitButton();
+		}
 	} else {
 		this.transform(distransformations);
 	}

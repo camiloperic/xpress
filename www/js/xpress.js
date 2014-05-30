@@ -23,6 +23,8 @@ CONTEXT: {
 	state: 'INITIAL'
 },
 
+CONTAINERID: '',
+
 //Xps Methods
 startDB: function() {
 	var opNode_0_0 = new Xps.Node('/');
@@ -152,16 +154,57 @@ startDB: function() {
 // 	Xps.EXPRESSIONS.push(expression);
 },
 
+start: function(parentId){
+	this.CONTAINERID = parentId;
+	var parent = document.getElementById(this.CONTAINERID);
+	var startHtml = '';
+	startHtml += '<div id="startDiv">';
+	startHtml +=	'<table id="startTable">';
+	startHtml +=		'<tr class="startTableRow"><td></td></tr>';
+	startHtml +=		'<tr class="startTableRow"><td>';
+	startHtml +=			'<div id="startButton" onclick="Xps.play()"><p class="text">Play</p></div>';
+	startHtml +=		'</td></tr>';
+	startHtml +=	   '<tr class="startTableRow"><td></td></tr>';
+	startHtml +=	'</table>';
+	startHtml += '</div>';
+	startHtml += '<table id="xpTable" visible="false"></table>';
+	parent.innerHTML = startHtml;
+},
+
 play: function() {
-	Xps.startDB();
+	var startDiv = document.getElementById('startDiv');
+	var xpTable = document.getElementById('xpTable');
+	startDiv.style.visibility = 'hidden';
+	xpTable.style.visibility = 'visible';
+	this.startDB();
 	//This is the time to choose the expression
-	Xps.newXp();
+	this.newXp();
 // 	Xps.printXp();
 	this.appendXp(Xps.CONTEXT.tree);
 },
 
+next: function() {
+	var xpTable = document.getElementById('xpTable');
+	xpTable.innerHTML = '';
+	this.newXp();
+	this.appendXp(Xps.CONTEXT.tree);
+},
+
+exit: function() {
+	var xpTable = document.getElementById('xpTable');
+	xpTable.style.visibility = 'hidden';
+	var parent = document.getElementById(this.CONTAINERID);
+},
+
 newXp: function() {
-	var xp = Xps.EXPRESSIONS[0];
+	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
+	console.log('rdm is ', rdm);
+	if (rdm != Xps.EXPRESSIONS.legnth-1) {
+		var toLast = Xps.EXPRESSIONS[rdm];
+		Xps.EXPRESSIONS[rdm] = Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1];
+		Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1] = toLast;
+	}
+	var xp = Xps.EXPRESSIONS.pop();
 	Xps.toContext(xp);
 },
 
@@ -347,6 +390,22 @@ appendXp: function (node) {
 	xpTable.innerHTML += toAppend;
 },
 
+appendNextButton: function () {
+	var xpTable = document.getElementById('xpTable');
+	var toAppend = '<tr><td>';
+	toAppend += '<div id="nextButton" onclick="Xps.next()"><p class="text">Next...</p></div>'
+	toAppend += '</td></td>';
+	xpTable.innerHTML += toAppend;
+},
+
+appendExitButton: function () {
+	var xpTable = document.getElementById('xpTable');
+	var toAppend = '<tr><td>';
+	toAppend += '<div id="exitButton" onclick="Xps.exit()"><p class="text">Exit</p></div>'
+	toAppend += '</td></td>';
+	xpTable.innerHTML += toAppend;
+},
+
 stringfy: function (node) {
    if (!(node instanceof Xps.Node)) return null;
    if (!node.operation) return node.value;
@@ -495,6 +554,11 @@ solSubmit: function(event, opid) {
 		}
 		solutionTree.transformations = [];
 		this.appendXp(Xps.CONTEXT.tree);
+		if (!Xps.CONTEXT.tree.isOperation()) {
+			console.log('!!!   !!!   !!!   FINISHED');
+			if(this.EXPRESSIONS.length > 0)this.appendNextButton();
+			this.appendExitButton();
+		}
 	} else {
 		this.transform(distransformations);
 	}
