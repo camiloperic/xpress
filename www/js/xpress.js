@@ -28,53 +28,7 @@ CONTAINERID: '',
 
 //Xps Methods
 startDB: function() {
-	var opNode_0_0 = new Xps.Node('/');
-	var opNode_0_1 = new Xps.Node('*');
-	var opNode_0_2 = new Xps.Node('+');
-	var opNode_0_3 = new Xps.Node('-');
-	var intNode_0_0 = new Xps.Node(13);
-	var intNode_0_1 = new Xps.Node(4);
-	var intNode_0_2 = new Xps.Node(6);
-	var intNode_0_3 = new Xps.Node(2);
-	var intNode_0_4 = new Xps.Node(1);
-	opNode_0_0.setLeft(opNode_0_1);
-	opNode_0_0.setRight(opNode_0_2);
-	opNode_0_0.ctxid = 0;
-	opNode_0_1.setLeft(opNode_0_3);
-	opNode_0_1.setRight(intNode_0_2);
-	opNode_0_1.ctxid = 1;
-	opNode_0_2.setLeft(intNode_0_3);
-	opNode_0_2.setRight(intNode_0_4);
-	opNode_0_2.ctxid = 2;
-	opNode_0_3.setLeft(intNode_0_0);
-	opNode_0_3.setRight(intNode_0_1);
-	opNode_0_3.ctxid = 3;
-	Xps.EXPRESSIONS.push({
-		tree: opNode_0_0,
-		opNodes: [opNode_0_0, opNode_0_1, opNode_0_2, opNode_0_3],
-		solutionTrees: [{
-			tree: opNode_0_0.ctxid,
-			transformations: []
-		},{
-			tree: opNode_0_1.ctxid,
-			transformations: [{
-				id: opNode_0_0.ctxid,
-				mirror: false,
-				ccw: false
-			}]
-		},{
-			tree: opNode_0_1.ctxid,
-			transformations: [{
-				id: opNode_0_0.ctxid,
-				mirror: false,
-				ccw: false
-			},{
-				id: opNode_0_1.ctxid,
-				mirror: true
-			}]
-		}]		
-	});
-	
+	// XP: 4*(7-2)
 	var opNode_1_0 = new Xps.Node('*');
 	var opNode_1_1 = new Xps.Node('-');
 	var intNode_1_0 = new Xps.Node(4);
@@ -95,6 +49,7 @@ startDB: function() {
 		}]		
 	});
 	
+	// XP: 5+12/4
 	var opNode_2_0 = new Xps.Node('+');
 	var opNode_2_1 = new Xps.Node('/');
 	var intNode_2_0 = new Xps.Node(5);
@@ -115,6 +70,7 @@ startDB: function() {
 		}]		
 	});
 	
+	// XP: 14*4/2
 	var opNode_3_0 = new Xps.Node('/');
 	var opNode_3_1 = new Xps.Node('*');
 	var intNode_3_0 = new Xps.Node(2);
@@ -147,6 +103,54 @@ startDB: function() {
 				ccw: false
 			},{
 				id: opNode_3_1.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
+
+	// XP: (13-4)*6/(2+1)
+	var opNode_7_0 = new Xps.Node('/');
+	var opNode_7_1 = new Xps.Node('*');
+	var opNode_7_2 = new Xps.Node('+');
+	var opNode_7_3 = new Xps.Node('-');
+	var intNode_7_0 = new Xps.Node(13);
+	var intNode_7_1 = new Xps.Node(4);
+	var intNode_7_2 = new Xps.Node(6);
+	var intNode_7_3 = new Xps.Node(2);
+	var intNode_7_4 = new Xps.Node(1);
+	opNode_7_0.setLeft(opNode_7_1);
+	opNode_7_0.setRight(opNode_7_2);
+	opNode_7_0.ctxid = 0;
+	opNode_7_1.setLeft(opNode_7_3);
+	opNode_7_1.setRight(intNode_7_2);
+	opNode_7_1.ctxid = 1;
+	opNode_7_2.setLeft(intNode_7_3);
+	opNode_7_2.setRight(intNode_7_4);
+	opNode_7_2.ctxid = 2;
+	opNode_7_3.setLeft(intNode_7_0);
+	opNode_7_3.setRight(intNode_7_1);
+	opNode_7_3.ctxid = 3;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_7_0,
+		opNodes: [opNode_7_0, opNode_7_1, opNode_7_2, opNode_7_3],
+		solutionTrees: [{
+			tree: opNode_7_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_7_1.ctxid,
+			transformations: [{
+				id: opNode_7_0.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_7_1.ctxid,
+			transformations: [{
+				id: opNode_7_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_7_1.ctxid,
 				mirror: true
 			}]
 		}]		
@@ -322,7 +326,6 @@ printXp: function() {
 makeExp: function (lvl) {
    var root = Xps.makeOps(lvl);
    Xps.fillWithInts(root);
-   Xps.toContext(root);
    return root;
 },
 
@@ -524,10 +527,10 @@ spanWarn: function(increase, value) {
 	var spanWarnDiv = document.getElementById('spanWarnDiv');
 	spanDiv.style.visibility = 'visible';
 	spanDiv.style.zIndex = 300;
-	spanWarnDiv.addEventListener('animationend', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
-	spanWarnDiv.addEventListener('webkitAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
-	spanWarnDiv.addEventListener('oanimationend', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
-	spanWarnDiv.addEventListener('MSAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('animationend', function(){spanDiv.style.visibility = 'hidden';spanWarnDiv.className='animateShim';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('webkitAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanWarnDiv.className='animateShim';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('oanimationend', function(){spanDiv.style.visibility = 'hidden';spanWarnDiv.className='animateShim';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('MSAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanWarnDiv.className='animateShim';spanDiv.style.zIndex = 0;}, false);
 	spanWarnDiv.className = '';
 	if (increase) {
 		spanWarnDiv.innerHTML = '<p class="text, animateNum">+'+value+'</p>';
@@ -555,14 +558,6 @@ treefy: function(node, lvl) {
 	if (node.left != null) retTree += Xps.treefy(node.left,lvl+1);
 	if (node.right != null) retTree += Xps.treefy(node.right,lvl+1);
 	return retTree;
-},
-
-//Deprecated
-testfy: function(elid) {
-   var main = document.getElementById(elid);
-   var xp = Xps.makeExp(6);
-   main.innerHTML += Xps.htmlfy(xp);
-   main.innerHTML += Xps.stringfy(xp);
 },
 
 askForSolution: function(opid, solutionKey) {
@@ -766,6 +761,16 @@ solEnter: function(event, opid) {
 //Not prime for now
 getPrime: function () {
    return Math.ceil(Math.random()*18)+2;
+},
+
+isInt: function(node) {
+	if (node instanceof Xps.Node && !node.isOperation()) return true;
+	else return false;
+},
+
+isOp: function(node) {
+	if (node instanceof Xps.Node && node.isOperation()) return true;
+	else return false;
 },
 
 //Xps Objects

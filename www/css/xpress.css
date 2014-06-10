@@ -205,12 +205,38 @@ background: rgba(255,0,0,0);
 }
 }
 
+@-webkit-keyframes shimAnim
+{
+0% {
+background: rgba(255,255,255,0);
+}
+100% {
+background: rgba(255,255,255,0);
+}
+}
+
+/* Standard syntax */
+@keyframes shimAnim
+{
+0% {
+background: rgba(255,255,255,0);
+}
+100% {
+background: rgba(255,255,255,0);
+}
+}
+
 #spanWarnDiv {
 -moz-border-radius: 32px;
 -webkit-border-radius: 32px;
 width: 64px;
 height: 64px;
 margin: auto;
+}
+
+.animateShim {
+-webkit-animation: shimAnim 1s; /* Chrome, Safari, Opera */
+animation: shimAnim 1s;
 }
 
 .animateInc {
