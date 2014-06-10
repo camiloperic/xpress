@@ -283,7 +283,7 @@ startDB: function() {
 	});
 	
 	// XP: 5*3-36/6+2
-	var opNode_9_0 = new Xps.Node('-');
+	var opNode_9_0 = new Xps.Node('-');file:///home/camiloperic/Documents/xpress/www/index.html
 	var opNode_9_1 = new Xps.Node('*');
 	var opNode_9_2 = new Xps.Node('+');
 	var opNode_9_3 = new Xps.Node('/');
@@ -369,6 +369,301 @@ startDB: function() {
 			},{
 				id: opNode_10_3.ctxid,
 				mirror: true
+			}]
+		}]		
+	});
+	
+	// XP: 6*(15-3)/(4-5*2)
+	var opNode_11_0 = new Xps.Node('/');
+	var opNode_11_1 = new Xps.Node('*');
+	var opNode_11_2 = new Xps.Node('-');
+	var opNode_11_3 = new Xps.Node('-');
+	var opNode_11_4 = new Xps.Node('*');
+	var intNode_11_0 = new Xps.Node(6);
+	var intNode_11_1 = new Xps.Node(4);
+	var intNode_11_2 = new Xps.Node(15);
+	var intNode_11_3 = new Xps.Node(3);
+	var intNode_11_4 = new Xps.Node(5);
+	var intNode_11_5 = new Xps.Node(2);
+	opNode_11_0.setLeft(opNode_11_1);
+	opNode_11_0.setRight(opNode_11_2);
+	opNode_11_0.ctxid = 0;
+	opNode_11_1.setLeft(intNode_11_0);
+	opNode_11_1.setRight(opNode_11_3);
+	opNode_11_1.ctxid = 1;
+	opNode_11_2.setLeft(intNode_11_1);
+	opNode_11_2.setRight(opNode_11_4);
+	opNode_11_2.ctxid = 2;
+	opNode_11_3.setLeft(intNode_11_2);
+	opNode_11_3.setRight(intNode_11_3);
+	opNode_11_3.ctxid = 3;
+	opNode_11_4.setLeft(intNode_11_4);
+	opNode_11_4.setRight(intNode_11_5);
+	opNode_11_4.ctxid = 4;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_11_0,
+		opNodes: [opNode_11_0, opNode_11_1, opNode_11_2, opNode_11_3, opNode_11_4],
+		solutionTrees: [{
+			tree: opNode_11_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_11_1.ctxid,
+			transformations: [{
+				id: opNode_11_0.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_11_1.ctxid,
+			transformations: [{
+				id: opNode_11_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_11_1.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
+	
+	// XP: (3+5)*2-4*6/2
+	var opNode_12_0 = new Xps.Node('-');
+	var opNode_12_1 = new Xps.Node('*');
+	var opNode_12_2 = new Xps.Node('/');
+	var opNode_12_3 = new Xps.Node('+');
+	var opNode_12_4 = new Xps.Node('*');
+	var intNode_12_0 = new Xps.Node(2);
+	var intNode_12_1 = new Xps.Node(2);
+	var intNode_12_2 = new Xps.Node(3);
+	var intNode_12_3 = new Xps.Node(5);
+	var intNode_12_4 = new Xps.Node(4);
+	var intNode_12_5 = new Xps.Node(6);
+	opNode_12_0.setLeft(opNode_12_1);
+	opNode_12_0.setRight(opNode_12_2);
+	opNode_12_0.ctxid = 0;
+	opNode_12_1.setLeft(opNode_12_3);
+	opNode_12_1.setRight(intNode_12_0);
+	opNode_12_1.ctxid = 1;
+	opNode_12_2.setLeft(opNode_12_4);
+	opNode_12_2.setRight(intNode_12_1);
+	opNode_12_2.ctxid = 2;
+	opNode_12_3.setLeft(intNode_12_2);
+	opNode_12_3.setRight(intNode_12_3);
+	opNode_12_3.ctxid = 3;
+	opNode_12_4.setLeft(intNode_12_4);
+	opNode_12_4.setRight(intNode_12_5);
+	opNode_12_4.ctxid = 4;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_12_0,
+		opNodes: [opNode_12_0, opNode_12_1, opNode_12_2, opNode_12_3, opNode_12_4],
+		solutionTrees: [{
+			tree: opNode_12_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_12_0.ctxid,
+			transformations: [{
+				id: opNode_12_2.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_12_0.ctxid,
+			transformations: [{
+				id: opNode_12_2.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_12_4.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
+	
+	// XP: 4*(2+3*(7-4)/(1+2))
+	var opNode_13_0 = new Xps.Node('*');
+	var opNode_13_1 = new Xps.Node('+');
+	var opNode_13_2 = new Xps.Node('/');
+	var opNode_13_3 = new Xps.Node('*');
+	var opNode_13_4 = new Xps.Node('+');
+	var opNode_13_5 = new Xps.Node('-');
+	var intNode_13_0 = new Xps.Node(4);
+	var intNode_13_1 = new Xps.Node(2);
+	var intNode_13_2 = new Xps.Node(3);
+	var intNode_13_3 = new Xps.Node(1);
+	var intNode_13_4 = new Xps.Node(2);
+	var intNode_13_5 = new Xps.Node(7);
+	var intNode_13_6 = new Xps.Node(4);
+	opNode_13_0.setLeft(intNode_13_0);
+	opNode_13_0.setRight(opNode_13_1);
+	opNode_13_0.ctxid = 0;
+	opNode_13_1.setLeft(intNode_13_1);
+	opNode_13_1.setRight(opNode_13_2);
+	opNode_13_1.ctxid = 1;
+	opNode_13_2.setLeft(opNode_13_3);
+	opNode_13_2.setRight(opNode_13_4);
+	opNode_13_2.ctxid = 2;
+	opNode_13_3.setLeft(intNode_13_2);
+	opNode_13_3.setRight(opNode_13_5);
+	opNode_13_3.ctxid = 3;
+	opNode_13_4.setLeft(intNode_13_3);
+	opNode_13_4.setRight(intNode_13_4);
+	opNode_13_4.ctxid = 4;
+	opNode_13_5.setLeft(intNode_13_5);
+	opNode_13_5.setRight(intNode_13_6);
+	opNode_13_5.ctxid = 5;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_13_0,
+		opNodes: [opNode_13_0, opNode_13_1, opNode_13_2, opNode_13_3, opNode_13_4, opNode_13_5],
+		solutionTrees: [{
+			tree: opNode_13_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_13_0.ctxid,
+			transformations: [{
+				id: opNode_13_2.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_13_0.ctxid,
+			transformations: [{
+				id: opNode_13_2.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_13_3.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
+	
+	// XP: (21*7)/(11-4)*(7+3)/5
+	var opNode_14_0 = new Xps.Node('*');
+	var opNode_14_1 = new Xps.Node('/');
+	var opNode_14_2 = new Xps.Node('/');
+	var opNode_14_3 = new Xps.Node('*');
+	var opNode_14_4 = new Xps.Node('-');
+	var opNode_14_5 = new Xps.Node('+');
+	var intNode_14_0 = new Xps.Node(5);
+	var intNode_14_1 = new Xps.Node(21);
+	var intNode_14_2 = new Xps.Node(7);
+	var intNode_14_3 = new Xps.Node(11);
+	var intNode_14_4 = new Xps.Node(4);
+	var intNode_14_5 = new Xps.Node(7);
+	var intNode_14_6 = new Xps.Node(3);
+	opNode_14_0.setLeft(opNode_14_1);
+	opNode_14_0.setRight(opNode_14_2);
+	opNode_14_0.ctxid = 0;
+	opNode_14_1.setLeft(opNode_14_3);
+	opNode_14_1.setRight(opNode_14_4);
+	opNode_14_1.ctxid = 1;
+	opNode_14_2.setLeft(opNode_14_5);
+	opNode_14_2.setRight(intNode_14_0);
+	opNode_14_2.ctxid = 2;
+	opNode_14_3.setLeft(intNode_14_1);
+	opNode_14_3.setRight(intNode_14_2);
+	opNode_14_3.ctxid = 3;
+	opNode_14_4.setLeft(intNode_14_3);
+	opNode_14_4.setRight(intNode_14_4);
+	opNode_14_4.ctxid = 4;
+	opNode_14_5.setLeft(intNode_14_5);
+	opNode_14_5.setRight(intNode_14_6);
+	opNode_14_5.ctxid = 5;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_14_0,
+		opNodes: [opNode_14_0, opNode_14_1, opNode_14_2, opNode_14_3, opNode_14_4, opNode_14_5],
+		solutionTrees: [{
+			tree: opNode_14_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_14_0.ctxid,
+			transformations: [{
+				id: opNode_14_1.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_14_0.ctxid,
+			transformations: [{
+				id: opNode_14_1.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_14_3.ctxid,
+				mirror: true
+			}]
+		},{
+			tree: opNode_14_1.ctxid,
+			transformations: [{
+				id: opNode_14_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_14_1.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_14_1.ctxid,
+			transformations: [{
+				id: opNode_14_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_14_1.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_14_3.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
+	
+	// XP: (9+6)/(7-2)*(3+10)*2
+	var opNode_15_0 = new Xps.Node('*');
+	var opNode_15_1 = new Xps.Node('/');
+	var opNode_15_2 = new Xps.Node('*');
+	var opNode_15_3 = new Xps.Node('+');
+	var opNode_15_4 = new Xps.Node('-');
+	var opNode_15_5 = new Xps.Node('+');
+	var intNode_15_0 = new Xps.Node(2);
+	var intNode_15_1 = new Xps.Node(9);
+	var intNode_15_2 = new Xps.Node(6);
+	var intNode_15_3 = new Xps.Node(7);
+	var intNode_15_4 = new Xps.Node(2);
+	var intNode_15_5 = new Xps.Node(3);
+	var intNode_15_6 = new Xps.Node(10);
+	opNode_15_0.setLeft(opNode_15_1);
+	opNode_15_0.setRight(opNode_15_2);
+	opNode_15_0.ctxid = 0;
+	opNode_15_1.setLeft(opNode_15_3);
+	opNode_15_1.setRight(opNode_15_4);
+	opNode_15_1.ctxid = 1;
+	opNode_15_2.setLeft(opNode_15_5);
+	opNode_15_2.setRight(intNode_15_0);
+	opNode_15_2.ctxid = 2;
+	opNode_15_3.setLeft(intNode_15_1);
+	opNode_15_3.setRight(intNode_15_2);
+	opNode_15_3.ctxid = 3;
+	opNode_15_4.setLeft(intNode_15_3);
+	opNode_15_4.setRight(intNode_15_4);
+	opNode_15_4.ctxid = 4;
+	opNode_15_5.setLeft(intNode_15_5);
+	opNode_15_5.setRight(intNode_15_6);
+	opNode_15_5.ctxid = 5;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_15_0,
+		opNodes: [opNode_15_0, opNode_15_1, opNode_15_2, opNode_15_3, opNode_15_4, opNode_15_5],
+		solutionTrees: [{
+			tree: opNode_15_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_15_2.ctxid,
+			transformations: [{
+				id: opNode_15_0.ctxid,
+				mirror: false,
+				ccw: true
 			}]
 		}]		
 	});
@@ -460,7 +755,7 @@ exit: function() {
 	}
 	for (var i = 0; i < missing; i++) {
 		scoredSerie.data.push(0);
-		toScoreSerie.data.push(5);
+		toScoreSerie.data.push({y:5});
 		totalScore.data.push(0);
 	}
 	scoredSerie.data.push(0);
@@ -536,7 +831,7 @@ newXp: function() {
 // 	this.toContext(xp);
 
 // Code for testing specific expressions
-	this.toContext(this.EXPRESSIONS[9]);
+	this.toContext(this.EXPRESSIONS[14]);
 },
 
 //Deprecated
@@ -791,7 +1086,7 @@ askForSolution: function(opid, solutionKey) {
 // 	questionHtml += '<input id= "op'+solutionKey+'" type="number" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 	questionHtml += '</td></tr></table></td></tr>';
 	document.getElementById('xpTable').innerHTML += questionHtml;
-// 	document.getElementById('op'+solutionKey).focus();
+	document.getElementById('op'+solutionKey).focus();
 },
 
 getOpNsName: function(opid) {
@@ -894,6 +1189,7 @@ opClick: function(opid) {
 },
 
 solSubmit: function(event, opid) {
+	if (event.target.value == '') return;
 	var op = this.CONTEXT.opNodes[opid];
 	if (!op.isOperation()) return;
 	var key = event.target.id.substring(2, event.target.id.length)
@@ -1059,7 +1355,7 @@ Node: function Node(value){
 					//Rotate it
 					var pivot = this.right;
 					this.setRight(pivot.left);
-// 					pivot.parent = this.parent;
+					pivot.parent = this.parent;
 					if (this.parent != null) {
 						if (this.parent.right.ctxid == this.ctxid) {
 							this.parent.setRight(pivot);
@@ -1090,7 +1386,7 @@ Node: function Node(value){
 					//Rotate it
 					var pivot = this.left;
 					this.setLeft(pivot.right);
-// 					pivot.parent = this.parent;
+					pivot.parent = this.parent;
 					if (this.parent != null) {
 						if (this.parent.right.ctxid == this.ctxid) {
 							this.parent.setRight(pivot);
