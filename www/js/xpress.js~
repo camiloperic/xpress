@@ -8,7 +8,7 @@ PRIMENUMBERS: {
 },
 NATURE: {SUM:'SUM', MULT:'MULT'},
 OPERATION: {SUM:'+', SUB:'-', MULT:'*', DIV:'/'},
-RE: {NUMBERS: new RegExp(/^\d+$/)},
+RE: {NUMBERS: new RegExp(/^[-+]?\d+$/)},
 OPCLASSES: {'+':'sumSymbol', '-':'subSymbol', '*':'multSymbol'},
 ERROR: {
    "01": 'The level may be parseable as an integer. Unable to create operation structure.',
@@ -20,6 +20,7 @@ CONTEXT: {
    solutionTrees: [],
    opNodes: [],
 	opSolutions: null,
+	score: [],
 	state: 'INITIAL'
 },
 
@@ -27,53 +28,7 @@ CONTAINERID: '',
 
 //Xps Methods
 startDB: function() {
-	var opNode_0_0 = new Xps.Node('/');
-	var opNode_0_1 = new Xps.Node('*');
-	var opNode_0_2 = new Xps.Node('+');
-	var opNode_0_3 = new Xps.Node('-');
-	var intNode_0_0 = new Xps.Node(13);
-	var intNode_0_1 = new Xps.Node(4);
-	var intNode_0_2 = new Xps.Node(6);
-	var intNode_0_3 = new Xps.Node(2);
-	var intNode_0_4 = new Xps.Node(1);
-	opNode_0_0.setLeft(opNode_0_1);
-	opNode_0_0.setRight(opNode_0_2);
-	opNode_0_0.ctxid = 0;
-	opNode_0_1.setLeft(opNode_0_3);
-	opNode_0_1.setRight(intNode_0_2);
-	opNode_0_1.ctxid = 1;
-	opNode_0_2.setLeft(intNode_0_3);
-	opNode_0_2.setRight(intNode_0_4);
-	opNode_0_2.ctxid = 2;
-	opNode_0_3.setLeft(intNode_0_0);
-	opNode_0_3.setRight(intNode_0_1);
-	opNode_0_3.ctxid = 3;
-	Xps.EXPRESSIONS.push({
-		tree: opNode_0_0,
-		opNodes: [opNode_0_0, opNode_0_1, opNode_0_2, opNode_0_3],
-		solutionTrees: [{
-			tree: opNode_0_0.ctxid,
-			transformations: []
-		},{
-			tree: opNode_0_1.ctxid,
-			transformations: [{
-				id: opNode_0_0.ctxid,
-				mirror: false,
-				ccw: false
-			}]
-		},{
-			tree: opNode_0_1.ctxid,
-			transformations: [{
-				id: opNode_0_0.ctxid,
-				mirror: false,
-				ccw: false
-			},{
-				id: opNode_0_1.ctxid,
-				mirror: true
-			}]
-		}]		
-	});
-	
+	// XP: 4*(7-2)
 	var opNode_1_0 = new Xps.Node('*');
 	var opNode_1_1 = new Xps.Node('-');
 	var intNode_1_0 = new Xps.Node(4);
@@ -94,6 +49,7 @@ startDB: function() {
 		}]		
 	});
 	
+	// XP: 5+12/4
 	var opNode_2_0 = new Xps.Node('+');
 	var opNode_2_1 = new Xps.Node('/');
 	var intNode_2_0 = new Xps.Node(5);
@@ -114,6 +70,7 @@ startDB: function() {
 		}]		
 	});
 	
+	// XP: 14*4/2
 	var opNode_3_0 = new Xps.Node('/');
 	var opNode_3_1 = new Xps.Node('*');
 	var intNode_3_0 = new Xps.Node(2);
@@ -150,6 +107,272 @@ startDB: function() {
 			}]
 		}]		
 	});
+
+	// XP: (7+5)/(3*2)
+	var opNode_4_0 = new Xps.Node('/');
+	var opNode_4_1 = new Xps.Node('+');
+	var opNode_4_2 = new Xps.Node('*');
+	var intNode_4_0 = new Xps.Node(7);
+	var intNode_4_1 = new Xps.Node(5);
+	var intNode_4_2 = new Xps.Node(3);
+	var intNode_4_3 = new Xps.Node(2);
+	opNode_4_0.setLeft(opNode_4_1);
+	opNode_4_0.setRight(opNode_4_2);
+	opNode_4_0.ctxid = 0;
+	opNode_4_1.setLeft(intNode_4_0);
+	opNode_4_1.setRight(intNode_4_1);
+	opNode_4_1.ctxid = 1;
+	opNode_4_2.setLeft(intNode_4_2);
+	opNode_4_2.setRight(intNode_4_3);
+	opNode_4_2.ctxid = 2;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_4_0,
+		opNodes: [opNode_4_0, opNode_4_1, opNode_4_2],
+		solutionTrees: [{
+			tree: opNode_4_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_4_2.ctxid,
+			transformations: [{
+				id: opNode_4_0.ctxid,
+				mirror: false,
+				ccw: true
+			}]
+		},{
+			tree: opNode_4_2.ctxid,
+			transformations: [{
+				id: opNode_4_0.ctxid,
+				mirror: false,
+				ccw: true
+			},{
+				id: opNode_4_2.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
+	
+	// XP: (6-4)*3+5
+	var opNode_5_0 = new Xps.Node('+');
+	var opNode_5_1 = new Xps.Node('*');
+	var opNode_5_2 = new Xps.Node('-');
+	var intNode_5_0 = new Xps.Node(5);
+	var intNode_5_1 = new Xps.Node(3);
+	var intNode_5_2 = new Xps.Node(6);
+	var intNode_5_3 = new Xps.Node(4);
+	opNode_5_0.setLeft(opNode_5_1);
+	opNode_5_0.setRight(intNode_5_0);
+	opNode_5_0.ctxid = 0;
+	opNode_5_1.setLeft(opNode_5_2);
+	opNode_5_1.setRight(intNode_5_1);
+	opNode_5_1.ctxid = 1;
+	opNode_5_2.setLeft(intNode_5_2);
+	opNode_5_2.setRight(intNode_5_3);
+	opNode_5_2.ctxid = 2;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_5_0,
+		opNodes: [opNode_5_0, opNode_5_1, opNode_5_2],
+		solutionTrees: [{
+			tree: opNode_5_0.ctxid,
+			transformations: []
+		}]		
+	});
+	
+	// XP: (11-2)/3+5
+	var opNode_6_0 = new Xps.Node('+');
+	var opNode_6_1 = new Xps.Node('/');
+	var opNode_6_2 = new Xps.Node('-');
+	var intNode_6_0 = new Xps.Node(5);
+	var intNode_6_1 = new Xps.Node(3);
+	var intNode_6_2 = new Xps.Node(11);
+	var intNode_6_3 = new Xps.Node(2);
+	opNode_6_0.setLeft(opNode_6_1);
+	opNode_6_0.setRight(intNode_6_0);
+	opNode_6_0.ctxid = 0;
+	opNode_6_1.setLeft(opNode_6_2);
+	opNode_6_1.setRight(intNode_6_1);
+	opNode_6_1.ctxid = 1;
+	opNode_6_2.setLeft(intNode_6_2);
+	opNode_6_2.setRight(intNode_6_3);
+	opNode_6_2.ctxid = 2;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_6_0,
+		opNodes: [opNode_6_0, opNode_6_1, opNode_6_2],
+		solutionTrees: [{
+			tree: opNode_6_0.ctxid,
+			transformations: []
+		}]		
+	});
+	
+	// XP: (13-4)*6/(2+1)
+	var opNode_7_0 = new Xps.Node('/');
+	var opNode_7_1 = new Xps.Node('*');
+	var opNode_7_2 = new Xps.Node('+');
+	var opNode_7_3 = new Xps.Node('-');
+	var intNode_7_0 = new Xps.Node(13);
+	var intNode_7_1 = new Xps.Node(4);
+	var intNode_7_2 = new Xps.Node(6);
+	var intNode_7_3 = new Xps.Node(2);
+	var intNode_7_4 = new Xps.Node(1);
+	opNode_7_0.setLeft(opNode_7_1);
+	opNode_7_0.setRight(opNode_7_2);
+	opNode_7_0.ctxid = 0;
+	opNode_7_1.setLeft(opNode_7_3);
+	opNode_7_1.setRight(intNode_7_2);
+	opNode_7_1.ctxid = 1;
+	opNode_7_2.setLeft(intNode_7_3);
+	opNode_7_2.setRight(intNode_7_4);
+	opNode_7_2.ctxid = 2;
+	opNode_7_3.setLeft(intNode_7_0);
+	opNode_7_3.setRight(intNode_7_1);
+	opNode_7_3.ctxid = 3;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_7_0,
+		opNodes: [opNode_7_0, opNode_7_1, opNode_7_2, opNode_7_3],
+		solutionTrees: [{
+			tree: opNode_7_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_7_1.ctxid,
+			transformations: [{
+				id: opNode_7_0.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_7_1.ctxid,
+			transformations: [{
+				id: opNode_7_0.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_7_1.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
+	
+	// XP: 21/(2+5)-3*4
+	var opNode_8_0 = new Xps.Node('-');
+	var opNode_8_1 = new Xps.Node('/');
+	var opNode_8_2 = new Xps.Node('*');
+	var opNode_8_3 = new Xps.Node('+');
+	var intNode_8_0 = new Xps.Node(21);
+	var intNode_8_1 = new Xps.Node(3);
+	var intNode_8_2 = new Xps.Node(4);
+	var intNode_8_3 = new Xps.Node(2);
+	var intNode_8_4 = new Xps.Node(5);
+	opNode_8_0.setLeft(opNode_8_1);
+	opNode_8_0.setRight(opNode_8_2);
+	opNode_8_0.ctxid = 0;
+	opNode_8_1.setLeft(intNode_8_0);
+	opNode_8_1.setRight(opNode_8_3);
+	opNode_8_1.ctxid = 1;
+	opNode_8_2.setLeft(intNode_8_1);
+	opNode_8_2.setRight(intNode_8_2);
+	opNode_8_2.ctxid = 2;
+	opNode_8_3.setLeft(intNode_8_3);
+	opNode_8_3.setRight(intNode_8_4);
+	opNode_8_3.ctxid = 3;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_8_0,
+		opNodes: [opNode_8_0, opNode_8_1, opNode_8_2, opNode_8_3],
+		solutionTrees: [{
+			tree: opNode_8_0.ctxid,
+			transformations: []
+		}]		
+	});
+	
+	// XP: 5*3-36/6+2
+	var opNode_9_0 = new Xps.Node('-');
+	var opNode_9_1 = new Xps.Node('*');
+	var opNode_9_2 = new Xps.Node('+');
+	var opNode_9_3 = new Xps.Node('/');
+	var intNode_9_0 = new Xps.Node(5);
+	var intNode_9_1 = new Xps.Node(3);
+	var intNode_9_2 = new Xps.Node(2);
+	var intNode_9_3 = new Xps.Node(36);
+	var intNode_9_4 = new Xps.Node(6);
+	opNode_9_0.setLeft(opNode_9_1);
+	opNode_9_0.setRight(opNode_9_2);
+	opNode_9_0.ctxid = 0;
+	opNode_9_1.setLeft(intNode_9_0);
+	opNode_9_1.setRight(intNode_9_1);
+	opNode_9_1.ctxid = 1;
+	opNode_9_2.setLeft(opNode_9_3);
+	opNode_9_2.setRight(intNode_9_2);
+	opNode_9_2.ctxid = 2;
+	opNode_9_3.setLeft(intNode_9_3);
+	opNode_9_3.setRight(intNode_9_4);
+	opNode_9_3.ctxid = 3;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_9_0,
+		opNodes: [opNode_9_0, opNode_9_1, opNode_9_2, opNode_9_3],
+		solutionTrees: [{
+			tree: opNode_9_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_9_2.ctxid,
+			transformations: [{
+				id: opNode_9_0.ctxid,
+				mirror: false,
+				ccw: true
+			}]
+		}]		
+	});
+	
+	// XP: (14*21)/7+12/(7-4)
+	var opNode_10_0 = new Xps.Node('+');
+	var opNode_10_1 = new Xps.Node('/');
+	var opNode_10_2 = new Xps.Node('/');
+	var opNode_10_3 = new Xps.Node('*');
+	var opNode_10_4 = new Xps.Node('-');
+	var intNode_10_0 = new Xps.Node(7);
+	var intNode_10_1 = new Xps.Node(12);
+	var intNode_10_2 = new Xps.Node(14);
+	var intNode_10_3 = new Xps.Node(21);
+	var intNode_10_4 = new Xps.Node(7);
+	var intNode_10_5 = new Xps.Node(4);
+	opNode_10_0.setLeft(opNode_10_1);
+	opNode_10_0.setRight(opNode_10_2);
+	opNode_10_0.ctxid = 0;
+	opNode_10_1.setLeft(opNode_10_3);
+	opNode_10_1.setRight(intNode_10_0);
+	opNode_10_1.ctxid = 1;
+	opNode_10_2.setLeft(intNode_10_1);
+	opNode_10_2.setRight(opNode_10_4);
+	opNode_10_2.ctxid = 2;
+	opNode_10_3.setLeft(intNode_10_2);
+	opNode_10_3.setRight(intNode_10_3);
+	opNode_10_3.ctxid = 3;
+	opNode_10_4.setLeft(intNode_10_4);
+	opNode_10_4.setRight(intNode_10_5);
+	opNode_10_4.ctxid = 4;
+	Xps.EXPRESSIONS.push({
+		tree: opNode_10_0,
+		opNodes: [opNode_10_0, opNode_10_1, opNode_10_2, opNode_10_3, opNode_10_4],
+		solutionTrees: [{
+			tree: opNode_10_0.ctxid,
+			transformations: []
+		},{
+			tree: opNode_10_0.ctxid,
+			transformations: [{
+				id: opNode_10_1.ctxid,
+				mirror: false,
+				ccw: false
+			}]
+		},{
+			tree: opNode_10_0.ctxid,
+			transformations: [{
+				id: opNode_10_1.ctxid,
+				mirror: false,
+				ccw: false
+			},{
+				id: opNode_10_3.ctxid,
+				mirror: true
+			}]
+		}]		
+	});
+	
 // 	expression.solutionTrees.push(division.rotate(false));
 // 	Xps.EXPRESSIONS.push(expression);
 },
@@ -208,18 +431,112 @@ exit: function() {
 	var xpDiv = document.getElementById('xpDiv');
 	xpDiv.style.visibility = 'hidden';
 	var parent = document.getElementById(this.CONTAINERID);
+	var scoredSerie = {
+		name: 'Score',
+		data: []
+	};
+	var toScoreSerie = {
+		name: 'To score',
+		data: []
+	};
+	var totalScore = {
+		name: 'Total',
+		data: []
+	};
+	var total = 0;
+	var missing = 0;
+	for (var i = 4; i >= 0; i--) {
+		var count = this.CONTEXT.score.length-1-i;
+		if (count >= 0) {
+			var score = this.CONTEXT.score[count];
+			var value = (score.select + score.solve)*10/(score.ops*2-1)
+			scoredSerie.data.push(value);
+			total += value;
+			toScoreSerie.data.push(0);
+			totalScore.data.push(0);
+		} else {
+			missing++;
+		}
+	}
+	for (var i = 0; i < missing; i++) {
+		scoredSerie.data.push(0);
+		toScoreSerie.data.push(5);
+		totalScore.data.push(0);
+	}
+	scoredSerie.data.push(0);
+	toScoreSerie.data.push(0);
+	totalScore.data.push(total/5);
+	console.log('series are: ', {scored: scoredSerie, toScore: toScoreSerie, total: totalScore});
+	var hc = new Highcharts.Chart({
+		chart : {
+			renderTo : Xps.CONTAINERID,
+			type     : 'column'
+		},
+		title: {
+			text: 'Stacked column chart'
+		},
+		xAxis: {
+			categories: ['1', '2', '3', '4', '5', 'TOTAL'],
+			plotBands: [{
+				color: '#FCFFC5',
+				from: 4.5-missing,
+				to: 4.5
+			}]
+		},
+		yAxis: [{
+			min: 0,
+			title: {
+				text: ''
+			},
+			stackLabels: {
+				enabled: true,
+				style: {
+					fontWeight: 'bold',
+					color: 'gray'
+				}
+			}
+		}],
+		legend: {
+			align: 'right',
+			x: -70,
+			verticalAlign: 'top',
+			y: 20,
+			floating: true,
+			backgroundColor: 'white',
+			borderColor: '#CCC',
+			borderWidth: 1,
+			shadow: false
+		},
+		plotOptions: {
+			column: {
+				stacking: 'normal'/*,*/
+// 				dataLabels: {
+// 					enabled: true,
+// 					color: 'white',
+// 					style: {
+// 						textShadow: '0 0 3px black, 0 0 3px black'
+// 					}
+// 				}
+			}
+		},
+// 		series: [{name:'la', data: [1,2,3,4,5,6]}]
+		series: [scoredSerie,toScoreSerie,totalScore]
+	});
 },
 
 newXp: function() {
-	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
-	console.log('rdm is ', rdm);
-	if (rdm != Xps.EXPRESSIONS.legnth-1) {
-		var toLast = Xps.EXPRESSIONS[rdm];
-		Xps.EXPRESSIONS[rdm] = Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1];
-		Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1] = toLast;
-	}
-	var xp = Xps.EXPRESSIONS.pop();
-	Xps.toContext(xp);
+// 	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
+// 	console.log('rdm is ', rdm);
+// 	if (rdm != Xps.EXPRESSIONS.legnth-1) {
+// 		var toLast = Xps.EXPRESSIONS[rdm];
+// 		Xps.EXPRESSIONS[rdm] = Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1];
+// 		Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1] = toLast;
+// 	}
+// 	var xp = this.EXPRESSIONS.pop();
+// 	this.toContext(xp);
+
+// Code for testing specific expressions
+	this.toContext(this.EXPRESSIONS[9]);
 },
 
 //Deprecated
@@ -230,7 +547,6 @@ printXp: function() {
 makeExp: function (lvl) {
    var root = Xps.makeOps(lvl);
    Xps.fillWithInts(root);
-   Xps.toContext(root);
    return root;
 },
 
@@ -241,6 +557,13 @@ toContext: function (expression) {
 		this.CONTEXT.solutionTrees[i].valid = true;
    this.CONTEXT.opNodes = expression.opNodes;
 	this.CONTEXT.state = 'SELECTING';
+	this.CONTEXT.score.push({
+		select: 0,
+		solve: 0,
+		ops: expression.opNodes.length
+	});
+	this.CONTEXT.opToSolve = expression.opNodes.length;
+	this.CONTEXT.currentScore = this.CONTEXT.opToSolve > 1 ? 1 : 0;
 },
 
 changeState: function(state) {
@@ -315,7 +638,7 @@ fillWithInts: function (root, lvl) {
    if (root == null) {
        console.error(Xps.ERROR["02"]);
        return;
-   }
+   }this.CONTEXT.currentScore = 1;
    var queue = [root];
    while(queue.length > 0){
       var currNode = queue.pop();
@@ -420,21 +743,21 @@ appendExitButton: function () {
 	xpTable.innerHTML += toAppend;
 },
 
-spanWarn: function(increase) {
+spanWarn: function(increase, value) {
 	var spanDiv = document.getElementById('spanDiv');
 	var spanWarnDiv = document.getElementById('spanWarnDiv');
 	spanDiv.style.visibility = 'visible';
 	spanDiv.style.zIndex = 300;
-	spanWarnDiv.addEventListener('animationend', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
-	spanWarnDiv.addEventListener('webkitAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
-	spanWarnDiv.addEventListener('oanimationend', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
-	spanWarnDiv.addEventListener('MSAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('animationend', function(){spanDiv.style.visibility = 'hidden';spanWarnDiv.className='animateShim';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('webkitAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanWarnDiv.className='animateShim';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('oanimationend', function(){spanDiv.style.visibility = 'hidden';spanWarnDiv.className='animateShim';spanDiv.style.zIndex = 0;}, false);
+	spanWarnDiv.addEventListener('MSAnimationEnd', function(){spanDiv.style.visibility = 'hidden';spanWarnDiv.className='animateShim';spanDiv.style.zIndex = 0;}, false);
 	spanWarnDiv.className = '';
 	if (increase) {
-		spanWarnDiv.innerHTML = '<p class="text, animateNum">+1</p>';
+		spanWarnDiv.innerHTML = '<p class="text, animateNum">+'+value+'</p>';
 		spanWarnDiv.className = 'animateInc';
 	} else {
-		spanWarnDiv.innerHTML = '<p class="text, animateNum">-1</p>';
+		spanWarnDiv.innerHTML = '<p class="text, animateNum">-'+value+'</p>';
 		spanWarnDiv.className = 'animateDec';
 	}
 },
@@ -458,14 +781,6 @@ treefy: function(node, lvl) {
 	return retTree;
 },
 
-//Deprecated
-testfy: function(elid) {
-   var main = document.getElementById(elid);
-   var xp = Xps.makeExp(6);
-   main.innerHTML += Xps.htmlfy(xp);
-   main.innerHTML += Xps.stringfy(xp);
-},
-
 askForSolution: function(opid, solutionKey) {
 	var op = Xps.CONTEXT.opNodes[opid];
 	var questionHtml = '';
@@ -476,7 +791,7 @@ askForSolution: function(opid, solutionKey) {
 // 	questionHtml += '<input id= "op'+solutionKey+'" type="number" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 	questionHtml += '</td></tr></table></td></tr>';
 	document.getElementById('xpTable').innerHTML += questionHtml;
-	document.getElementById('op'+solutionKey).focus();
+// 	document.getElementById('op'+solutionKey).focus();
 },
 
 getOpNsName: function(opid) {
@@ -527,7 +842,7 @@ select: function(opid) {
 		Xps.CONTEXT.opSolutions = indice;
 		for (var key in indice) {
 			console.log(   'SOLUTION KEY IS ', key);
-			console.log(   'SOLUTION FIRST IS ', indice[key][0]);
+			console.log(   'SOLUTION INDEX IS ', indice[key][0]);
 			var solutionTree = solutionTrees[indice[key][0]];
 			var distransformations = this.transform(solutionTree.transformations);
 			this.askForSolution(opid, key);
@@ -541,15 +856,40 @@ select: function(opid) {
    return solvable;
 },
 
+score: function(right) {
+	var variation = this.CONTEXT.currentScore;
+	if (this.CONTEXT.state == 'SELECTING') {
+		if (right) {
+			this.CONTEXT.score[this.CONTEXT.score.length-1].select += variation;
+			this.CONTEXT.currentScore = 1;
+			this.CONTEXT.opToSolve--;
+		} else {
+		   variation = variation/2;
+			this.CONTEXT.currentScore = variation;
+		}
+	} else if (this.CONTEXT.state == 'SOLVING') {
+		if (right) {
+			this.CONTEXT.score[this.CONTEXT.score.length-1].solve += variation;
+			this.CONTEXT.currentScore = this.CONTEXT.opToSolve > 1 ? 1 : 0;
+		} else {
+			variation = variation/2;
+			this.CONTEXT.currentScore = variation;
+		}
+	}
+	return variation;
+},
+
 opClick: function(opid) {
 	if (Xps.CONTEXT.state == 'SOLVING') return;
    if (Xps.select(opid)) {
+		var scored = this.score(true);
+		this.spanWarn(true, scored);
 		Xps.changeState('SOLVING');
-		this.spanWarn(true);
 // 		Xps.askForSolution(opid);
 	} else {
+		var scored = this.score(false);
+		this.spanWarn(false, scored);
 		//Send WRONG message
-		this.spanWarn(false);
 	}
 },
 
@@ -561,11 +901,11 @@ solSubmit: function(event, opid) {
 	var solutionTree = this.CONTEXT.solutionTrees[opSolution[0]];
 	var distransformations = this.transform(solutionTree.transformations);
 	var isOpRoot = (op.parent == null);
+	console.log('op is root? ', isOpRoot)
 	console.log('key is ', key);
 	console.log('opSolution is ', opSolution);
 	if (op.solve(parseInt(event.target.value))) {
 		this.CONTEXT.tree = this.CONTEXT.opNodes[solutionTree.tree];
-		Xps.changeState('SELECTING');
 		console.log('event',event);
 		if (isOpRoot) Xps.CONTEXT.tree = Xps.CONTEXT.opNodes[opid];
 		event.target.parentNode.innerHTML = '<p class="number">'+parseInt(event.target.value)+'</p>';
@@ -589,14 +929,17 @@ solSubmit: function(event, opid) {
 		}
 		solutionTree.transformations = [];
 		this.appendXp(Xps.CONTEXT.tree);
-		this.spanWarn(true);
-		if (!Xps.CONTEXT.tree.isOperation()) {
+		var increase = this.score(true);
+		this.spanWarn(true, increase);
+		this.changeState('SELECTING');
+		if (!this.CONTEXT.tree.isOperation()) {
 			console.log('!!!   !!!   !!!   FINISHED');
 			if(this.EXPRESSIONS.length > 0)this.appendNextButton();
 			this.appendExitButton();
 		}
 	} else {
-		this.spanWarn(false);
+		var decrease = this.score(false);
+		this.spanWarn(false, decrease);
 		this.transform(distransformations);
 	}
 },
@@ -617,6 +960,8 @@ transform: function(transformations) {
 			//Not here, switch root elsewhere
 			var switchRoot = (transNode.parent == null);
 			var newRoot = transNode.rotate(transformation.ccw);
+			// This is for console.log sake only
+			var solutionTreeRoot = transNode;
 			if (switchRoot) {
 				solutionTreeRoot = newRoot;
 				console.log('Switching root to ', newRoot.ctxid);
@@ -627,7 +972,7 @@ transform: function(transformations) {
 				ccw: !transformation.ccw
 			});
 		}
-		console.log('Transformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
+// 		console.log('Transformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
 	}
 	return distransformations;
 },
@@ -640,6 +985,16 @@ solEnter: function(event, opid) {
 //Not prime for now
 getPrime: function () {
    return Math.ceil(Math.random()*18)+2;
+},
+
+isInt: function(node) {
+	if (node instanceof Xps.Node && !node.isOperation()) return true;
+	else return false;
+},
+
+isOp: function(node) {
+	if (node instanceof Xps.Node && node.isOperation()) return true;
+	else return false;
 },
 
 //Xps Objects
@@ -705,6 +1060,10 @@ Node: function Node(value){
 					var pivot = this.right;
 					this.setRight(pivot.left);
 					pivot.parent = this.parent;
+// 					if (pivot.parent != null) {
+// 						if (pivot.parent.right.ctxid = this.ctxid) pivot.parent.setRight(pivot);
+// 						else pivot.parent.setLeft(pivot);
+// 					}
 					pivot.setLeft(this);
 					return pivot;
 				} else {
@@ -727,6 +1086,10 @@ Node: function Node(value){
 					var pivot = this.left;
 					this.setLeft(pivot.right);
 					pivot.parent = this.parent;
+// 					if (pivot.parent != null) {
+// 						if (pivot.parent.right.ctxid = this.ctxid) pivot.parent.setRight(pivot);
+// 						else pivot.parent.setLeft(pivot);
+// 					}
 					pivot.setRight(this);
 					return pivot;
 				} else {
