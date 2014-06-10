@@ -1059,11 +1059,16 @@ Node: function Node(value){
 					//Rotate it
 					var pivot = this.right;
 					this.setRight(pivot.left);
-					pivot.parent = this.parent;
-// 					if (pivot.parent != null) {
-// 						if (pivot.parent.right.ctxid = this.ctxid) pivot.parent.setRight(pivot);
-// 						else pivot.parent.setLeft(pivot);
-// 					}
+// 					pivot.parent = this.parent;
+					if (this.parent != null) {
+						if (this.parent.right.ctxid == this.ctxid) {
+							this.parent.setRight(pivot);
+							console.log('this.parent',this.parent,'pivot right', pivot);
+						} else {
+							this.parent.setLeft(pivot);
+							console.log('this.parent',this.parent,'pivot left', pivot);
+						}
+					}
 					pivot.setLeft(this);
 					return pivot;
 				} else {
@@ -1085,11 +1090,16 @@ Node: function Node(value){
 					//Rotate it
 					var pivot = this.left;
 					this.setLeft(pivot.right);
-					pivot.parent = this.parent;
-// 					if (pivot.parent != null) {
-// 						if (pivot.parent.right.ctxid = this.ctxid) pivot.parent.setRight(pivot);
-// 						else pivot.parent.setLeft(pivot);
-// 					}
+// 					pivot.parent = this.parent;
+					if (this.parent != null) {
+						if (this.parent.right.ctxid == this.ctxid) {
+							this.parent.setRight(pivot);
+							console.log('this.parent',this.parent,'pivot right', pivot);
+						} else {
+							this.parent.setLeft(pivot);
+							console.log('this.parent',this.parent,'pivot left', pivot);
+						}
+					}
 					pivot.setRight(this);
 					return pivot;
 				} else {
