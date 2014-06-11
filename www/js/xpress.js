@@ -283,22 +283,22 @@ startDB: function() {
 	});
 	
 	// XP: 5*3-36/6+2
-	var opNode_9_0 = new Xps.Node('-');file:///home/camiloperic/Documents/xpress/www/index.html
-	var opNode_9_1 = new Xps.Node('*');
-	var opNode_9_2 = new Xps.Node('+');
+	var opNode_9_0 = new Xps.Node('+');
+	var opNode_9_1 = new Xps.Node('-');
+	var opNode_9_2 = new Xps.Node('*');
 	var opNode_9_3 = new Xps.Node('/');
-	var intNode_9_0 = new Xps.Node(5);
-	var intNode_9_1 = new Xps.Node(3);
-	var intNode_9_2 = new Xps.Node(2);
+	var intNode_9_0 = new Xps.Node(2);
+	var intNode_9_1 = new Xps.Node(5);
+	var intNode_9_2 = new Xps.Node(3);
 	var intNode_9_3 = new Xps.Node(36);
 	var intNode_9_4 = new Xps.Node(6);
 	opNode_9_0.setLeft(opNode_9_1);
-	opNode_9_0.setRight(opNode_9_2);
+	opNode_9_0.setRight(intNode_9_0);
 	opNode_9_0.ctxid = 0;
-	opNode_9_1.setLeft(intNode_9_0);
-	opNode_9_1.setRight(intNode_9_1);
+	opNode_9_1.setLeft(opNode_9_2);
+	opNode_9_1.setRight(opNode_9_3);
 	opNode_9_1.ctxid = 1;
-	opNode_9_2.setLeft(opNode_9_3);
+	opNode_9_2.setLeft(intNode_9_1);
 	opNode_9_2.setRight(intNode_9_2);
 	opNode_9_2.ctxid = 2;
 	opNode_9_3.setLeft(intNode_9_3);
@@ -311,11 +311,11 @@ startDB: function() {
 			tree: opNode_9_0.ctxid,
 			transformations: []
 		},{
-			tree: opNode_9_2.ctxid,
+			tree: opNode_9_1.ctxid,
 			transformations: [{
 				id: opNode_9_0.ctxid,
 				mirror: false,
-				ccw: true
+				ccw: false
 			}]
 		}]		
 	});
@@ -829,9 +829,11 @@ newXp: function() {
 // 	}
 // 	var xp = this.EXPRESSIONS.pop();
 // 	this.toContext(xp);
-
+	//Using + and - expression generation
+	this.toContext(this.makeExp(4,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]));
+	console.log(this.treefy(this.CONTEXT.tree,0));
 // Code for testing specific expressions
-	this.toContext(this.EXPRESSIONS[14]);
+// 	this.toContext(this.EXPRESSIONS[8]);
 },
 
 //Deprecated
@@ -839,13 +841,37 @@ printXp: function() {
 	document.getElementById('main').innerHTML += Xps.htmlfy(Xps.CONTEXT.tree);
 },
 
-makeExp: function (lvl) {
-   var root = Xps.makeOps(lvl);
+makeExp: function (lvl, operations) {
+   var root = Xps.makeOps(lvl, operations);
    Xps.fillWithInts(root);
    return root;
 },
 
 toContext: function (expression) {
+	if (expression instanceof Xps.Node) {
+		var root = expression;
+		var queue = new Queue();
+		queue.enqueue(root);
+		var opNodes = [];
+		var count = 0;
+		while (!queue.isEmpty()) {
+			var currNode = queue.dequeue();
+			currNode.ctxid = count++;
+			opNodes.push(currNode);
+			if (currNode.left instanceof Xps.Node && currNode.left.isOperation())
+				queue.enqueue(currNode.left);
+			if (currNode.right instanceof Xps.Node && currNode.right.isOperation())
+				queue.enqueue(currNode.right);
+		}
+		expression = {
+			tree: root,
+			opNodes: opNodes,
+			solutionTrees: [{
+				tree: root.ctxid,
+				transformations: []
+			}]
+		};
+	}
    this.CONTEXT.tree = expression.tree;
    this.CONTEXT.solutionTrees = expression.solutionTrees;
 	for (var i = 0; i < this.CONTEXT.solutionTrees.length; i++)
@@ -865,7 +891,27 @@ changeState: function(state) {
 	this.CONTEXT.state = state;
 },
 
-makeOps: function (lvl) {
+makeOps: function (lvl, operations) {
+	if (operations == null || typeof operations == 'undefined') {
+		operations = [
+			Xps.OPERATION.SUM, 
+			Xps.OPERATION.SUB, 
+			Xps.OPERATION.MULT, 
+			Xps.OPERATION.DIV
+		];
+	} else {
+		for (i in operations){
+			op = operations[i];
+			if (op != Xps.OPERATION.SUM
+				&& op != Xps.OPERATION.SUB
+				&& op != Xps.OPERATION.MULT
+				&& op != Xps.OPERATION.DIV
+			) {
+				console.log('Operation ', op, ' in operations is not valid');
+				return null;
+			}
+		}
+	}
    /**
    Creates the operation structure
    that can only rotate ccw:
@@ -881,26 +927,7 @@ makeOps: function (lvl) {
    var emptyNodes = [];
    var root = null;
    for (var i = 0; i < lvl; i++) {
-      var rdm = Math.ceil(Math.random()*4);
-      var operation = '';
-      switch(rdm) {
-         case 1:
-            operation = Xps.OPERATION.SUM;
-            console.log('Picked a ' + Xps.OPERATION.SUM);
-            break;
-         case 2:
-            operation = Xps.OPERATION.SUB;
-            console.log('Picked a ' + Xps.OPERATION.SUB);
-            break;
-         case 3:
-            operation = Xps.OPERATION.MULT;
-            console.log('Picked a ' + Xps.OPERATION.MULT);
-            break;
-         case 4:
-            operation = Xps.OPERATION.DIV;
-            console.log('Picked a ' + Xps.OPERATION.DIV);
-            break;
-      }
+		var operation = operations[Math.floor(Math.random()*operations.length)];
       var curr = new Xps.Node(operation);
       if (root == null) root = curr;
       else {
@@ -958,27 +985,48 @@ fillWithInts: function (root, lvl) {
       if(currNode.left instanceof Xps.Node) {
           queue.push(currNode.left);
       } else {
-          currNode.setLeft(new Xps.Node(Xps.getPrime()));
+          currNode.setLeft(new Xps.Node(this.getInt(-20,20)));
       }
       if(currNode.right instanceof Xps.Node) {
           queue.push(currNode.right);
       } else {
-          currNode.setRight(new Xps.Node(Xps.getPrime()));
+          currNode.setRight(new Xps.Node(this.getInt(-20,20)));
       }
    }
    
 },
 
+evaluateTree: function (node) {
+	var transformations = [];
+	var rotCcw = 0;
+	var rotCw = 0;
+	if (!node.isOperation()) return transformations;
+	var curr = node;
+	while (curr.isOperation() && curr.right.isOperation() && curr.nature == curr.right.nature) {
+		curr = curr.right;
+		rotCcw++;
+	}
+	curr = node;
+	while (curr.isOperation() && curr.left.isOperation() && curr.nature == curr.left.nature) {
+		curr = curr.left;
+		rotCw++;
+	}
+	return {ccw: rotCcw, cw: rotCw};
+},
+
 htmlfy: function (node, withEq) {
    if (!(node instanceof Xps.Node)) return null;
    if (!node.isOperation()) {
-      return '<p class="number">'+node.value+'</p>';
+		var withParentesis = node.value < 0 && node.parent != null && node.parent.value != this.OPERATION.DIV;
+      return '<p class="number">'+(withParentesis ? '('+node.value+')' : node.value)+'</p>';
    } else {
       var htmlRet = '';
 		var withParentesis = node.parent != null 
 									&& node.parent instanceof Xps.Node 
-									&& node.nature == Xps.NATURE.SUM 
-									&& node.parent.value == Xps.OPERATION.MULT;
+									&& ((node.nature == Xps.NATURE.SUM 
+									&& node.parent.value == Xps.OPERATION.MULT)
+									|| (node.value == Xps.OPERATION.SUM
+									&&	node.parent.value == Xps.OPERATION.SUB));
       if (node.value == Xps.OPERATION.DIV) {
          htmlRet += '<table>';
          htmlRet += '<tr>';
@@ -1007,7 +1055,13 @@ htmlfy: function (node, withEq) {
          htmlRet += '</table>';
       } else {
          //node.value will be an image
-         htmlRet += '<table><tr>'+(withParentesis ? '<td class="parentesis"></td>' : '')+'<td>'+Xps.htmlfy(node.left, false)+'</td><td>'+'<div id = "xpsop'+node.ctxid+'" class="'+Xps.OPCLASSES[node.value]+'" onclick="Xps.opClick('+node.ctxid+')"/>'+'</td><td>'+Xps.htmlfy(node.right, false)+'</td>'+(withParentesis ? '<td class="parentesis"></td>' : '')+(withEq ? '<td><p class="number">=</p></td>' : '')+'</tr></table>';
+         htmlRet += '<table><tr>'+(withParentesis ? '<td class="parentesis"></td>' : '')
+			+'<td>'+Xps.htmlfy(node.left, false)+'</td><td>'
+			+'<div id = "xpsop'+node.ctxid+'" class="'
+			+Xps.OPCLASSES[node.value]+'" onclick="Xps.opClick('+node.ctxid+')"/>'
+			+'</td><td>'+Xps.htmlfy(node.right, false)+'</td>'
+			+(withParentesis ? '<td class="parentesis"></td>' : '')
+			+(withEq ? '<td><p class="number">=</p></td>' : '')+'</tr></table>';
          //htmlRet += Xps.htmlfy(node.left)+node.value+Xps.htmlfy(node.right);
       }
       return htmlRet;
@@ -1283,6 +1337,10 @@ getPrime: function () {
    return Math.ceil(Math.random()*18)+2;
 },
 
+getInt: function (from, to) {
+	return Math.floor(Math.random()*(to-from+1))+from;
+},
+
 isInt: function(node) {
 	if (node instanceof Xps.Node && !node.isOperation()) return true;
 	else return false;
@@ -1436,7 +1494,7 @@ Node: function Node(value){
 		
 		this.solve = function(result) {
 			if (!this.isOperation()) return false;
-			var solution = eval(this.left.value+this.value+this.right.value);
+			var solution = eval('('+this.left.value+')'+this.value+'('+this.right.value+')');
 			if (result != solution) return false;
 			console.log('solution, result', solution, result);
 			var solutionNode = new Xps.Node(solution);
