@@ -849,28 +849,20 @@ makeExp: function (lvl, operations) {
 
 toContext: function (expression) {
 	if (expression instanceof Xps.Node) {
-		var root = expression;
-		var queue = new Queue();
-		queue.enqueue(root);
-		var opNodes = [];
+		var currNode = expression;
+		var opNodes = [currNode];
 		var count = 0;
-		while (!queue.isEmpty()) {
-			var currNode = queue.dequeue();
-			currNode.ctxid = count++;
+		while (typeof currNode.nextNode != 'undefined' && currNode.nextNode != null) {
+			currNode = currNode.nextNode;
+			console.log('adding opnode to opnodes', currNode);
 			opNodes.push(currNode);
-			if (currNode.left instanceof Xps.Node && currNode.left.isOperation())
-				queue.enqueue(currNode.left);
-			if (currNode.right instanceof Xps.Node && currNode.right.isOperation())
-				queue.enqueue(currNode.right);
 		}
 		expression = {
-			tree: root,
+			tree: expression,
 			opNodes: opNodes,
-			solutionTrees: [{
-				tree: root.ctxid,
-				transformations: []
-			}]
+			solutionTrees: Xps.evaluateTree(expression, opNodes)
 		};
+		console.log('expression is ', expression);
 	}
    this.CONTEXT.tree = expression.tree;
    this.CONTEXT.solutionTrees = expression.solutionTrees;
@@ -926,11 +918,14 @@ makeOps: function (lvl, operations) {
    // {parent:Node, child:'left' or 'right'}
    var emptyNodes = [];
    var root = null;
+	var last = null;
    for (var i = 0; i < lvl; i++) {
 		var operation = operations[Math.floor(Math.random()*operations.length)];
       var curr = new Xps.Node(operation);
+		curr.ctxid = i;
       if (root == null) root = curr;
-      else {
+		else {
+			last.nextNode = curr;
          rdm = Math.ceil(Math.random()*emptyNodes.length)-1;
          console.log('rdm for emptyNodes is: ', rdm);
          console.log('emptyNode[rdm]', emptyNodes[rdm]);
@@ -951,6 +946,7 @@ makeOps: function (lvl, operations) {
       emptyNodes.push({parent:curr, child:'left'});
       emptyNodes.push({parent:curr, child:'right'});
       console.log('emptyNodes is now: ', emptyNodes);
+		last = curr;
    }
    return root;
 },
@@ -959,7 +955,7 @@ makeOps: function (lvl, operations) {
 fillWithInts: function (root, lvl) {
    if (root == null) {
        console.error(Xps.ERROR["02"]);
-       return;
+       return;evaluateTree
    }this.CONTEXT.currentScore = 1;
    var queue = [root];
    while(queue.length > 0){
@@ -996,22 +992,116 @@ fillWithInts: function (root, lvl) {
    
 },
 
-evaluateTree: function (node) {
+//evaluateTreeTest
+evaluateTreeTest: function () {
+	var x = new Xps.Node('+');
+	var y = new Xps.Node('+');
+	var z = new Xps.Node('+');
+	var t = new Xps.Node('+');
+	x.setLeft(new Xps.Node(3));
+	x.setRight(y);
+	x.ctxid=0;
+	y.setLeft(new Xps.Node(4));
+	y.setRight(z);
+	y.ctxid=1;
+	z.setLeft(new Xps.Node(5));
+	z.setRight(t);
+	z.ctxid=2;
+	t.setLeft(new Xps.Node(1));
+	t.setRight(new Xps.Node(2));
+	t.ctxid=3;
+	console.log(this.evaluateTree(x, [x,y,z,t]));
+},
+
+evaluateTree: function (node, opNodes) {
+	console.log('evaluateTree for node ', node);
+	console.log(this.treefy(node,0));
+	// This evaluation works only for expressions with + and - ops.
+	// Recipy: when integer node return am empty list of transformations
+	//         when node, get transformations for child nodes,
+	//         combine them (caterisan product like) creating a set of transformations.
+	//         The current node will then get tested for rotations (cw and ccw)
+	//         for every possible transformation in the combined set.
+	if (!node.isOperation()) { 
+		console.log('evaluatedTree for node ', node);
+		return [{root: node, transformations: []}]; 
+	}
+	var leftTransformations = this.evaluateTree(node.left, opNodes);
+	var rightTransformations = this.evaluateTree(node.right, opNodes);
 	var transformations = [];
-	var rotCcw = 0;
-	var rotCw = 0;
-	if (!node.isOperation()) return transformations;
-	var curr = node;
-	while (curr.isOperation() && curr.right.isOperation() && curr.nature == curr.right.nature) {
-		curr = curr.right;
-		rotCcw++;
+	for (var i = 0; i < leftTransformations.length; i++) {
+		for (var j = 0; j < rightTransformations.length; j++) {
+			var ltf = leftTransformations[i];
+			var rtf = rightTransformations[j];
+			console.log('combining ', ltf, ' and ', rtf);
+			transformations[transformations.length] = {
+				root: node.ctxid,
+				transformations: ltf.transformations.concat(rtf.transformations)
+			};
+		}
 	}
-	curr = node;
-	while (curr.isOperation() && curr.left.isOperation() && curr.nature == curr.left.nature) {
-		curr = curr.left;
-		rotCw++;
+	var newTransformations = [];
+	for (var i = 0; i < transformations.length; i++) {
+		var ctf = transformations[i];
+		console.log('analyzing ', ctf);
+		var distransformations = this.transform(ctf.transformations, opNodes);
+		var currNode = node;
+		var cwTfs = [];
+		var cwDtfs = [];
+		while (currNode.left != null && currNode.left.isOperation()) {
+			console.log('can rotate clock wise');
+			var cwTf = {id: currNode.ctxid, mirror: false, ccw: false};
+			cwTfs.push(cwTf);
+			console.log('cwTfs', cwTfs);
+			var dtf = this.transform([cwTf],opNodes);
+			console.log('dtf, ', dtf);
+			cwDtfs.push(dtf[0]);
+			console.log('cwDtfs, ', cwDtfs);
+			var abctoconcat = [];
+			console.log('tfsToContact',abctoconcat);
+			for (var j = cwTfs.length - 1; j >= 0; j--) {
+				abctoconcat.push(cwTfs[j]);
+				console.log('tfsToContact',abctoconcat);
+			}
+			newTransformations.push({
+				root: currNode.parent.ctxid,
+				transformations: abctoconcat.concat(ctf.transformations)
+			});
+			console.log(this.treefy(currNode.parent,0));
+			currNode = currNode.parent;
+		}
+		this.transform(cwDtfs, opNodes);
+		currNode = node;
+		var ccwTfs = [];
+		var ccwDtfs = [];
+		while (currNode.right != null && currNode.right.isOperation()) {
+			console.log('can rotate counter clock wise', this.treefy(currNode,0));
+			var ccwTf = {id: currNode.ctxid, mirror: false, ccw: true};
+			ccwTfs.push(ccwTf);
+			console.log('ccwTfs', ccwTfs);
+			var dtf = this.transform([ccwTf],opNodes);
+			console.log('dtf, ', dtf);
+			ccwDtfs.push(dtf[0]);
+			console.log('ccwDtfs, ', ccwDtfs);
+			var abctoconcat = [];
+			console.log('tfsToContact',abctoconcat);
+			for (var j = ccwTfs.length - 1; j >= 0; j--) {
+				abctoconcat.push(ccwTfs[j]);
+				console.log('tfsToContact',abctoconcat);
+			}
+			console.log('tfsToContact',abctoconcat);
+			newTransformations.push({
+				root: currNode.parent.ctxid,
+				transformations: abctoconcat.concat(ctf.transformations)
+			});
+			console.log('ccw parent', this.treefy(currNode.parent,0));
+			currNode = currNode.parent;
+		}
+		this.transform(ccwDtfs, opNodes);
+		this.transform(distransformations, opNodes);
 	}
-	return {ccw: rotCcw, cw: rotCw};
+	console.log('evaluatedTree for node ', node);
+	return transformations.concat(newTransformations);
 },
 
 htmlfy: function (node, withEq) {
@@ -1294,12 +1384,15 @@ solSubmit: function(event, opid) {
 	}
 },
 
-transform: function(transformations) {
+transform: function(transformations, opNodes) {
 	var distransformations = [];
 	for (var j = transformations.length -1; j >= 0; j--) {
 		var transformation = transformations[j];
-		var transNode = Xps.CONTEXT.opNodes[transformation.id];
-		console.log('Transforming: ', transformation);
+		var transNode = (typeof opNodes != undefined  
+								&& opNodes != null 
+									? opNodes[transformation.id] 
+									: this.CONTEXT.opNodes[transformation.id]);
+		console.log('Transforming: ', transformation, ' opNodes ', opNodes);
 		if (transformation.mirror) {
 			transNode.mirror();
 			distransformations.push({
@@ -1322,6 +1415,7 @@ transform: function(transformations) {
 				ccw: !transformation.ccw
 			});
 		}
+		console.log('Transformed: ', transformation);
 // 		console.log('Transformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
 	}
 	return distransformations;
