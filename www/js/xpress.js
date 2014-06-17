@@ -830,7 +830,7 @@ newXp: function() {
 // 	var xp = this.EXPRESSIONS.pop();
 // 	this.toContext(xp);
 // 	//Using + and - expression generation
-	this.toContext(this.makeExp(3,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]));
+	this.toContext(this.makeExp(5,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]));
 	console.log(this.treefy(this.CONTEXT.tree,0));
 // Code for testing specific expressions
 // 	this.toContext(this.EXPRESSIONS[8]);
@@ -1113,12 +1113,13 @@ evaluateTree: function (node, opNodes) {
 htmlfy: function (node, withEq, test) {
    if (!(node instanceof Xps.Node)) return null;
    if (!node.isOperation()) {
-		var withParentesis = node.value < 0 && node.parent != null && node.parent.value != this.OPERATION.DIV;
+		var withParentesis = node.value < 0 && node.parent != null && node.parent.value != this.OPERATION.DIV && node.prev != null;
 		var leftNegative = test 
 								&& !node.isOperation() 
 								&& node.prev != null 
 								&& node.prev.value == this.OPERATION.SUB
-								&& node.prev.ctxid != node.parent.parent.ctxid;
+								&& node.prev.ctxid != node.parent.parent.ctxid
+								&& !node.prev.right.parenthesized();
 		if (test) {
 			console.log('leftNegative ', leftNegative, ' for node ', node);
 		}
@@ -1233,6 +1234,16 @@ treefy: function(node, lvl) {
 	if (node.left != null) retTree += Xps.treefy(node.left,lvl+1);
 	if (node.right != null) retTree += Xps.treefy(node.right,lvl+1);
 	return retTree;
+},
+
+linefy: function(node) {
+	var currNode = node;
+	var rtn = '';
+	while (currNode.next != null) {
+		rtn += currNode.value;
+		currNode = currNode.next;
+	}
+	return rtn;
 },
 
 askForSolution: function(opid, solutionKey) {
@@ -1389,7 +1400,10 @@ solSubmit: function(event, opid) {
 			}
 		}
 		solutionTree.transformations = [];
-		this.appendXp(Xps.CONTEXT.tree);
+		//Should not use this link method here
+// 		this.CONTEXT.tree.link();
+// 		console.log('New ex linefied ', this.linefy((this.CONTEXT.tree.link())[0]));
+		this.appendXp(this.CONTEXT.tree);
 		var increase = this.score(true);
 		this.spanWarn(true, increase);
 		this.changeState('SELECTING');
@@ -1627,7 +1641,8 @@ Node: function Node(value){
 			if (!this.isOperation()) return false;
 			var leftNegative = this.prev.prev != null 
 									&& this.prev.prev.value == Xps.OPERATION.SUB
-									&& this.prev.prev.ctxid != this.parent.ctxid;
+									&& this.prev.prev.ctxid != this.parent.ctxid
+									&& !this.prev.prev.right.parenthesized();
 			var solution = eval((leftNegative?'-':'')+'('+this.left.value+')'+this.value+'('+this.right.value+')');
 			console.log('solution, result', solution, result);
 			if (result != solution) return false;
@@ -1639,14 +1654,20 @@ Node: function Node(value){
 				this.prev.prev.invert();
 			}
 			if (this.parent != null && this.ctxid == this.parent.left.ctxid) {
-// 				this.parent.setLeft(solutionNode);
-				this.parent.left = solutionNode;
+				this.parent.setLeft(solutionNode);
+// 				this.parent.left = solutionNode;
 			} else if (this.parent != null && this.ctxid == this.parent.right.ctxid) {
-// 				this.parent.setRight(solutionNode);
-				this.parent.right = solutionNode;
+				this.parent.setRight(solutionNode);
+// 				this.parent.right = solutionNode;
 			}
-			if (this.prev != null) solutionNode.prev = this.prev;
-			if (this.next != null) solutionNode.next = this.next;
+			if (this.prev.prev != null) {
+				solutionNode.prev = this.prev.prev;
+				this.prev.prev.next = solutionNode;
+			}
+			if (this.next.next != null) {
+				solutionNode.next = this.next.next;
+				this.next.next.prev = solutionNode;
+			}
 			Xps.CONTEXT.opNodes[this.ctxid] = solutionNode;
 			return true;
 		},		
@@ -1687,6 +1708,17 @@ Node: function Node(value){
 			} else {
 				this.value = -this.value;
 			}
+		};
+		
+		this.parenthesized = function() {
+			var rtn = this.parent != null 
+									&& this.parent instanceof Xps.Node 
+									&& ((this.nature == Xps.NATURE.SUM 
+									&& this.parent.value == Xps.OPERATION.MULT)
+									|| (this.nature == Xps.NATURE.SUM
+									&&	this.parent.value == Xps.OPERATION.SUB
+									&& this.parent.right.ctxid == this.ctxid));
+			return rtn;
 		};
 		
    } else return new Node(value);
