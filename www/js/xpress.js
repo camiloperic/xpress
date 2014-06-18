@@ -754,9 +754,9 @@ exit: function() {
 		}
 	}
 	for (var i = 0; i < missing; i++) {
-		scoredSerie.data.push(0);
+		scoredSerie.data.push(null);
 		toScoreSerie.data.push({y:5});
-		totalScore.data.push(0);
+		totalScore.data.push(null);
 	}
 	scoredSerie.data.push(0);
 	toScoreSerie.data.push(0);
@@ -768,14 +768,26 @@ exit: function() {
 			type     : 'column'
 		},
 		title: {
-			text: 'Stacked column chart'
+			text: null
 		},
 		xAxis: {
 			categories: ['1', '2', '3', '4', '5', 'TOTAL'],
 			plotBands: [{
-				color: '#FCFFC5',
+				color: 'rgba(255,0,0,0.25)',
 				from: 4.5-missing,
-				to: 4.5
+				to: 4.5,
+				label: {
+					text: 'Work to do...',
+					align: 'left',
+					y: 30,
+					x: 5,
+					style: {
+						fontSize: '32px',
+						fontFamily: '"Arial Black", Gadget, sans-serif',
+						fontWeight: 'bold',
+						color: 'white'
+					}
+				}
 			}]
 		},
 		yAxis: [{
@@ -815,11 +827,12 @@ exit: function() {
 			}
 		},
 // 		series: [{name:'la', data: [1,2,3,4,5,6]}]
-		series: [scoredSerie,toScoreSerie,totalScore]
+		series: [scoredSerie,totalScore]
 	});
 },
 
 newXp: function() {
+	// Getting expressions from 'DB'
 // 	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
 // 	console.log('rdm is ', rdm);
 // 	if (rdm != Xps.EXPRESSIONS.legnth-1) {
@@ -829,11 +842,11 @@ newXp: function() {
 // 	}
 // 	var xp = this.EXPRESSIONS.pop();
 // 	this.toContext(xp);
-// 	//Using + and - expression generation
-	this.toContext(this.makeExp(5,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]));
-	console.log(this.treefy(this.CONTEXT.tree,0));
-// Code for testing specific expressions
-// 	this.toContext(this.EXPRESSIONS[8]);
+	// Using + and - expression generation
+// 	this.toContext(this.makeExp(5,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]));
+// 	console.log(this.treefy(this.CONTEXT.tree,0));
+	// Code for testing specific expressions
+	this.toContext(this.EXPRESSIONS[3]);
 },
 
 //Deprecated
@@ -923,6 +936,8 @@ makeOps: function (lvl, operations) {
    var emptyNodes = [];
    var root = null;
 	var last = null;
+	var setLeft = Math.floor(Math.random()*2) == 0;
+	console.log('setLeft is ', setLeft);
    for (var i = 0; i < lvl; i++) {
 		var operation = operations[Math.floor(Math.random()*operations.length)];
       var curr = new Xps.Node(operation);
@@ -931,7 +946,8 @@ makeOps: function (lvl, operations) {
 		else {
 			last.nextNode = curr;
 			// Building a tree that can only rotate ccw.
-			last.setRight(curr);
+			if (setLeft) last.setLeft(curr);
+			else last.setRight(curr);
 //          rdm = Math.ceil(Math.random()*emptyNodes.length)-1;
 //          console.log('rdm for emptyNodes is: ', rdm);
 //          console.log('emptyNode[rdm]', emptyNodes[rdm]);
@@ -1054,7 +1070,7 @@ evaluateTree: function (node, opNodes) {
 		var currNode = node;
 		var cwTfs = [];
 		var cwDtfs = [];
-		while (currNode.left != null && currNode.left.isOperation() && currNode.value == this.OPERATION.SUM) {
+		while (currNode.left != null && currNode.left.isOperation()) {
 			console.log('can rotate clock wise');
 			var cwTf = {id: currNode.ctxid, mirror: false, ccw: false};
 			cwTfs.push(cwTf);
@@ -1119,7 +1135,8 @@ htmlfy: function (node, withEq, test) {
 								&& node.prev != null 
 								&& node.prev.value == this.OPERATION.SUB
 								&& node.prev.ctxid != node.parent.parent.ctxid
-								&& !node.prev.right.parenthesized();
+								&& !node.prev.right.parenthesized()
+								&& node.prev.right.value != this.OPERATION.DIV;
 		if (test) {
 			console.log('leftNegative ', leftNegative, ' for node ', node);
 		}
@@ -1252,7 +1269,7 @@ askForSolution: function(opid, solutionKey) {
 	questionHtml += '<tr id="opLine'+solutionKey+'"><td class="'+this.getOpNsName(opid)+'Line"><table><tr><td>';
 	questionHtml += Xps.htmlfy(op, true, true);
 	questionHtml += '</td><td>';
-	questionHtml += '<input id= "op'+solutionKey+'" type="number" onblur="Xps.solSubmit(event,'+opid+')" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
+	questionHtml += '<input id= "op'+solutionKey+'" type="number" '/*+'onblur="Xps.solSubmit(event,'+opid+')" '*/+'onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 // 	questionHtml += '<input id= "op'+solutionKey+'" type="number" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 	questionHtml += '</td></tr></table></td></tr>';
 	document.getElementById('xpTable').innerHTML += questionHtml;
@@ -1546,13 +1563,17 @@ Node: function Node(value){
 				Is the right child an operation node with the same nature?
 				**/
 				if (
-					this.operation && 
+					this.isOperation() && 
 					this.right != null && 
-					this.right.operation &&
+					this.right.isOperation() &&
 					this.nature == this.right.nature
 				) {
 					//Rotate it
 					var pivot = this.right;
+					if (this.value == Xps.OPERATION.DIV && pivot.value == Xps.OPERATION.MULT) {
+						console.log('   ###   ###   ###   ###');
+						pivot.invert();
+					}
 					this.setRight(pivot.left);
 					pivot.parent = this.parent;
 					if (this.parent != null) {
@@ -1584,6 +1605,10 @@ Node: function Node(value){
 				) {
 					//Rotate it
 					var pivot = this.left;
+					if (this.value == Xps.OPERATION.DIV && pivot.value == Xps.OPERATION.DIV) {
+						console.log('   ###   ###   ###   ###');
+						this.invert();
+					}
 					this.setLeft(pivot.right);
 					pivot.parent = this.parent;
 					if (this.parent != null) {
@@ -1642,7 +1667,17 @@ Node: function Node(value){
 			var leftNegative = this.prev.prev != null 
 									&& this.prev.prev.value == Xps.OPERATION.SUB
 									&& this.prev.prev.ctxid != this.parent.ctxid
-									&& !this.prev.prev.right.parenthesized();
+									&& !this.prev.prev.right.parenthesized()
+									&& this.prev.prev.right.value != Xps.OPERATION.DIV;
+// 			var divMultDem = this.value == Xps.OPERATION.DIV
+// 									&& this.right != null
+// 									&& this.right.isOperation()
+// 									&& this.right.value == Xps.OPERATION.MULT;
+// 			console.log('divMultDem ', divMultDem);
+// 			console.log('this.value == Xps.OPERATION.DIV', this.value == Xps.OPERATION.DIV);
+// 			console.log('this.right != null', this.right != null);
+// 			console.log('this.right.isOperation()', this.right.isOperation());
+// 			console.log('this.right.value == Xps.OPEARTION.MULT', this.right.value == Xps.OPERATION.MULT);
 			var solution = eval((leftNegative?'-':'')+'('+this.left.value+')'+this.value+'('+this.right.value+')');
 			console.log('solution, result', solution, result);
 			if (result != solution) return false;
@@ -1653,6 +1688,7 @@ Node: function Node(value){
 			} else if (leftNegative && solution >= 0) {
 				this.prev.prev.invert();
 			}
+// 			if (divMultDem) this.right.invert();
 			if (this.parent != null && this.ctxid == this.parent.left.ctxid) {
 				this.parent.setLeft(solutionNode);
 // 				this.parent.left = solutionNode;
@@ -1703,7 +1739,13 @@ Node: function Node(value){
 						this.value = Xps.OPERATION.SUB;
 					}
 				} else {
-					//Code for dealing with mult and div invertion;
+					if (this.inverse) {
+						this.inverse = false;
+						this.value = Xps.OPERATION.MULT;
+					} else {
+						this.inverse = true;
+						this.value = Xps.OPERATION.DIV;
+					}
 				}
 			} else {
 				this.value = -this.value;
