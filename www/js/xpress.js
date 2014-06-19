@@ -845,7 +845,7 @@ newXp: function() {
 	// Using + and - expression generation
 // 	this.toContext(this.makeExp(5,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]));
 // 	console.log(this.treefy(this.CONTEXT.tree,0));
-	// Code for testing specific expressions
+// 	Code for testing specific expressions
 	this.toContext(this.EXPRESSIONS[3]);
 },
 
@@ -1021,23 +1021,38 @@ evaluateTreeTest: function () {
 	var z = new Xps.Node('+');
 	var t = new Xps.Node('+');
 	x.setLeft(new Xps.Node(3));
-	x.setRight(y);
+	x.setRight(new Xps.Node(1));
 	x.ctxid=0;
-	y.setLeft(new Xps.Node(4));
+	y.setLeft(x);
 	y.setRight(z);
 	y.ctxid=1;
 	z.setLeft(new Xps.Node(5));
 	z.setRight(t);
 	z.ctxid=2;
-	t.setLeft(new Xps.Node(1));
+	t.setLeft(new Xps.Node(7));
 	t.setRight(new Xps.Node(2));
 	t.ctxid=3;
-	console.log(this.evaluateTree(x, [x,y,z,t]));
+	var sols = this.evaluateTree(y, [x,y,z,t]);
+	console.log(sols);
+	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
+	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
+},
+
+getTransKey: function (transformations) {
+	console.log('key for', transformations );
+	var key = '';
+	for(var i = 0; i < transformations.transformations.length; i++) {
+		var trans = transformations.transformations[i];
+		if (i != 0) key += '|';
+		key += trans.id+'_'+trans.ccw;
+	}
+	return key;
 },
 
 evaluateTree: function (node, opNodes) {
 	console.log('evaluateTree for node ', node);
 	console.log(this.treefy(node,0));
+	var transKeys = {};
 	// This evaluation works only for expressions with + and - ops.
 	// Recipy: when integer node return am empty list of transformations
 	//         when node, get transformations for child nodes,
@@ -1048,6 +1063,7 @@ evaluateTree: function (node, opNodes) {
 		console.log('evaluatedTree for node ', node);
 		return [{tree: node, transformations: []}]; 
 	}
+	//This code will be duplicated inside every while iteration
 	var leftTransformations = this.evaluateTree(node.left, opNodes);
 	var rightTransformations = this.evaluateTree(node.right, opNodes);
 	var transformations = [];
@@ -1056,10 +1072,16 @@ evaluateTree: function (node, opNodes) {
 			var ltf = leftTransformations[i];
 			var rtf = rightTransformations[j];
 			console.log('combining ', ltf, ' and ', rtf);
-			transformations[transformations.length] = {
+			var transToAdd = {
 				tree: node.ctxid,
 				transformations: ltf.transformations.concat(rtf.transformations)
 			};
+			var key = this.getTransKey(transToAdd);
+			console.log(key + ' for', transToAdd);
+			if (typeof transKeys[key] == 'undefined') {
+				transKeys[key] = transToAdd;
+			}
+			transformations[transformations.length] = transToAdd;
 		}
 	}
 	var newTransformations = [];
@@ -1085,10 +1107,33 @@ evaluateTree: function (node, opNodes) {
 				abctoconcat.push(cwTfs[j]);
 				console.log('tfsToContact',abctoconcat);
 			}
-			newTransformations.push({
+			var newTransToAdd = {
 				tree: currNode.parent.ctxid,
 				transformations: abctoconcat.concat(ctf.transformations)
-			});
+			};
+			newTransformations.push(newTransToAdd);
+			var newTransKey = this.getTransKey(newTransToAdd);
+			console.log(newTransKey + ' for', newTransToAdd);
+			if (typeof transKeys[newTransKey] == 'undefined') {
+				transKeys[newTransKey] = newTransToAdd;
+			}
+			var cwLeftTransformations = this.evaluateTree(currNode.parent.left, opNodes);
+			var cwRightTransformations = this.evaluateTree(currNode, opNodes);
+			for (var i = 0; i < cwLeftTransformations.length; i++) {
+				for (var j = 0; j < cwRightTransformations.length; j++) {
+					var ltf = cwLeftTransformations[i];
+					var rtf = cwRightTransformations[j];
+					console.log('combining ', ltf, ' and ', rtf);
+					var cwNewTransToAdd = {
+						tree: node.ctxid,
+						transformations: ltf.transformations.concat(rtf.transformations,abctoconcat)
+					};
+					var cwNewTransKey = this.getTransKey(cwNewTransToAdd);
+					if (typeof transKeys[cwNewTransKey] == 'undefined') {
+						transKeys[cwNewTransKey] = cwNewTransToAdd;
+					}
+				}
+			}
 			console.log(this.treefy(currNode.parent,0));
 			currNode = currNode.parent;
 		}
@@ -1112,10 +1157,33 @@ evaluateTree: function (node, opNodes) {
 				console.log('tfsToContact',abctoconcat);
 			}
 			console.log('tfsToContact',abctoconcat);
-			newTransformations.push({
+			var newTransToAdd = {
 				tree: currNode.parent.ctxid,
 				transformations: abctoconcat.concat(ctf.transformations)
-			});
+			};
+			newTransformations.push(newTransToAdd);
+			var newTransKey = this.getTransKey(newTransToAdd);
+			console.log(newTransKey + ' for', newTransToAdd);
+			if (typeof transKeys[newTransKey] == 'undefined') {
+				transKeys[newTransKey] = newTransToAdd;
+			}
+			var ccwLeftTransformations = this.evaluateTree(currNode, opNodes);
+			var ccwRightTransformations = this.evaluateTree(currNode.parent.right, opNodes);
+			for (var i = 0; i < ccwLeftTransformations.length; i++) {
+				for (var j = 0; j < ccwRightTransformations.length; j++) {
+					var ltf = ccwLeftTransformations[i];
+					var rtf = ccwRightTransformations[j];
+					console.log('combining ', ltf, ' and ', rtf);
+					var ccwNewTransToAdd = {
+						tree: node.ctxid,
+						transformations: ltf.transformations.concat(rtf.transformations,abctoconcat)
+					};
+					var ccwNewTransKey = this.getTransKey(ccwNewTransToAdd);
+					if (typeof transKeys[ccwNewTransKey] == 'undefined') {
+						transKeys[ccwNewTransKey] = ccwNewTransToAdd;
+					}
+				}
+			}
 			console.log('ccw parent', this.treefy(currNode.parent,0));
 			currNode = currNode.parent;
 		}
@@ -1123,7 +1191,11 @@ evaluateTree: function (node, opNodes) {
 		this.transform(distransformations, opNodes);
 	}
 	console.log('evaluatedTree for node ', node);
-	return transformations.concat(newTransformations);
+	var rtnTrans = [];
+	for (key in transKeys) rtnTrans.push(transKeys[key]);
+	console.log('transKeys is ',JSON.stringify(transKeys));
+	return rtnTrans;
+// 	return transformations.concat(newTransformations);
 },
 
 htmlfy: function (node, withEq, test) {
@@ -1269,7 +1341,7 @@ askForSolution: function(opid, solutionKey) {
 	questionHtml += '<tr id="opLine'+solutionKey+'"><td class="'+this.getOpNsName(opid)+'Line"><table><tr><td>';
 	questionHtml += Xps.htmlfy(op, true, true);
 	questionHtml += '</td><td>';
-	questionHtml += '<input id= "op'+solutionKey+'" type="number" '/*+'onblur="Xps.solSubmit(event,'+opid+')" '*/+'onkeypress="Xps.solEnter(event,'+opid+')"></input>';
+	questionHtml += '<input id= "op'+solutionKey+'" type="number" '+'onblur="Xps.solSubmit(event,'+opid+')" '+'onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 // 	questionHtml += '<input id= "op'+solutionKey+'" type="number" onkeypress="Xps.solEnter(event,'+opid+')"></input>';
 	questionHtml += '</td></tr></table></td></tr>';
 	document.getElementById('xpTable').innerHTML += questionHtml;
