@@ -843,8 +843,9 @@ newXp: function() {
 // 	var xp = this.EXPRESSIONS.pop();
 // 	this.toContext(xp);
 	// Using + and - expression generation
-	var newXp = this.makeExp(4,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]);
+	var newXp = this.makeExp(5,[Xps.OPERATION.SUM/*, Xps.OPERATION.SUB*/]);
 	//console.log('newXp is ', newXp);
+	console.log('Newly created xp: ', this.treefy(newXp,0));
 	this.toContext(newXp);
 	//console.log(this.treefy(this.CONTEXT.tree,0));
 // 	Code for testing specific expressions
@@ -864,17 +865,23 @@ makeExp: function (lvl, operations) {
 
 toContext: function (expression) {
 	if (expression instanceof Xps.Node) {
-		var currNode = expression;
-		var opNodes = [currNode];
+		var opNodes = [];
 		var count = 0;
-		while (typeof currNode.nextNode != 'undefined' && currNode.nextNode != null) {
-			currNode = currNode.nextNode;
+		var nodeQ = new Queue();
+		nodeQ.enqueue(expression);
+		while (!nodeQ.isEmpty()) {
+			var currNode = nodeQ.dequeue();
+			currNode.ctxid = count;
+			console.log('adding node with ctxid ' + count, currNode);
+			count++;
 			//console.log('adding opnode to opnodes', currNode);
 			opNodes.push(currNode);
+			if (currNode.left != null && currNode.left.isOperation()) nodeQ.enqueue(currNode.left);
+			if (currNode.right != null && currNode.right.isOperation()) nodeQ.enqueue(currNode.right);
 		}
 		//console.log('opNodes is ', opNodes);
 		//console.log('!@#$% !@#$% xp: ', expression, ' | opNodes: ', opNodes);
-		var solutionTrees = this.evaluateTreeRec(expression, opNodes);
+		var solutionTrees = this.evaluateTreeIt(expression, opNodes);
 		console.log('solutionTrees is',solutionTrees);
 // 		var solutionTrees = [];
 		var catalanNumber = Xps.factorial(opNodes.length*2)/(Xps.factorial(opNodes.length+1)*Xps.factorial(opNodes.length));
@@ -947,7 +954,7 @@ makeOps: function (lvl, operations) {
    for (var i = 0; i < lvl; i++) {
 		var operation = operations[Math.floor(Math.random()*operations.length)];
       var curr = new Xps.Node(operation);
-		curr.ctxid = i;
+// 		curr.ctxid = i;
       if (root == null) root = curr;
 		else {
 			last.nextNode = curr;
@@ -1065,43 +1072,51 @@ evaluateTreeRecTest: function () {
 
 //evaluateTreeTest
 evaluateTreeItTest: function () {
-	var x = new Xps.Node('+');
-	var y = new Xps.Node('+');
-	var z = new Xps.Node('+');
-	var t = new Xps.Node('+');
-	x.setLeft(new Xps.Node(3));
-	x.setRight(new Xps.Node(1));
-	x.ctxid=0;
-	y.setLeft(x);
-	y.setRight(z);
-	y.ctxid=1;
-	z.setLeft(new Xps.Node(5));
-	z.setRight(t);
-	z.ctxid=2;
-	t.setLeft(new Xps.Node(7));
-	t.setRight(new Xps.Node(2));
-	t.ctxid=3;
 // 	var x = new Xps.Node('+');
 // 	var y = new Xps.Node('+');
 // 	var z = new Xps.Node('+');
 // 	var t = new Xps.Node('+');
-// 	x.setLeft(y);
+// 	x.setLeft(new Xps.Node(3));
 // 	x.setRight(new Xps.Node(1));
 // 	x.ctxid=0;
-// 	y.setLeft(z);
-// 	y.setRight(new Xps.Node(3));
+// 	y.setLeft(x);
+// 	y.setRight(z);
 // 	y.ctxid=1;
-// 	z.setLeft(t);
-// 	z.setRight(new Xps.Node(5));
+// 	z.setLeft(new Xps.Node(5));
+// 	z.setRight(t);
 // 	z.ctxid=2;
 // 	t.setLeft(new Xps.Node(7));
 // 	t.setRight(new Xps.Node(2));
 // 	t.ctxid=3;
+	var x = new Xps.Node('+');
+	var y = new Xps.Node('+');
+	var z = new Xps.Node('+');
+	var t = new Xps.Node('+');
+	var r = new Xps.Node('+');
+// 	var s = new Xps.Node('+');
+	x.setLeft(y);
+	x.setRight(new Xps.Node(20));
+	x.ctxid=0;
+	y.setLeft(new Xps.Node(10));
+	y.setRight(z);
+	y.ctxid=1;
+	z.setLeft(t);
+	z.setRight(r);
+	z.ctxid=2;
+	t.setLeft(new Xps.Node(-19));
+	t.setRight(new Xps.Node(17));
+	t.ctxid=3;
+	r.setLeft(new Xps.Node(14));
+	r.setRight(new Xps.Node(-16));
+	r.ctxid=4;
+// 	s.setLeft(new Xps.Node(12));
+// 	s.setRight(new Xps.Node(-19));
+// 	s.ctxid=3;
 	//console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
-	var sols = this.evaluateTreeIt(y, [x,y,z,t]);
+	var sols = this.evaluateTreeIt(x, [x,y,z,t,r]);
 	console.log(sols);
-	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
-	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
+	var catalanNumber = Xps.factorial(5*2)/(Xps.factorial(5+1)*Xps.factorial(5));
+	console.log('n is ', 5, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
 },
 
 
@@ -1316,6 +1331,9 @@ evaluateTreeIt: function (node, opNodes) {
 					if (i == 0) {
 						inCount++;
 						var solKey = this.getSolKey(opNodes[solToAdd.tree]);
+						if (solKey.length != 11) {
+// 							console.log('wrong key');
+						}
 						if (typeof solsKeys[solKey] == 'undefined') {
 							solsKeys[solKey] = solToAdd;
 							solsQueue.enqueue(solToAdd);
@@ -1343,6 +1361,9 @@ evaluateTreeIt: function (node, opNodes) {
 						if (i == 0) {
 							inCount++;
 							var solKey = this.getSolKey(opNodes[newSolToAdd.tree]);
+							if (solKey.length != 11) {
+// 								console.log('wrong key');
+							}
 							if (typeof solsKeys[solKey] == 'undefined') {
 								solsKeys[solKey] = newSolToAdd;
 								solsQueue.enqueue(newSolToAdd);
@@ -1373,6 +1394,9 @@ evaluateTreeIt: function (node, opNodes) {
 						if (i == 0) {
 							inCount++;
 							var solKey = this.getSolKey(opNodes[newSolToAdd.tree]);
+							if (solKey.length != 11) {
+// 								console.log('wrong key');
+							}
 							if (typeof solsKeys[solKey] == 'undefined') {
 								solsKeys[solKey] = newSolToAdd;
 								solsQueue.enqueue(newSolToAdd);
@@ -1395,11 +1419,13 @@ evaluateTreeIt: function (node, opNodes) {
 // 				solsQueue.enqueue(currSolToAdd);
 // 			}
 // 		}
+		count++;
 		this.transform(solDtfs, opNodes);
 	}
 // 	var lArr = this.lvlArray(node);
 // 	//console.log('lArr is', lArr);
 	var rtnSols = [];
+	console.log('solsKeys is ', solsKeys);
 	for (key in solsKeys) rtnSols.push(solsKeys[key]);
 	var diff = Date.now() - begin;
 	console.log('it time ' + diff + ' ms');
