@@ -843,10 +843,12 @@ newXp: function() {
 // 	var xp = this.EXPRESSIONS.pop();
 // 	this.toContext(xp);
 	// Using + and - expression generation
-// 	this.toContext(this.makeExp(5,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]));
-// 	console.log(this.treefy(this.CONTEXT.tree,0));
+	var newXp = this.makeExp(4,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]);
+	console.log('newXp is ', newXp);
+	this.toContext(newXp);
+	console.log(this.treefy(this.CONTEXT.tree,0));
 // 	Code for testing specific expressions
-	this.toContext(this.EXPRESSIONS[3]);
+// 	this.toContext(this.EXPRESSIONS[3]);
 },
 
 //Deprecated
@@ -870,7 +872,10 @@ toContext: function (expression) {
 			console.log('adding opnode to opnodes', currNode);
 			opNodes.push(currNode);
 		}
-		var solutionTrees = Xps.evaluateTree(expression, opNodes);
+		console.log('opNodes is ', opNodes);
+		console.log('!@#$% !@#$% xp: ', expression, ' | opNodes: ', opNodes);
+// 		var solutionTrees = Xps.evaluateTree(expression, opNodes);
+		var solutionTrees = [];
 		var catalanNumber = Xps.factorial(opNodes.length*2)/(Xps.factorial(opNodes.length+1)*Xps.factorial(opNodes.length));
 		console.log('n is ', opNodes.length, ', catalan number is ', catalanNumber, ', solutions trees count is ', solutionTrees.length);
 		expression = {
@@ -946,24 +951,25 @@ makeOps: function (lvl, operations) {
 		else {
 			last.nextNode = curr;
 			// Building a tree that can only rotate ccw.
-			if (setLeft) last.setLeft(curr);
-			else last.setRight(curr);
-//          rdm = Math.ceil(Math.random()*emptyNodes.length)-1;
+// 			if (setLeft) last.setLeft(curr);
+// 			else last.setRight(curr);
+			// Creating every possible tree
+         rdm = Math.ceil(Math.random()*emptyNodes.length)-1;
 //          console.log('rdm for emptyNodes is: ', rdm);
 //          console.log('emptyNode[rdm]', emptyNodes[rdm]);
 //          console.log('rdm for emptyNodes is: ', rdm);
-//          if (rdm != emptyNodes.length-1) {
-//             var toPop = emptyNodes[rdm];
-//             emptyNodes[rdm] = emptyNodes[emptyNodes.length-1];
-//             emptyNodes[emptyNodes.length-1] = toPop;
-//          }
-//          var emptyNode = emptyNodes.pop(rdm);
+         if (rdm != emptyNodes.length-1) {
+            var toPop = emptyNodes[rdm];
+            emptyNodes[rdm] = emptyNodes[emptyNodes.length-1];
+            emptyNodes[emptyNodes.length-1] = toPop;
+         }
+         var emptyNode = emptyNodes.pop(rdm);
 //          console.log('emptyNode is: ', emptyNode);
-//          if (emptyNode.child == 'left') {
-//             emptyNode.parent.setLeft(curr);
-//          } else {
-//             emptyNode.parent.setRight(curr);
-//          }
+         if (emptyNode.child == 'left') {
+            emptyNode.parent.setLeft(curr);
+         } else {
+            emptyNode.parent.setRight(curr);
+         }
       }
       emptyNodes.push({parent:curr, child:'left'});
       emptyNodes.push({parent:curr, child:'right'});
@@ -1015,7 +1021,33 @@ fillWithInts: function (root, lvl) {
 },
 
 //evaluateTreeTest
-evaluateTreeTest: function () {
+evaluateTreeRecTest: function () {
+	var x = new Xps.Node('+');
+	var y = new Xps.Node('+');
+	var z = new Xps.Node('+');
+	var t = new Xps.Node('+');
+	var s = new Xps.Node('+');
+	x.setLeft(new Xps.Node(3));
+	x.setRight(new Xps.Node(1));
+	x.ctxid=0;
+	y.setLeft(x);
+	y.setRight(z);
+	y.ctxid=1;
+	z.setLeft(new Xps.Node(5));
+	z.setRight(t);
+	z.ctxid=2;
+	t.setLeft(new Xps.Node(7));
+	t.setRight(new Xps.Node(2));
+	t.ctxid=3;
+	console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
+	var sols = this.evaluateTreeRec(y, [x,y,z,t]);
+	console.log(sols);
+	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
+	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
+},
+
+//evaluateTreeTest
+evaluateTreeItTest: function () {
 	var x = new Xps.Node('+');
 	var y = new Xps.Node('+');
 	var z = new Xps.Node('+');
@@ -1032,11 +1064,13 @@ evaluateTreeTest: function () {
 	t.setLeft(new Xps.Node(7));
 	t.setRight(new Xps.Node(2));
 	t.ctxid=3;
-	var sols = this.evaluateTree(y, [x,y,z,t]);
+	console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
+	var sols = this.evaluateTreeIt(y, [x,y,z,t]);
 	console.log(sols);
 	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
 	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
 },
+
 
 getTransKey: function (transformations) {
 	console.log('key for', transformations );
@@ -1049,7 +1083,7 @@ getTransKey: function (transformations) {
 	return key;
 },
 
-evaluateTree: function (node, opNodes) {
+evaluateTreeRec: function (node, opNodes) {
 	console.log('evaluateTree for node ', node);
 	console.log(this.treefy(node,0));
 	var transKeys = {};
@@ -1064,8 +1098,8 @@ evaluateTree: function (node, opNodes) {
 		return [{tree: node, transformations: []}]; 
 	}
 	//This code will be duplicated inside every while iteration
-	var leftTransformations = this.evaluateTree(node.left, opNodes);
-	var rightTransformations = this.evaluateTree(node.right, opNodes);
+	var leftTransformations = this.evaluateTreeRec(node.left, opNodes);
+	var rightTransformations = this.evaluateTreeRec(node.right, opNodes);
 	var transformations = [];
 	for (var i = 0; i < leftTransformations.length; i++) {
 		for (var j = 0; j < rightTransformations.length; j++) {
@@ -1117,8 +1151,8 @@ evaluateTree: function (node, opNodes) {
 			if (typeof transKeys[newTransKey] == 'undefined') {
 				transKeys[newTransKey] = newTransToAdd;
 			}
-			var cwLeftTransformations = this.evaluateTree(currNode.parent.left, opNodes);
-			var cwRightTransformations = this.evaluateTree(currNode, opNodes);
+			var cwLeftTransformations = this.evaluateTreeRec(currNode.parent.left, opNodes);
+			var cwRightTransformations = this.evaluateTreeRec(currNode, opNodes);
 			for (var i = 0; i < cwLeftTransformations.length; i++) {
 				for (var j = 0; j < cwRightTransformations.length; j++) {
 					var ltf = cwLeftTransformations[i];
@@ -1167,8 +1201,8 @@ evaluateTree: function (node, opNodes) {
 			if (typeof transKeys[newTransKey] == 'undefined') {
 				transKeys[newTransKey] = newTransToAdd;
 			}
-			var ccwLeftTransformations = this.evaluateTree(currNode, opNodes);
-			var ccwRightTransformations = this.evaluateTree(currNode.parent.right, opNodes);
+			var ccwLeftTransformations = this.evaluateTreeRec(currNode, opNodes);
+			var ccwRightTransformations = this.evaluateTreeRec(currNode.parent.right, opNodes);
 			for (var i = 0; i < ccwLeftTransformations.length; i++) {
 				for (var j = 0; j < ccwRightTransformations.length; j++) {
 					var ltf = ccwLeftTransformations[i];
@@ -1196,6 +1230,98 @@ evaluateTree: function (node, opNodes) {
 	console.log('transKeys is ',JSON.stringify(transKeys));
 	return rtnTrans;
 // 	return transformations.concat(newTransformations);
+},
+
+evaluateTreeIt: function (node, opNodes) {
+	var solsKeys = {};
+	var lArr = this.lvlArray(node);
+	console.log('lArr is', lArr);
+	var nodeTrans = {};
+	for (var i = lArr.length-1; i >=0; i--) {
+		var currNode = opNodes[lArr[i]];
+		var currNodeSols = [];
+		var lsols;
+		if (currNode.left.isOperation()) lsols = nodeTrans['op_'+currNode.left.ctxid];
+		else lsols = [{tree: currNode.left, transformations:[]}];
+		var rsols;
+		if (currNode.right.isOperation()) rsols = nodeTrans['op_'+currNode.right.ctxid];
+		else rsols = [{tree: currNode.right, transformations:[]}];
+		nodeTrans['op_'+currNode.ctxid] = [];
+		//!!!!!!!!!!1
+		for (var j = 0; j < lsols.length; j++) {
+			for (var k = 0; k < rsols.length; k++) {
+				var ltf = lsols[j];
+				var rtf = rsols[k];
+				var solToAdd = {
+					tree: currNode.ctxid,
+					transformations: ltf.transformations.concat(rtf.transformations)
+				};
+				(nodeTrans['op_'+currNode.ctxid]).push(solToAdd);
+				var distransformations = this.transform(solToAdd.transformations, opNodes);
+				var cwTfs = [];
+				var cwDtfs = [];
+				var whileNode = currNode;
+				while (whileNode.left != null 
+							&& whileNode.left.isOperation()) {
+					console.log('can rotate clock wise');
+					var cwTf = {id: whileNode.ctxid, mirror: false, ccw: false};
+					cwTfs.push(cwTf);
+					var dtf = this.transform([cwTf],opNodes);
+					cwDtfs.push(dtf[0]);
+					var abctoconcat = [];
+					for (var l = cwTfs.length - 1; l >= 0; l--)
+						abctoconcat.push(cwTfs[l]);
+					var newSolToAdd = {
+						tree: whileNode.parent.ctxid,
+						transformations: abctoconcat.concat(solToAdd.transformations)
+					};
+					(nodeTrans['op_'+currNode.ctxid]).push(newSolToAdd);
+					whileNode = whileNode.parent;
+				}
+				this.transform(cwDtfs, opNodes);
+				var ccwTfs = [];
+				var ccwDtfs = [];
+				whileNode = currNode;
+				while (whileNode.right != null 
+							&& whileNode.right.isOperation() 
+							&& whileNode.value == this.OPERATION.SUM) {
+					console.log('can rotate counter clock wise');
+					var ccwTf = {id: whileNode.ctxid, mirror: false, ccw: true};
+					ccwTfs.push(ccwTf);
+					var dtf = this.transform([ccwTf],opNodes);
+					ccwDtfs.push(dtf[0]);
+					var abctoconcat = [];
+					for (var l = ccwTfs.length - 1; l >= 0; l--)
+						abctoconcat.push(ccwTfs[l]);
+					var newSolToAdd = {
+						tree: whileNode.parent.ctxid,
+						transformations: abctoconcat.concat(solToAdd.transformations)
+					};
+					(nodeTrans['op_'+currNode.ctxid]).push(newSolToAdd);
+					whileNode = whileNode.parent;
+				}
+				this.transform(ccwDtfs, opNodes);
+				this.transform(distransformations, opNodes);
+			}
+		}
+	}
+// 	var rtnSols = [];
+// 	for (key in solKeys) rtnSols.push(solKeys[key]);
+// 	return rtnSols;
+	return nodeTrans['op_'+node.ctxid];
+},
+
+lvlArray: function (node) {
+	var lArr = [];
+	var queue = new Queue();
+	queue.enqueue(node);
+	while(!queue.isEmpty()) {
+		var toQ = queue.dequeue();
+		lArr.push(toQ.ctxid);
+		if (toQ.left != null && toQ.left.isOperation()) queue.enqueue(toQ.left);
+		if (toQ.right != null && toQ.right.isOperation()) queue.enqueue(toQ.right);
+	}
+	return lArr;
 },
 
 htmlfy: function (node, withEq, test) {
