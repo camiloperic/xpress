@@ -1048,24 +1048,40 @@ evaluateTreeRecTest: function () {
 
 //evaluateTreeTest
 evaluateTreeItTest: function () {
+// 	var x = new Xps.Node('+');
+// 	var y = new Xps.Node('+');
+// 	var z = new Xps.Node('+');
+// 	var t = new Xps.Node('+');
+// 	x.setLeft(new Xps.Node(3));
+// 	x.setRight(new Xps.Node(1));
+// 	x.ctxid=0;
+// 	y.setLeft(x);
+// 	y.setRight(z);
+// 	y.ctxid=1;
+// 	z.setLeft(new Xps.Node(5));
+// 	z.setRight(t);
+// 	z.ctxid=2;
+// 	t.setLeft(new Xps.Node(7));
+// 	t.setRight(new Xps.Node(2));
+// 	t.ctxid=3;
 	var x = new Xps.Node('+');
 	var y = new Xps.Node('+');
 	var z = new Xps.Node('+');
 	var t = new Xps.Node('+');
-	x.setLeft(new Xps.Node(3));
+	x.setLeft(y);
 	x.setRight(new Xps.Node(1));
 	x.ctxid=0;
-	y.setLeft(x);
-	y.setRight(z);
+	y.setLeft(z);
+	y.setRight(new Xps.Node(3));
 	y.ctxid=1;
-	z.setLeft(new Xps.Node(5));
-	z.setRight(t);
+	z.setLeft(t);
+	z.setRight(new Xps.Node(5));
 	z.ctxid=2;
 	t.setLeft(new Xps.Node(7));
 	t.setRight(new Xps.Node(2));
 	t.ctxid=3;
 	console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
-	var sols = this.evaluateTreeIt(y, [x,y,z,t]);
+	var sols = this.evaluateTreeIt(x, [x,y,z,t]);
 	console.log(sols);
 	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
 	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
@@ -1081,6 +1097,16 @@ getTransKey: function (transformations) {
 		key += trans.id+'_'+trans.ccw;
 	}
 	return key;
+},
+
+getSolKey: function (node) {
+	var solKey = '';
+	var lArr = this.lvlArray(node);
+	for (var i = 0; i < lArr.length; i++) {
+		if (i > 0) solKey += '|';
+		solKey += lArr[i];
+	}
+	return solKey;
 },
 
 evaluateTreeRec: function (node, opNodes) {
@@ -1233,82 +1259,133 @@ evaluateTreeRec: function (node, opNodes) {
 },
 
 evaluateTreeIt: function (node, opNodes) {
+	var firstKey = this.getSolKey(node);
 	var solsKeys = {};
-	var lArr = this.lvlArray(node);
-	console.log('lArr is', lArr);
-	var nodeTrans = {};
-	for (var i = lArr.length-1; i >=0; i--) {
-		var currNode = opNodes[lArr[i]];
-		var currNodeSols = [];
-		var lsols;
-		if (currNode.left.isOperation()) lsols = nodeTrans['op_'+currNode.left.ctxid];
-		else lsols = [{tree: currNode.left, transformations:[]}];
-		var rsols;
-		if (currNode.right.isOperation()) rsols = nodeTrans['op_'+currNode.right.ctxid];
-		else rsols = [{tree: currNode.right, transformations:[]}];
-		nodeTrans['op_'+currNode.ctxid] = [];
-		//!!!!!!!!!!1
-		for (var j = 0; j < lsols.length; j++) {
-			for (var k = 0; k < rsols.length; k++) {
-				var ltf = lsols[j];
-				var rtf = rsols[k];
-				var solToAdd = {
-					tree: currNode.ctxid,
-					transformations: ltf.transformations.concat(rtf.transformations)
-				};
-				(nodeTrans['op_'+currNode.ctxid]).push(solToAdd);
-				var distransformations = this.transform(solToAdd.transformations, opNodes);
-				var cwTfs = [];
-				var cwDtfs = [];
-				var whileNode = currNode;
-				while (whileNode.left != null 
-							&& whileNode.left.isOperation()) {
-					console.log('can rotate clock wise');
-					var cwTf = {id: whileNode.ctxid, mirror: false, ccw: false};
-					cwTfs.push(cwTf);
-					var dtf = this.transform([cwTf],opNodes);
-					cwDtfs.push(dtf[0]);
-					var abctoconcat = [];
-					for (var l = cwTfs.length - 1; l >= 0; l--)
-						abctoconcat.push(cwTfs[l]);
-					var newSolToAdd = {
-						tree: whileNode.parent.ctxid,
-						transformations: abctoconcat.concat(solToAdd.transformations)
+	solsKeys[firstKey] = {tree: node.ctxid, transformations: []};
+	var solsQueue = new Queue();
+	solsQueue.enqueue({tree: node.ctxid, transformations: []});
+	var count = 0;
+	while(!solsQueue.isEmpty()) {
+		var begin = Date.now();
+		var inCount = 0;
+		console.log(console.log('Count is ', count++));
+		var currSol = solsQueue.dequeue();
+		var solDtfs = this.transform(currSol.transformations, opNodes);
+		var lArr = this.lvlArray(opNodes[currSol.tree]);
+		var nodeTrans = {};
+		for (var i = lArr.length-1; i >=0; i--) {
+			var currNode = opNodes[lArr[i]];
+			var currNodeSols = [];
+			var lsols;
+			if (currNode.left.isOperation()) lsols = nodeTrans['op_'+currNode.left.ctxid];
+			else lsols = [{tree: currNode.left, transformations:[]}];
+			var rsols;
+			if (currNode.right.isOperation()) rsols = nodeTrans['op_'+currNode.right.ctxid];
+			else rsols = [{tree: currNode.right, transformations:[]}];
+			nodeTrans['op_'+currNode.ctxid] = [];
+			//!!!!!!!!!!1
+			for (var j = 0; j < lsols.length; j++) {
+				for (var k = 0; k < rsols.length; k++) {
+					var ltf = lsols[j];
+					var rtf = rsols[k];
+					var solToAdd = {
+						tree: currNode.ctxid,
+						transformations: ltf.transformations.concat(rtf.transformations,currSol.transformations)
 					};
-					(nodeTrans['op_'+currNode.ctxid]).push(newSolToAdd);
-					whileNode = whileNode.parent;
+					(nodeTrans['op_'+currNode.ctxid]).push(solToAdd);
+					if (i == 0) {
+						inCount++;
+						var solKey = this.getSolKey(opNodes[solToAdd.tree]);
+						if (typeof solsKeys[solKey] == 'undefined') {
+							solsKeys[solKey] = solToAdd;
+							solsQueue.enqueue(solToAdd);
+						}
+					}
+					var distransformations = this.transform(solToAdd.transformations, opNodes);
+					var cwTfs = [];
+					var cwDtfs = [];
+					var whileNode = currNode;
+					while (whileNode.left != null 
+								&& whileNode.left.isOperation()) {
+						console.log('can rotate clock wise');
+						var cwTf = {id: whileNode.ctxid, mirror: false, ccw: false};
+						cwTfs.push(cwTf);
+						var dtf = this.transform([cwTf],opNodes);
+						cwDtfs.push(dtf[0]);
+						var abctoconcat = [];
+						for (var l = cwTfs.length - 1; l >= 0; l--)
+							abctoconcat.push(cwTfs[l]);
+						var newSolToAdd = {
+							tree: whileNode.parent.ctxid,
+							transformations: abctoconcat.concat(solToAdd.transformations,currSol.transformations)
+						};
+						(nodeTrans['op_'+currNode.ctxid]).push(newSolToAdd);
+						if (i == 0) {
+							inCount++;
+							var solKey = this.getSolKey(opNodes[newSolToAdd.tree]);
+							if (typeof solsKeys[solKey] == 'undefined') {
+								solsKeys[solKey] = newSolToAdd;
+								solsQueue.enqueue(newSolToAdd);
+							}
+						}
+						whileNode = whileNode.parent;
+					}
+					this.transform(cwDtfs, opNodes);
+					var ccwTfs = [];
+					var ccwDtfs = [];
+					whileNode = currNode;
+					while (whileNode.right != null 
+								&& whileNode.right.isOperation() 
+								&& whileNode.value == this.OPERATION.SUM) {
+						console.log('can rotate counter clock wise');
+						var ccwTf = {id: whileNode.ctxid, mirror: false, ccw: true};
+						ccwTfs.push(ccwTf);
+						var dtf = this.transform([ccwTf],opNodes);
+						ccwDtfs.push(dtf[0]);
+						var abctoconcat = [];
+						for (var l = ccwTfs.length - 1; l >= 0; l--)
+							abctoconcat.push(ccwTfs[l]);
+						var newSolToAdd = {
+							tree: whileNode.parent.ctxid,
+							transformations: abctoconcat.concat(solToAdd.transformations,currSol.transformations)
+						};
+						(nodeTrans['op_'+currNode.ctxid]).push(newSolToAdd);
+						if (i == 0) {
+							inCount++;
+							var solKey = this.getSolKey(opNodes[newSolToAdd.tree]);
+							if (typeof solsKeys[solKey] == 'undefined') {
+								solsKeys[solKey] = newSolToAdd;
+								solsQueue.enqueue(newSolToAdd);
+							}
+						}
+						whileNode = whileNode.parent;
+					}
+					this.transform(ccwDtfs, opNodes);
+					this.transform(distransformations, opNodes);
 				}
-				this.transform(cwDtfs, opNodes);
-				var ccwTfs = [];
-				var ccwDtfs = [];
-				whileNode = currNode;
-				while (whileNode.right != null 
-							&& whileNode.right.isOperation() 
-							&& whileNode.value == this.OPERATION.SUM) {
-					console.log('can rotate counter clock wise');
-					var ccwTf = {id: whileNode.ctxid, mirror: false, ccw: true};
-					ccwTfs.push(ccwTf);
-					var dtf = this.transform([ccwTf],opNodes);
-					ccwDtfs.push(dtf[0]);
-					var abctoconcat = [];
-					for (var l = ccwTfs.length - 1; l >= 0; l--)
-						abctoconcat.push(ccwTfs[l]);
-					var newSolToAdd = {
-						tree: whileNode.parent.ctxid,
-						transformations: abctoconcat.concat(solToAdd.transformations)
-					};
-					(nodeTrans['op_'+currNode.ctxid]).push(newSolToAdd);
-					whileNode = whileNode.parent;
-				}
-				this.transform(ccwDtfs, opNodes);
-				this.transform(distransformations, opNodes);
 			}
 		}
+// 		var rootSols = nodeTrans['op_'+currSol.tree];
+// 		for (var i = 0; i < rootSols.length; i++) {
+// 			var currSolToAdd = rootSols[i];
+// 			var solKey = this.getTransKey(currSolToAdd);
+// 			if (typeof solsKeys[solKey] == 'undefined') {
+// 				console.log('Adding solution ', currSolToAdd);
+// 				solsKeys[solKey] = currSolToAdd;
+// 				solsQueue.enqueue(currSolToAdd);
+// 			}
+// 		}
+		var diff = Date.now() - begin;
+		this.transform(solDtfs, opNodes);
 	}
+// 	var lArr = this.lvlArray(node);
+// 	console.log('lArr is', lArr);
 // 	var rtnSols = [];
 // 	for (key in solKeys) rtnSols.push(solKeys[key]);
 // 	return rtnSols;
-	return nodeTrans['op_'+node.ctxid];
+	console.log(solsKeys);
+	console.log(solsKeys);
+// 	return nodeTrans['op_'+node.ctxid];
 },
 
 lvlArray: function (node) {
