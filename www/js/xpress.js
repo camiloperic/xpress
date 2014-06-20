@@ -761,7 +761,7 @@ exit: function() {
 	scoredSerie.data.push(0);
 	toScoreSerie.data.push(0);
 	totalScore.data.push(total/5);
-	console.log('series are: ', {scored: scoredSerie, toScore: toScoreSerie, total: totalScore});
+	//console.log('series are: ', {scored: scoredSerie, toScore: toScoreSerie, total: totalScore});
 	var hc = new Highcharts.Chart({
 		chart : {
 			renderTo : Xps.CONTAINERID,
@@ -834,7 +834,7 @@ exit: function() {
 newXp: function() {
 	// Getting expressions from 'DB'
 // 	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
-// 	console.log('rdm is ', rdm);
+// 	//console.log('rdm is ', rdm);
 // 	if (rdm != Xps.EXPRESSIONS.legnth-1) {
 // 		var toLast = Xps.EXPRESSIONS[rdm];
 // 		Xps.EXPRESSIONS[rdm] = Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1];
@@ -844,9 +844,9 @@ newXp: function() {
 // 	this.toContext(xp);
 	// Using + and - expression generation
 	var newXp = this.makeExp(4,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]);
-	console.log('newXp is ', newXp);
+	//console.log('newXp is ', newXp);
 	this.toContext(newXp);
-	console.log(this.treefy(this.CONTEXT.tree,0));
+	//console.log(this.treefy(this.CONTEXT.tree,0));
 // 	Code for testing specific expressions
 // 	this.toContext(this.EXPRESSIONS[3]);
 },
@@ -869,13 +869,14 @@ toContext: function (expression) {
 		var count = 0;
 		while (typeof currNode.nextNode != 'undefined' && currNode.nextNode != null) {
 			currNode = currNode.nextNode;
-			console.log('adding opnode to opnodes', currNode);
+			//console.log('adding opnode to opnodes', currNode);
 			opNodes.push(currNode);
 		}
-		console.log('opNodes is ', opNodes);
-		console.log('!@#$% !@#$% xp: ', expression, ' | opNodes: ', opNodes);
-// 		var solutionTrees = Xps.evaluateTree(expression, opNodes);
-		var solutionTrees = [];
+		//console.log('opNodes is ', opNodes);
+		//console.log('!@#$% !@#$% xp: ', expression, ' | opNodes: ', opNodes);
+		var solutionTrees = this.evaluateTreeRec(expression, opNodes);
+		console.log('solutionTrees is',solutionTrees);
+// 		var solutionTrees = [];
 		var catalanNumber = Xps.factorial(opNodes.length*2)/(Xps.factorial(opNodes.length+1)*Xps.factorial(opNodes.length));
 		console.log('n is ', opNodes.length, ', catalan number is ', catalanNumber, ', solutions trees count is ', solutionTrees.length);
 		expression = {
@@ -883,7 +884,7 @@ toContext: function (expression) {
 			opNodes: opNodes,
 			solutionTrees: solutionTrees
 		};
-		console.log('expression is ', expression);
+		//console.log('expression is ', expression);
 	}
    this.CONTEXT.tree = expression.tree;
 	this.CONTEXT.tree.link();
@@ -921,7 +922,7 @@ makeOps: function (lvl, operations) {
 				&& op != Xps.OPERATION.MULT
 				&& op != Xps.OPERATION.DIV
 			) {
-				console.log('Operation ', op, ' in operations is not valid');
+				//console.log('Operation ', op, ' in operations is not valid');
 				return null;
 			}
 		}
@@ -942,7 +943,7 @@ makeOps: function (lvl, operations) {
    var root = null;
 	var last = null;
 	var setLeft = Math.floor(Math.random()*2) == 0;
-	console.log('setLeft is ', setLeft);
+	//console.log('setLeft is ', setLeft);
    for (var i = 0; i < lvl; i++) {
 		var operation = operations[Math.floor(Math.random()*operations.length)];
       var curr = new Xps.Node(operation);
@@ -955,16 +956,16 @@ makeOps: function (lvl, operations) {
 // 			else last.setRight(curr);
 			// Creating every possible tree
          rdm = Math.ceil(Math.random()*emptyNodes.length)-1;
-//          console.log('rdm for emptyNodes is: ', rdm);
-//          console.log('emptyNode[rdm]', emptyNodes[rdm]);
-//          console.log('rdm for emptyNodes is: ', rdm);
+//          //console.log('rdm for emptyNodes is: ', rdm);
+//          //console.log('emptyNode[rdm]', emptyNodes[rdm]);
+//          //console.log('rdm for emptyNodes is: ', rdm);
          if (rdm != emptyNodes.length-1) {
             var toPop = emptyNodes[rdm];
             emptyNodes[rdm] = emptyNodes[emptyNodes.length-1];
             emptyNodes[emptyNodes.length-1] = toPop;
          }
          var emptyNode = emptyNodes.pop(rdm);
-//          console.log('emptyNode is: ', emptyNode);
+//          //console.log('emptyNode is: ', emptyNode);
          if (emptyNode.child == 'left') {
             emptyNode.parent.setLeft(curr);
          } else {
@@ -973,7 +974,7 @@ makeOps: function (lvl, operations) {
       }
       emptyNodes.push({parent:curr, child:'left'});
       emptyNodes.push({parent:curr, child:'right'});
-      console.log('emptyNodes is now: ', emptyNodes);
+      //console.log('emptyNodes is now: ', emptyNodes);
 		last = curr;
    }
    return root;
@@ -1022,36 +1023,11 @@ fillWithInts: function (root, lvl) {
 
 //evaluateTreeTest
 evaluateTreeRecTest: function () {
-	var x = new Xps.Node('+');
-	var y = new Xps.Node('+');
-	var z = new Xps.Node('+');
-	var t = new Xps.Node('+');
-	var s = new Xps.Node('+');
-	x.setLeft(new Xps.Node(3));
-	x.setRight(new Xps.Node(1));
-	x.ctxid=0;
-	y.setLeft(x);
-	y.setRight(z);
-	y.ctxid=1;
-	z.setLeft(new Xps.Node(5));
-	z.setRight(t);
-	z.ctxid=2;
-	t.setLeft(new Xps.Node(7));
-	t.setRight(new Xps.Node(2));
-	t.ctxid=3;
-	console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
-	var sols = this.evaluateTreeRec(y, [x,y,z,t]);
-	console.log(sols);
-	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
-	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
-},
-
-//evaluateTreeTest
-evaluateTreeItTest: function () {
 // 	var x = new Xps.Node('+');
 // 	var y = new Xps.Node('+');
 // 	var z = new Xps.Node('+');
 // 	var t = new Xps.Node('+');
+// 	var s = new Xps.Node('+');
 // 	x.setLeft(new Xps.Node(3));
 // 	x.setRight(new Xps.Node(1));
 // 	x.ctxid=0;
@@ -1080,8 +1056,49 @@ evaluateTreeItTest: function () {
 	t.setLeft(new Xps.Node(7));
 	t.setRight(new Xps.Node(2));
 	t.ctxid=3;
-	console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
-	var sols = this.evaluateTreeIt(x, [x,y,z,t]);
+	//console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
+	var sols = this.evaluateTreeRec(x, [x,y,z,t]);
+	console.log(sols);
+	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
+	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
+},
+
+//evaluateTreeTest
+evaluateTreeItTest: function () {
+	var x = new Xps.Node('+');
+	var y = new Xps.Node('+');
+	var z = new Xps.Node('+');
+	var t = new Xps.Node('+');
+	x.setLeft(new Xps.Node(3));
+	x.setRight(new Xps.Node(1));
+	x.ctxid=0;
+	y.setLeft(x);
+	y.setRight(z);
+	y.ctxid=1;
+	z.setLeft(new Xps.Node(5));
+	z.setRight(t);
+	z.ctxid=2;
+	t.setLeft(new Xps.Node(7));
+	t.setRight(new Xps.Node(2));
+	t.ctxid=3;
+// 	var x = new Xps.Node('+');
+// 	var y = new Xps.Node('+');
+// 	var z = new Xps.Node('+');
+// 	var t = new Xps.Node('+');
+// 	x.setLeft(y);
+// 	x.setRight(new Xps.Node(1));
+// 	x.ctxid=0;
+// 	y.setLeft(z);
+// 	y.setRight(new Xps.Node(3));
+// 	y.ctxid=1;
+// 	z.setLeft(t);
+// 	z.setRight(new Xps.Node(5));
+// 	z.ctxid=2;
+// 	t.setLeft(new Xps.Node(7));
+// 	t.setRight(new Xps.Node(2));
+// 	t.ctxid=3;
+	//console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
+	var sols = this.evaluateTreeIt(y, [x,y,z,t]);
 	console.log(sols);
 	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
 	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
@@ -1089,7 +1106,7 @@ evaluateTreeItTest: function () {
 
 
 getTransKey: function (transformations) {
-	console.log('key for', transformations );
+	//console.log('key for', transformations );
 	var key = '';
 	for(var i = 0; i < transformations.transformations.length; i++) {
 		var trans = transformations.transformations[i];
@@ -1110,8 +1127,9 @@ getSolKey: function (node) {
 },
 
 evaluateTreeRec: function (node, opNodes) {
-	console.log('evaluateTree for node ', node);
-	console.log(this.treefy(node,0));
+	//console.log('evaluateTree for node ', node);
+	//console.log(this.treefy(node,0));
+	var begin = Date.now();
 	var transKeys = {};
 	// This evaluation works only for expressions with + and - ops.
 	// Recipy: when integer node return am empty list of transformations
@@ -1120,7 +1138,7 @@ evaluateTreeRec: function (node, opNodes) {
 	//         The current node will then get tested for rotations (cw and ccw)
 	//         for every possible transformation in the combined set.
 	if (!node.isOperation()) { 
-		console.log('evaluatedTree for node ', node);
+		//console.log('evaluatedTree for node ', node);
 		return [{tree: node, transformations: []}]; 
 	}
 	//This code will be duplicated inside every while iteration
@@ -1131,13 +1149,13 @@ evaluateTreeRec: function (node, opNodes) {
 		for (var j = 0; j < rightTransformations.length; j++) {
 			var ltf = leftTransformations[i];
 			var rtf = rightTransformations[j];
-			console.log('combining ', ltf, ' and ', rtf);
+			//console.log('combining ', ltf, ' and ', rtf);
 			var transToAdd = {
 				tree: node.ctxid,
 				transformations: ltf.transformations.concat(rtf.transformations)
 			};
 			var key = this.getTransKey(transToAdd);
-			console.log(key + ' for', transToAdd);
+			//console.log(key + ' for', transToAdd);
 			if (typeof transKeys[key] == 'undefined') {
 				transKeys[key] = transToAdd;
 			}
@@ -1147,25 +1165,25 @@ evaluateTreeRec: function (node, opNodes) {
 	var newTransformations = [];
 	for (var i = 0; i < transformations.length; i++) {
 		var ctf = transformations[i];
-		console.log('analyzing ', ctf);
+		//console.log('analyzing ', ctf);
 		var distransformations = this.transform(ctf.transformations, opNodes);
 		var currNode = node;
 		var cwTfs = [];
 		var cwDtfs = [];
 		while (currNode.left != null && currNode.left.isOperation()) {
-			console.log('can rotate clock wise');
+			//console.log('can rotate clock wise');
 			var cwTf = {id: currNode.ctxid, mirror: false, ccw: false};
 			cwTfs.push(cwTf);
-			console.log('cwTfs', cwTfs);
+			//console.log('cwTfs', cwTfs);
 			var dtf = this.transform([cwTf],opNodes);
-			console.log('dtf, ', dtf);
+			//console.log('dtf, ', dtf);
 			cwDtfs.push(dtf[0]);
-			console.log('cwDtfs, ', cwDtfs);
+			//console.log('cwDtfs, ', cwDtfs);
 			var abctoconcat = [];
-			console.log('tfsToContact',abctoconcat);
+			//console.log('tfsToContact',abctoconcat);
 			for (var j = cwTfs.length - 1; j >= 0; j--) {
 				abctoconcat.push(cwTfs[j]);
-				console.log('tfsToContact',abctoconcat);
+				//console.log('tfsToContact',abctoconcat);
 			}
 			var newTransToAdd = {
 				tree: currNode.parent.ctxid,
@@ -1173,7 +1191,7 @@ evaluateTreeRec: function (node, opNodes) {
 			};
 			newTransformations.push(newTransToAdd);
 			var newTransKey = this.getTransKey(newTransToAdd);
-			console.log(newTransKey + ' for', newTransToAdd);
+			//console.log(newTransKey + ' for', newTransToAdd);
 			if (typeof transKeys[newTransKey] == 'undefined') {
 				transKeys[newTransKey] = newTransToAdd;
 			}
@@ -1183,7 +1201,7 @@ evaluateTreeRec: function (node, opNodes) {
 				for (var j = 0; j < cwRightTransformations.length; j++) {
 					var ltf = cwLeftTransformations[i];
 					var rtf = cwRightTransformations[j];
-					console.log('combining ', ltf, ' and ', rtf);
+					//console.log('combining ', ltf, ' and ', rtf);
 					var cwNewTransToAdd = {
 						tree: node.ctxid,
 						transformations: ltf.transformations.concat(rtf.transformations,abctoconcat)
@@ -1194,7 +1212,7 @@ evaluateTreeRec: function (node, opNodes) {
 					}
 				}
 			}
-			console.log(this.treefy(currNode.parent,0));
+			//console.log(this.treefy(currNode.parent,0));
 			currNode = currNode.parent;
 		}
 		this.transform(cwDtfs, opNodes);
@@ -1202,28 +1220,28 @@ evaluateTreeRec: function (node, opNodes) {
 		var ccwTfs = [];
 		var ccwDtfs = [];
 		while (currNode.right != null && currNode.right.isOperation() && currNode.value == this.OPERATION.SUM) {
-			console.log('can rotate counter clock wise\n', this.treefy(currNode,0));
+			//console.log('can rotate counter clock wise\n', this.treefy(currNode,0));
 			var ccwTf = {id: currNode.ctxid, mirror: false, ccw: true};
 			ccwTfs.push(ccwTf);
-			console.log('ccwTfs', ccwTfs);
+			//console.log('ccwTfs', ccwTfs);
 			var dtf = this.transform([ccwTf],opNodes);
-			console.log('dtf, ', dtf);
+			//console.log('dtf, ', dtf);
 			ccwDtfs.push(dtf[0]);
-			console.log('ccwDtfs, ', ccwDtfs);
+			//console.log('ccwDtfs, ', ccwDtfs);
 			var abctoconcat = [];
-			console.log('tfsToContact',abctoconcat);
+			//console.log('tfsToContact',abctoconcat);
 			for (var j = ccwTfs.length - 1; j >= 0; j--) {
 				abctoconcat.push(ccwTfs[j]);
-				console.log('tfsToContact',abctoconcat);
+				//console.log('tfsToContact',abctoconcat);
 			}
-			console.log('tfsToContact',abctoconcat);
+			//console.log('tfsToContact',abctoconcat);
 			var newTransToAdd = {
 				tree: currNode.parent.ctxid,
 				transformations: abctoconcat.concat(ctf.transformations)
 			};
 			newTransformations.push(newTransToAdd);
 			var newTransKey = this.getTransKey(newTransToAdd);
-			console.log(newTransKey + ' for', newTransToAdd);
+			//console.log(newTransKey + ' for', newTransToAdd);
 			if (typeof transKeys[newTransKey] == 'undefined') {
 				transKeys[newTransKey] = newTransToAdd;
 			}
@@ -1233,7 +1251,7 @@ evaluateTreeRec: function (node, opNodes) {
 				for (var j = 0; j < ccwRightTransformations.length; j++) {
 					var ltf = ccwLeftTransformations[i];
 					var rtf = ccwRightTransformations[j];
-					console.log('combining ', ltf, ' and ', rtf);
+					//console.log('combining ', ltf, ' and ', rtf);
 					var ccwNewTransToAdd = {
 						tree: node.ctxid,
 						transformations: ltf.transformations.concat(rtf.transformations,abctoconcat)
@@ -1244,21 +1262,24 @@ evaluateTreeRec: function (node, opNodes) {
 					}
 				}
 			}
-			console.log('ccw parent', this.treefy(currNode.parent,0));
+			//console.log('ccw parent', this.treefy(currNode.parent,0));
 			currNode = currNode.parent;
 		}
 		this.transform(ccwDtfs, opNodes);
 		this.transform(distransformations, opNodes);
 	}
-	console.log('evaluatedTree for node ', node);
+	//console.log('evaluatedTree for node ', node);
 	var rtnTrans = [];
 	for (key in transKeys) rtnTrans.push(transKeys[key]);
-	console.log('transKeys is ',JSON.stringify(transKeys));
+	//console.log('transKeys is ',JSON.stringify(transKeys));
+	var diff = Date.now() - begin;
+	console.log('rec time ' + diff + ' ms');
 	return rtnTrans;
 // 	return transformations.concat(newTransformations);
 },
 
 evaluateTreeIt: function (node, opNodes) {
+	var begin = Date.now();
 	var firstKey = this.getSolKey(node);
 	var solsKeys = {};
 	solsKeys[firstKey] = {tree: node.ctxid, transformations: []};
@@ -1266,9 +1287,8 @@ evaluateTreeIt: function (node, opNodes) {
 	solsQueue.enqueue({tree: node.ctxid, transformations: []});
 	var count = 0;
 	while(!solsQueue.isEmpty()) {
-		var begin = Date.now();
 		var inCount = 0;
-		console.log(console.log('Count is ', count++));
+		//console.log(//console.log('Count is ', count++));
 		var currSol = solsQueue.dequeue();
 		var solDtfs = this.transform(currSol.transformations, opNodes);
 		var lArr = this.lvlArray(opNodes[currSol.tree]);
@@ -1307,7 +1327,7 @@ evaluateTreeIt: function (node, opNodes) {
 					var whileNode = currNode;
 					while (whileNode.left != null 
 								&& whileNode.left.isOperation()) {
-						console.log('can rotate clock wise');
+						//console.log('can rotate clock wise');
 						var cwTf = {id: whileNode.ctxid, mirror: false, ccw: false};
 						cwTfs.push(cwTf);
 						var dtf = this.transform([cwTf],opNodes);
@@ -1337,7 +1357,7 @@ evaluateTreeIt: function (node, opNodes) {
 					while (whileNode.right != null 
 								&& whileNode.right.isOperation() 
 								&& whileNode.value == this.OPERATION.SUM) {
-						console.log('can rotate counter clock wise');
+						//console.log('can rotate counter clock wise');
 						var ccwTf = {id: whileNode.ctxid, mirror: false, ccw: true};
 						ccwTfs.push(ccwTf);
 						var dtf = this.transform([ccwTf],opNodes);
@@ -1370,21 +1390,22 @@ evaluateTreeIt: function (node, opNodes) {
 // 			var currSolToAdd = rootSols[i];
 // 			var solKey = this.getTransKey(currSolToAdd);
 // 			if (typeof solsKeys[solKey] == 'undefined') {
-// 				console.log('Adding solution ', currSolToAdd);
+// 				//console.log('Adding solution ', currSolToAdd);
 // 				solsKeys[solKey] = currSolToAdd;
 // 				solsQueue.enqueue(currSolToAdd);
 // 			}
 // 		}
-		var diff = Date.now() - begin;
 		this.transform(solDtfs, opNodes);
 	}
 // 	var lArr = this.lvlArray(node);
-// 	console.log('lArr is', lArr);
-// 	var rtnSols = [];
-// 	for (key in solKeys) rtnSols.push(solKeys[key]);
-// 	return rtnSols;
-	console.log(solsKeys);
-	console.log(solsKeys);
+// 	//console.log('lArr is', lArr);
+	var rtnSols = [];
+	for (key in solsKeys) rtnSols.push(solsKeys[key]);
+	var diff = Date.now() - begin;
+	console.log('it time ' + diff + ' ms');
+	return rtnSols;
+	//console.log(solsKeys);
+	//console.log(solsKeys);
 // 	return nodeTrans['op_'+node.ctxid];
 },
 
@@ -1413,7 +1434,7 @@ htmlfy: function (node, withEq, test) {
 								&& !node.prev.right.parenthesized()
 								&& node.prev.right.value != this.OPERATION.DIV;
 		if (test) {
-			console.log('leftNegative ', leftNegative, ' for node ', node);
+			//console.log('leftNegative ', leftNegative, ' for node ', node);
 		}
       return '<p class="number">'+(leftNegative ? '-' : '')+(withParentesis ? '('+node.value+')' : node.value)+'</p>';
    } else {
@@ -1565,7 +1586,7 @@ getOpNsName: function(opid) {
 },
 
 select: function(opid) {
-	console.log('OPERATION SELECTED: ', opid);
+	//console.log('OPERATION SELECTED: ', opid);
 	var opEl = document.getElementById('xpsop'+opid);
 	var opNodes = Xps.CONTEXT.opNodes;
    var opNode = Xps.CONTEXT.opNodes[opid];
@@ -1575,31 +1596,31 @@ select: function(opid) {
 	var notValid = [];
 	var indice = {};
    for (var i = 0; i < solutionTrees.length; i++) {
-		console.log('   SOLUTION TREE: ', i);
+		//console.log('   SOLUTION TREE: ', i);
 		var solutionTree = solutionTrees[i];
 		if (!solutionTree.valid) continue;
-		console.log('      VALID SOLUTION TREE! ');
+		//console.log('      VALID SOLUTION TREE! ');
 		var distransformations = this.transform(solutionTree.transformations);
 		if (!opNode.left.isOperation() && !opNode.right.isOperation()) {
-			console.log('      OPERATION VALID FOR TREE');
+			//console.log('      OPERATION VALID FOR TREE');
 			solvable = true;
 			var currIndx = opNode.left.value+'op'+opNode.right.value;
-			console.log('      SOLUTION KEY: ', currIndx);
+			//console.log('      SOLUTION KEY: ', currIndx);
 			if (typeof indice[currIndx] == 'undefined')
 				indice[currIndx] = [i];
 			else {
 				indice[currIndx].push(i);
 			}
-			console.log('      SOLUTION KEYS: ', indice);
+			//console.log('      SOLUTION KEYS: ', indice);
 		} else notValid.push(i);
 		this.transform(distransformations);
    }
-   console.log('   ANALISIS IS DONE FOR SOLUTION TREE: ', i);
+   //console.log('   ANALISIS IS DONE FOR SOLUTION TREE: ', i);
    if (solvable) {
 		Xps.CONTEXT.opSolutions = indice;
 		for (var key in indice) {
-			console.log(   'SOLUTION KEY IS ', key);
-			console.log(   'SOLUTION INDEX IS ', indice[key][0]);
+			//console.log(   'SOLUTION KEY IS ', key);
+			//console.log(   'SOLUTION INDEX IS ', indice[key][0]);
 			var solutionTree = solutionTrees[indice[key][0]];
 			var distransformations = this.transform(solutionTree.transformations);
 			this.askForSolution(opid, key);
@@ -1609,7 +1630,7 @@ select: function(opid) {
 			solutionTrees[notValid[i]].valid = false;
 		}
 	}
-	console.log('OPERATION SELECTION ENDED');
+	//console.log('OPERATION SELECTION ENDED');
    return solvable;
 },
 
@@ -1655,23 +1676,23 @@ solSubmit: function(event, opid) {
 	var op = this.CONTEXT.opNodes[opid];
 	if (!op.isOperation()) return;
 	var key = event.target.id.substring(2, event.target.id.length);
-	console.log('key is ', key);
+	//console.log('key is ', key);
 	var opSolution = this.CONTEXT.opSolutions[key];
-	console.log('opSolutions is ', opSolution);
+	//console.log('opSolutions is ', opSolution);
 	var solutionTree = this.CONTEXT.solutionTrees[opSolution[0]];
-	console.log('solutionTree is ', solutionTree);
+	//console.log('solutionTree is ', solutionTree);
 	var distransformations = this.transform(solutionTree.transformations);
 	var isOpRoot = (op.parent == null);
-	console.log('op is root? ', isOpRoot)
-	console.log('key is ', key);
-	console.log('opSolution is ', opSolution);
+	//console.log('op is root? ', isOpRoot)
+	//console.log('key is ', key);
+	//console.log('opSolution is ', opSolution);
 	if (op.solve(parseInt(event.target.value))) {
-		console.log('solutionTree.tree is', solutionTree.tree);
+		//console.log('solutionTree.tree is', solutionTree.tree);
 		this.CONTEXT.tree = this.CONTEXT.opNodes[solutionTree.tree];
-		console.log('this.CONTEXT.tree is ',this.CONTEXT.tree);
-		console.log('event',event);
+		//console.log('this.CONTEXT.tree is ',this.CONTEXT.tree);
+		//console.log('event',event);
 // 		if (isOpRoot) Xps.CONTEXT.tree = Xps.CONTEXT.opNodes[opid];
-		console.log('this.CONTEXT.tree is ', this.CONTEXT.tree);
+		//console.log('this.CONTEXT.tree is ', this.CONTEXT.tree);
 		event.target.parentNode.innerHTML = '<p class="number">'+parseInt(event.target.value)+'</p>';
 // 		Xps.printXp();
 		for (var currKey in this.CONTEXT.opSolutions) {
@@ -1694,13 +1715,13 @@ solSubmit: function(event, opid) {
 		solutionTree.transformations = [];
 		//Should not use this link method here
 // 		this.CONTEXT.tree.link();
-// 		console.log('New ex linefied ', this.linefy((this.CONTEXT.tree.link())[0]));
+// 		//console.log('New ex linefied ', this.linefy((this.CONTEXT.tree.link())[0]));
 		this.appendXp(this.CONTEXT.tree);
 		var increase = this.score(true);
 		this.spanWarn(true, increase);
 		this.changeState('SELECTING');
 		if (!this.CONTEXT.tree.isOperation()) {
-			console.log('!!!   !!!   !!!   FINISHED');
+			//console.log('!!!   !!!   !!!   FINISHED');
 			if(this.EXPRESSIONS.length > 0)this.appendNextButton();
 			this.appendExitButton();
 		}
@@ -1719,7 +1740,7 @@ transform: function(transformations, opNodes) {
 								&& opNodes != null 
 									? opNodes[transformation.id] 
 									: this.CONTEXT.opNodes[transformation.id]);
-		console.log('Transforming: ', transformation, ' opNodes ', opNodes);
+		//console.log('Transforming: ', transformation, ' opNodes ', opNodes);
 		if (transformation.mirror) {
 			transNode.mirror();
 			distransformations.push({
@@ -1730,11 +1751,11 @@ transform: function(transformations, opNodes) {
 			//Not here, switch root elsewhere
 			var switchRoot = (transNode.parent == null);
 			var newRoot = transNode.rotate(transformation.ccw);
-			// This is for console.log sake only
+			// This is for //console.log sake only
 			var solutionTreeRoot = transNode;
 			if (switchRoot && newRoot != null) {
 				solutionTreeRoot = newRoot;
-				console.log('Switching root to ', newRoot.ctxid);
+				//console.log('Switching root to ', newRoot.ctxid);
 			}
 			if (newRoot != null)
 				distransformations.push({
@@ -1743,8 +1764,8 @@ transform: function(transformations, opNodes) {
 					ccw: !transformation.ccw
 				});
 		}
-		console.log('Transformed: ', transformation);
-// 		console.log('Transformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
+		//console.log('Transformed: ', transformation);
+// 		//console.log('Transformed tree', '\n'+Xps.treefy(solutionTreeRoot, 0));
 	}
 	return distransformations;
 },
@@ -1787,12 +1808,12 @@ Node: function Node(value){
    value = ''+value;
    if (this instanceof Node) {
       if (value == undefined) {
-//          console.log('undefined');         
+//          //console.log('undefined');         
       } else if (value == null) {
-//          console.log('null');
+//          //console.log('null');
       } else if (value.length == 1 && (Xps.OPERATION.SUM+Xps.OPERATION.SUB).indexOf(value) != -1) {
          //Sum and subtraction
-//          console.log('sum');
+//          //console.log('sum');
          this.value = value;
          this.operation = true;
          this.nature = Xps.NATURE.SUM;
@@ -1800,18 +1821,18 @@ Node: function Node(value){
          else this.inverse = true;
       } else if (value.length == 1 && (Xps.OPERATION.MULT+Xps.OPERATION.DIV).indexOf(value) != -1) {
          //Multiplication and division
-//          console.log('mul');
+//          //console.log('mul');
          this.value = value;
          this.operation = true;
          this.nature = Xps.NATURE.MULT;
          if (value == Xps.OPERATION.MULT) this.inverse = false;
          else this.inverse = true;
       } else if (Xps.RE.NUMBERS.test(value)) {
-//          console.log('integer');
+//          //console.log('integer');
          this.value = parseInt(value);
          this.operation = false;
       } else {
-         console.log('value must be +,-,*,/ or an integer');
+         //console.log('value must be +,-,*,/ or an integer');
          return null;
       }
       this.factors = [];
@@ -1846,7 +1867,7 @@ Node: function Node(value){
 					//Rotate it
 					var pivot = this.right;
 					if (this.value == Xps.OPERATION.DIV && pivot.value == Xps.OPERATION.MULT) {
-						console.log('   ###   ###   ###   ###');
+						//console.log('   ###   ###   ###   ###');
 						pivot.invert();
 					}
 					this.setRight(pivot.left);
@@ -1854,16 +1875,16 @@ Node: function Node(value){
 					if (this.parent != null) {
 						if (this.parent.right.ctxid == this.ctxid) {
 							this.parent.setRight(pivot);
-							console.log('this.parent',this.parent,'pivot right', pivot);
+							//console.log('this.parent',this.parent,'pivot right', pivot);
 						} else {
 							this.parent.setLeft(pivot);
-							console.log('this.parent',this.parent,'pivot left', pivot);
+							//console.log('this.parent',this.parent,'pivot left', pivot);
 						}
 					}
 					pivot.setLeft(this);
 					return pivot;
 				} else {
-					console.error('Can\'t rotate node ccw', this);
+// 					console.error('Can\'t rotate node ccw', this);
 					return null;
 				}
 			} else {		
@@ -1881,7 +1902,7 @@ Node: function Node(value){
 					//Rotate it
 					var pivot = this.left;
 					if (this.value == Xps.OPERATION.DIV && pivot.value == Xps.OPERATION.DIV) {
-						console.log('   ###   ###   ###   ###');
+						//console.log('   ###   ###   ###   ###');
 						this.invert();
 					}
 					this.setLeft(pivot.right);
@@ -1889,16 +1910,16 @@ Node: function Node(value){
 					if (this.parent != null) {
 						if (this.parent.right.ctxid == this.ctxid) {
 							this.parent.setRight(pivot);
-							console.log('this.parent',this.parent,'pivot right', pivot);
+							//console.log('this.parent',this.parent,'pivot right', pivot);
 						} else {
 							this.parent.setLeft(pivot);
-							console.log('this.parent',this.parent,'pivot left', pivot);
+							//console.log('this.parent',this.parent,'pivot left', pivot);
 						}
 					}
 					pivot.setRight(this);
 					return pivot;
 				} else {
-					console.error('Can\'t rotate node cw', this);
+// 					console.error('Can\'t rotate node cw', this);
 					return null;
 				}
 			}
@@ -1918,13 +1939,13 @@ Node: function Node(value){
       }
       this.setRight = function(node) {
          if (!this.operation) {
-            console.error('Can\'t set right child for an integer, operations only.');
+//             console.error('Can\'t set right child for an integer, operations only.');
          } else {
             if(node instanceof Node) {
                this.right = node;// 			var solutionTreeRoot = transNode;
 // 			if (switchRoot) {
 // 				solutionTreeRoot = newRoot;
-// 				console.log('Switching root to ', newRoot.ctxid);
+// 				//console.log('Switching root to ', newRoot.ctxid);
 // 			}
                node.parent = this;
             } else {
@@ -1948,13 +1969,13 @@ Node: function Node(value){
 // 									&& this.right != null
 // 									&& this.right.isOperation()
 // 									&& this.right.value == Xps.OPERATION.MULT;
-// 			console.log('divMultDem ', divMultDem);
-// 			console.log('this.value == Xps.OPERATION.DIV', this.value == Xps.OPERATION.DIV);
-// 			console.log('this.right != null', this.right != null);
-// 			console.log('this.right.isOperation()', this.right.isOperation());
-// 			console.log('this.right.value == Xps.OPEARTION.MULT', this.right.value == Xps.OPERATION.MULT);
+// 			//console.log('divMultDem ', divMultDem);
+// 			//console.log('this.value == Xps.OPERATION.DIV', this.value == Xps.OPERATION.DIV);
+// 			//console.log('this.right != null', this.right != null);
+// 			//console.log('this.right.isOperation()', this.right.isOperation());
+// 			//console.log('this.right.value == Xps.OPEARTION.MULT', this.right.value == Xps.OPERATION.MULT);
 			var solution = eval((leftNegative?'-':'')+'('+this.left.value+')'+this.value+'('+this.right.value+')');
-			console.log('solution, result', solution, result);
+			//console.log('solution, result', solution, result);
 			if (result != solution) return false;
 			var solutionNode = new Xps.Node(solution);
 			solutionNode.ctxid = this.ctxid;
