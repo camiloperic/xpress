@@ -1029,7 +1029,44 @@ fillWithInts: function (root, lvl) {
 },
 
 //evaluateTreeTest
-evaluateTreeRecTest: function () {
+evaluateTreeRecTest: function (from, to, tests, operations) {
+	//Avoiding an infinite loop
+	if (from > to || tests < 0) return;
+	if (typeof operations == 'undefined') operations = [Xps.OPERATION.SUM,Xps.OPERATION.SUB,Xps.OPERATION.MULT,Xps.OPERATION.DIV];
+	var testData = '';
+	var rawData = '';
+	for (var i = from; i <= to; i++) {
+		for (var j = 0; j < tests; j++) {
+			var xp = this.makeExp(i,operations);
+			var opNodes = [];
+			var count = 0;
+			var nodeQ = new Queue();
+			nodeQ.enqueue(xp);
+			while (!nodeQ.isEmpty()) {
+				var currNode = nodeQ.dequeue();
+				currNode.ctxid = count;
+				count++;
+				opNodes.push(currNode);
+				if (currNode.left != null && currNode.left.isOperation()) nodeQ.enqueue(currNode.left);
+				if (currNode.right != null && currNode.right.isOperation()) nodeQ.enqueue(currNode.right);
+			}
+			var start = Date.now();
+			var xpSols = this.evaluateTreeRec(xp, opNodes);
+			var diff = Date.now() - start;
+			var catalanNumber = Xps.factorial(i*2)/(Xps.factorial(i+1)*Xps.factorial(i));
+			if (testData != '') {
+				testData += '\n';
+// 				rawData += '\n';
+				rawData += ',';
+			}
+			testData += 'n is ' + i + ' | cn is ' + catalanNumber + ' | sn is ' + xpSols.length + ' [' + diff + 'ms]';
+			rawData += '['+i+','+diff+']';
+		}
+	}
+	console.log('###############################################################');
+	console.log('################## RESULTS ARE ################################');
+	console.log('###############################################################');
+	console.log('\n\n'+testData+'\n\n'+rawData);
 // 	var x = new Xps.Node('+');
 // 	var y = new Xps.Node('+');
 // 	var z = new Xps.Node('+');
@@ -1047,38 +1084,39 @@ evaluateTreeRecTest: function () {
 // 	t.setLeft(new Xps.Node(7));
 // 	t.setRight(new Xps.Node(2));
 // 	t.ctxid=3;
-	var x = new Xps.Node('+');
-	var y = new Xps.Node('+');
-	var z = new Xps.Node('+');
-	var t = new Xps.Node('+');
-	x.setLeft(y);
-	x.setRight(new Xps.Node(1));
-	x.ctxid=0;
-	y.setLeft(z);
-	y.setRight(new Xps.Node(3));
-	y.ctxid=1;
-	z.setLeft(t);
-	z.setRight(new Xps.Node(5));
-	z.ctxid=2;
-	t.setLeft(new Xps.Node(7));
-	t.setRight(new Xps.Node(2));
-	t.ctxid=3;
-	//console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
-	var sols = this.evaluateTreeRec(x, [x,y,z,t]);
-	//console.log(sols);
-	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
-	//console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
+// 	var x = new Xps.Node('+');
+// 	var y = new Xps.Node('+');
+// 	var z = new Xps.Node('+');
+// 	var t = new Xps.Node('+');
+// 	x.setLeft(y);
+// 	x.setRight(new Xps.Node(1));
+// 	x.ctxid=0;
+// 	y.setLeft(z);
+// 	y.setRight(new Xps.Node(3));
+// 	y.ctxid=1;
+// 	z.setLeft(t);
+// 	z.setRight(new Xps.Node(5));
+// 	z.ctxid=2;
+// 	t.setLeft(new Xps.Node(7));
+// 	t.setRight(new Xps.Node(2));
+// 	t.ctxid=3;
+// 	//console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
+// 	var sols = this.evaluateTreeRec(x, [x,y,z,t]);
+// 	//console.log(sols);
+// 	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
+// 	//console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
 },
 
 //evaluateTreeTest
-evaluateTreeItTest: function (from, to, tests) {
+evaluateTreeItTest: function (from, to, tests, operations) {
 	//Avoiding an infinite loop
 	if (from > to || tests < 0) return;
+	if (typeof operations == 'undefined') operations = [Xps.OPERATION.SUM,Xps.OPERATION.SUB,Xps.OPERATION.MULT,Xps.OPERATION.DIV];
 	var testData = '';
 	var rawData = '';
 	for (var i = from; i <= to; i++) {
 		for (var j = 0; j < tests; j++) {
-			var xp = this.makeExp(i,[Xps.OPERATION.SUM/*, Xps.OPERATION.SUB*/]);
+			var xp = this.makeExp(i,operations);
 			var opNodes = [];
 			var count = 0;
 			var nodeQ = new Queue();
