@@ -672,6 +672,14 @@ startDB: function() {
 // 	Xps.EXPRESSIONS.push(expression);
 },
 
+/*
+ * start function
+ * 	
+ * 	PARAMS
+ * 		parentId: xpress container id
+ * 	
+ * 	- prints the game screen inside the container
+ */
 start: function(parentId){
 	this.CONTAINERID = parentId;
 	var parent = document.getElementById(this.CONTAINERID);
@@ -699,6 +707,15 @@ start: function(parentId){
 	parent.innerHTML = startHtml;
 },
 
+/*
+ * play function 
+ * 
+ * 	- hides the start screen,
+ * 	- shows the expressions screen
+ * 	- starts the expressions data base
+ * 	- prepares the first expression to be tested
+ * 	- prints the prepared expression.
+ */
 play: function() {
 	var startDiv = document.getElementById('startDiv');
 	var xpDiv = document.getElementById('xpDiv');
@@ -713,6 +730,13 @@ play: function() {
 	this.appendXp(Xps.CONTEXT.tree);
 },
 
+/*
+ * next function
+ * 
+ * 	- clears the expressions table
+ * 	- prepares the next expression to be tested
+ * 	- prints the prepared expression.
+ */
 next: function() {
 	var xpTable = document.getElementById('xpTable');
 	xpTable.innerHTML = '';
@@ -720,6 +744,13 @@ next: function() {
 	this.appendXp(Xps.CONTEXT.tree);
 },
 
+/*
+ * exit function
+ * 
+ * 	- clears the expressions table
+ * 	- hides the expressions screen
+ * 	- generates and print the score chart
+ */
 exit: function() {
 	var xpTable = document.getElementById('xpTable');
 	xpTable.innerHTML = '';
@@ -831,6 +862,13 @@ exit: function() {
 	});
 },
 
+/*
+ * newXp function
+ * 
+ * 	- picks randomly one of the expressions on the DB
+ * 		OR generates a new expression
+ * 	- sets the expression to the game context
+ */
 newXp: function() {
 	// Getting expressions from 'DB'
 // 	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
@@ -852,17 +890,36 @@ newXp: function() {
 // 	this.toContext(this.EXPRESSIONS[3]);
 },
 
-//Deprecated
-printXp: function() {
-	document.getElementById('main').innerHTML += Xps.htmlfy(Xps.CONTEXT.tree);
-},
-
+/*
+ * makeExp function
+ * 
+ * 	PARAMS
+ * 		lvl: number of operations
+ * 		operations: array of possible operations
+ * 	RETURN
+ * 		generated tree
+ * 
+ * 	- generates an operation only tree
+ * 	- fills the generated tree with integers
+ */
 makeExp: function (lvl, operations) {
    var root = Xps.makeOps(lvl, operations);
    Xps.fillWithInts(root);
    return root;
 },
 
+/*
+ * toContext function
+ * 
+ * 	PARAMS
+ * 		expression: the expression to be set into the game context,
+ * 			either a expression object or a node
+ * 	
+ * 	- when the expression is a node
+ * 		- generates an array with all the nodes
+ * 		- evaluates every possible solution tree
+ * 	- sets the expression into the game context
+ */
 toContext: function (expression) {
 	if (expression instanceof Xps.Node) {
 		var opNodes = [];
@@ -909,9 +966,18 @@ toContext: function (expression) {
 	this.CONTEXT.currentScore = this.CONTEXT.opToSolve > 1 ? 1 : 0;
 },
 
+/*
+ * changeState function
+ * 	
+ * 	PARAMS
+ * 		state: new state to be set
+ * 
+ * 	- changes the current game state (SELECTING, SOLVING)
+ */
 changeState: function(state) {
 	this.CONTEXT.state = state;
 },
+
 
 makeOps: function (lvl, operations) {
 	if (operations == null || typeof operations == 'undefined') {
