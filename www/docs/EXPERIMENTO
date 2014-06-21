@@ -38,3 +38,12 @@ CAPÍTULO 4 – EXPERIMENTO: JOGO DE EXPRESSÕES ALGÉBRICAS
 4.1.7 Passagem da solução
 
 	Depois que o usuário inserir a solução na caixa de texto e apertar a tecla ENTER ou tirar o foco da caixa de texto o programa faz uma avaliação da solução passada através da função solSubmit. Caso a solução esteja correta a caixa de texto é transformada em texto simples. Se houver mais de uma possível solução apenas aquela que foi resolvida permanece na tela, as outras são eliminadas da tela.
+
+4.2 Estruturas de dados utilizadas
+
+4.2.1 Árvore
+4.2.2 
+
+4.3 Algoritmo de avaliação de soluções
+
+	A criação de expressões é um ponto importante no experimento desenvolvido neste tabalho pois evita a necessidade da criação manual de expressões e cria um potencial repositório infinito de expressões. Para tanto é necessário que a aplicação seja capaz de avaliar a expressão criada para encontrar todas as soluções possíveis.
