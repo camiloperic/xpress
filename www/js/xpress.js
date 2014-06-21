@@ -843,9 +843,9 @@ newXp: function() {
 // 	var xp = this.EXPRESSIONS.pop();
 // 	this.toContext(xp);
 	// Using + and - expression generation
-	var newXp = this.makeExp(5,[Xps.OPERATION.SUM/*, Xps.OPERATION.SUB*/]);
+	var newXp = this.makeExp(7,[Xps.OPERATION.SUM/*, Xps.OPERATION.SUB*/]);
 	//console.log('newXp is ', newXp);
-	console.log('Newly created xp: ', this.treefy(newXp,0));
+	//console.log('Newly created xp: ', this.treefy(newXp,0));
 	this.toContext(newXp);
 	//console.log(this.treefy(this.CONTEXT.tree,0));
 // 	Code for testing specific expressions
@@ -872,7 +872,7 @@ toContext: function (expression) {
 		while (!nodeQ.isEmpty()) {
 			var currNode = nodeQ.dequeue();
 			currNode.ctxid = count;
-			console.log('adding node with ctxid ' + count, currNode);
+			//console.log('adding node with ctxid ' + count, currNode);
 			count++;
 			//console.log('adding opnode to opnodes', currNode);
 			opNodes.push(currNode);
@@ -882,10 +882,10 @@ toContext: function (expression) {
 		//console.log('opNodes is ', opNodes);
 		//console.log('!@#$% !@#$% xp: ', expression, ' | opNodes: ', opNodes);
 		var solutionTrees = this.evaluateTreeIt(expression, opNodes);
-		console.log('solutionTrees is',solutionTrees);
+		//console.log('solutionTrees is',solutionTrees);
 // 		var solutionTrees = [];
 		var catalanNumber = Xps.factorial(opNodes.length*2)/(Xps.factorial(opNodes.length+1)*Xps.factorial(opNodes.length));
-		console.log('n is ', opNodes.length, ', catalan number is ', catalanNumber, ', solutions trees count is ', solutionTrees.length);
+		//console.log('n is ', opNodes.length, ', catalan number is ', catalanNumber, ', solutions trees count is ', solutionTrees.length);
 		expression = {
 			tree: expression,
 			opNodes: opNodes,
@@ -1065,13 +1065,51 @@ evaluateTreeRecTest: function () {
 	t.ctxid=3;
 	//console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
 	var sols = this.evaluateTreeRec(x, [x,y,z,t]);
-	console.log(sols);
+	//console.log(sols);
 	var catalanNumber = Xps.factorial(4*2)/(Xps.factorial(4+1)*Xps.factorial(4));
-	console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
+	//console.log('n is ', 4, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
 },
 
 //evaluateTreeTest
-evaluateTreeItTest: function () {
+evaluateTreeItTest: function (from, to, tests) {
+	//Avoiding an infinite loop
+	if (from > to || tests < 0) return;
+	var testData = '';
+	var rawData = '';
+	for (var i = from; i <= to; i++) {
+		for (var j = 0; j < tests; j++) {
+			var xp = this.makeExp(i,[Xps.OPERATION.SUM/*, Xps.OPERATION.SUB*/]);
+			var opNodes = [];
+			var count = 0;
+			var nodeQ = new Queue();
+			nodeQ.enqueue(xp);
+			while (!nodeQ.isEmpty()) {
+				var currNode = nodeQ.dequeue();
+				currNode.ctxid = count;
+				count++;
+				opNodes.push(currNode);
+				if (currNode.left != null && currNode.left.isOperation()) nodeQ.enqueue(currNode.left);
+				if (currNode.right != null && currNode.right.isOperation()) nodeQ.enqueue(currNode.right);
+			}
+			var start = Date.now();
+			var xpSols = this.evaluateTreeIt(xp, opNodes);
+			var diff = Date.now() - start;
+			var catalanNumber = Xps.factorial(i*2)/(Xps.factorial(i+1)*Xps.factorial(i));
+			if (testData != '') {
+				testData += '\n';
+// 				rawData += '\n';
+				rawData += ',';
+			}
+			testData += 'n is ' + i + ' | cn is ' + catalanNumber + ' | sn is ' + xpSols.length + ' [' + diff + 'ms]';
+			rawData += '['+i+','+diff+']';
+		}
+	}
+	console.log('###############################################################');
+	console.log('################## RESULTS ARE ################################');
+	console.log('###############################################################');
+	console.log('\n\n'+testData+'\n\n'+rawData);
+	
+	
 // 	var x = new Xps.Node('+');
 // 	var y = new Xps.Node('+');
 // 	var z = new Xps.Node('+');
@@ -1088,36 +1126,37 @@ evaluateTreeItTest: function () {
 // 	t.setLeft(new Xps.Node(7));
 // 	t.setRight(new Xps.Node(2));
 // 	t.ctxid=3;
-	var x = new Xps.Node('+');
-	var y = new Xps.Node('+');
-	var z = new Xps.Node('+');
-	var t = new Xps.Node('+');
-	var r = new Xps.Node('+');
-// 	var s = new Xps.Node('+');
-	x.setLeft(y);
-	x.setRight(new Xps.Node(20));
-	x.ctxid=0;
-	y.setLeft(new Xps.Node(10));
-	y.setRight(z);
-	y.ctxid=1;
-	z.setLeft(t);
-	z.setRight(r);
-	z.ctxid=2;
-	t.setLeft(new Xps.Node(-19));
-	t.setRight(new Xps.Node(17));
-	t.ctxid=3;
-	r.setLeft(new Xps.Node(14));
-	r.setRight(new Xps.Node(-16));
-	r.ctxid=4;
-// 	s.setLeft(new Xps.Node(12));
-// 	s.setRight(new Xps.Node(-19));
-// 	s.ctxid=3;
-	//console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
-	var sols = this.evaluateTreeIt(x, [x,y,z,t,r]);
-	console.log(sols);
-	var catalanNumber = Xps.factorial(5*2)/(Xps.factorial(5+1)*Xps.factorial(5));
-	console.log('n is ', 5, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
+// 	var x = new Xps.Node('+');
+// 	var y = new Xps.Node('+');
+// 	var z = new Xps.Node('+');
+// 	var t = new Xps.Node('+');
+// 	var r = new Xps.Node('+');
+// // 	var s = new Xps.Node('+');
+// 	x.setLeft(y);
+// 	x.setRight(new Xps.Node(20));
+// 	x.ctxid=0;
+// 	y.setLeft(new Xps.Node(10));
+// 	y.setRight(z);
+// 	y.ctxid=1;
+// 	z.setLeft(t);
+// 	z.setRight(r);
+// 	z.ctxid=2;
+// 	t.setLeft(new Xps.Node(-19));
+// 	t.setRight(new Xps.Node(17));
+// 	t.ctxid=3;
+// 	r.setLeft(new Xps.Node(14));
+// 	r.setRight(new Xps.Node(-16));
+// 	r.ctxid=4;
+// // 	s.setLeft(new Xps.Node(12));
+// // 	s.setRight(new Xps.Node(-19));
+// // 	s.ctxid=3;
+// 	//console.log('!@#$% !@#$% xp: ', y, ' | opNodes: ', [x,y,z,t]);
+// 	var sols = this.evaluateTreeIt(x, [x,y,z,t,r]);
+// 	//console.log(sols);
+// 	var catalanNumber = Xps.factorial(5*2)/(Xps.factorial(5+1)*Xps.factorial(5));
+// 	//console.log('n is ', 5, ', catalan number is ', catalanNumber, ', solutions trees count is ', sols.length);
 },
+
 
 
 getTransKey: function (transformations) {
@@ -1288,7 +1327,7 @@ evaluateTreeRec: function (node, opNodes) {
 	for (key in transKeys) rtnTrans.push(transKeys[key]);
 	//console.log('transKeys is ',JSON.stringify(transKeys));
 	var diff = Date.now() - begin;
-	console.log('rec time ' + diff + ' ms');
+	//console.log('rec time ' + diff + ' ms');
 	return rtnTrans;
 // 	return transformations.concat(newTransformations);
 },
@@ -1310,7 +1349,6 @@ evaluateTreeIt: function (node, opNodes) {
 		var nodeTrans = {};
 		for (var i = lArr.length-1; i >=0; i--) {
 			var currNode = opNodes[lArr[i]];
-			var currNodeSols = [];
 			var lsols;
 			if (currNode.left.isOperation()) lsols = nodeTrans['op_'+currNode.left.ctxid];
 			else lsols = [{tree: currNode.left, transformations:[]}];
@@ -1328,11 +1366,11 @@ evaluateTreeIt: function (node, opNodes) {
 						transformations: ltf.transformations.concat(rtf.transformations,currSol.transformations)
 					};
 					(nodeTrans['op_'+currNode.ctxid]).push(solToAdd);
-					if (i == 0) {
+					if (opNodes[solToAdd.tree].parent == null) {
 						inCount++;
 						var solKey = this.getSolKey(opNodes[solToAdd.tree]);
 						if (solKey.length != 11) {
-// 							console.log('wrong key');
+// 							//console.log('wrong key');
 						}
 						if (typeof solsKeys[solKey] == 'undefined') {
 							solsKeys[solKey] = solToAdd;
@@ -1358,11 +1396,11 @@ evaluateTreeIt: function (node, opNodes) {
 							transformations: abctoconcat.concat(solToAdd.transformations,currSol.transformations)
 						};
 						(nodeTrans['op_'+currNode.ctxid]).push(newSolToAdd);
-						if (i == 0) {
+						if (opNodes[newSolToAdd.tree].parent == null) {
 							inCount++;
 							var solKey = this.getSolKey(opNodes[newSolToAdd.tree]);
 							if (solKey.length != 11) {
-// 								console.log('wrong key');
+// 								//console.log('wrong key');
 							}
 							if (typeof solsKeys[solKey] == 'undefined') {
 								solsKeys[solKey] = newSolToAdd;
@@ -1391,11 +1429,11 @@ evaluateTreeIt: function (node, opNodes) {
 							transformations: abctoconcat.concat(solToAdd.transformations,currSol.transformations)
 						};
 						(nodeTrans['op_'+currNode.ctxid]).push(newSolToAdd);
-						if (i == 0) {
+						if (opNodes[newSolToAdd.tree].parent == null) {
 							inCount++;
 							var solKey = this.getSolKey(opNodes[newSolToAdd.tree]);
 							if (solKey.length != 11) {
-// 								console.log('wrong key');
+// 								//console.log('wrong key');
 							}
 							if (typeof solsKeys[solKey] == 'undefined') {
 								solsKeys[solKey] = newSolToAdd;
@@ -1425,10 +1463,10 @@ evaluateTreeIt: function (node, opNodes) {
 // 	var lArr = this.lvlArray(node);
 // 	//console.log('lArr is', lArr);
 	var rtnSols = [];
-	console.log('solsKeys is ', solsKeys);
+	//console.log('solsKeys is ', solsKeys);
 	for (key in solsKeys) rtnSols.push(solsKeys[key]);
 	var diff = Date.now() - begin;
-	console.log('it time ' + diff + ' ms');
+	//console.log('it time ' + diff + ' ms');
 	return rtnSols;
 	//console.log(solsKeys);
 	//console.log(solsKeys);
