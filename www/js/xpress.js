@@ -873,20 +873,20 @@ exit: function() {
  */
 newXp: function() {
 	// Getting expressions from 'DB'
-// 	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
-// 	//console.log('rdm is ', rdm);
-// 	if (rdm != Xps.EXPRESSIONS.legnth-1) {
-// 		var toLast = Xps.EXPRESSIONS[rdm];
-// 		Xps.EXPRESSIONS[rdm] = Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1];
-// 		Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1] = toLast;
-// 	}
-// 	var xp = this.EXPRESSIONS.pop();
-// 	this.toContext(xp);
+	var rdm = Math.round(Math.random()*(Xps.EXPRESSIONS.length-1));
+	//console.log('rdm is ', rdm);
+	if (rdm != Xps.EXPRESSIONS.legnth-1) {
+		var toLast = Xps.EXPRESSIONS[rdm];
+		Xps.EXPRESSIONS[rdm] = Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1];
+		Xps.EXPRESSIONS[Xps.EXPRESSIONS.length-1] = toLast;
+	}
+	var xp = this.EXPRESSIONS.pop();
+	this.toContext(xp);
 	// Using + and - expression generation
-	var newXp = this.makeExp(5,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]);
-	//console.log('newXp is ', newXp);
-	//console.log('Newly created xp: ', this.treefy(newXp,0));
-	this.toContext(newXp);
+// 	var newXp = this.makeExp(5,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]);
+// 	//console.log('newXp is ', newXp);
+// 	//console.log('Newly created xp: ', this.treefy(newXp,0));
+// 	this.toContext(newXp);
 	//console.log(this.treefy(this.CONTEXT.tree,0));
 // 	Code for testing specific expressions
 // 	this.toContext(this.EXPRESSIONS[3]);
