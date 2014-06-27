@@ -883,7 +883,7 @@ newXp: function() {
 // 	var xp = this.EXPRESSIONS.pop();
 // 	this.toContext(xp);
 	// Using + and - expression generation
-	var newXp = this.makeExp(7,[Xps.OPERATION.SUM/*, Xps.OPERATION.SUB*/]);
+	var newXp = this.makeExp(5,[Xps.OPERATION.SUM, Xps.OPERATION.SUB]);
 	//console.log('newXp is ', newXp);
 	//console.log('Newly created xp: ', this.treefy(newXp,0));
 	this.toContext(newXp);
