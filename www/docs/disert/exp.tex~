@@ -215,10 +215,3 @@ Lembrando que as gramáticas são compostas por: um conjunto finito de símbolos
 
 \subsection{Gramáticas com Estrutura de Frase}
 A gramática é com Estrutura de Frase se todas as produções são da forma:
-
-$\alpha \to \delta$, onde $\alpha \in (N \cup T)$* - $T$*, $\delta \in (N \cup T)$*.
-
-\subsection{Gramáticas Sensíveis ao Contexto}
-A gramática é Sensível ao Contexto se todas as produções são da forma:
-
-$\alpha A\beta \to \alpha \delta \beta$, onde $\alpha,\beta \in (N \cup T)$*$, A \in N, \delta \in (N \cup T)$* - \{$\lambda$\}.
