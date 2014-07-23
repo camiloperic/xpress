@@ -211,7 +211,7 @@ As expressões algébricas utilizadas são linguagens formais pois são um subco
 A Classificação de Chomsky leva em conta os tipos de produções existentes na gramática. A seguir estão explicadas as classificações.
 
 \section{Classificação de Chomsky}
-Lembrando que as gramáticas são compostas por: um conjunto finito de símbolos não-terminais (N), um conjunto finito de símbolos terminais (T), um conjunto de produções (P) e um símbolo inicial (teta). A intersecção entre os conjuntos de símbolos não terminais e terminais deve ser vazia. O conjuto de produções é um subconjunto de todas as produções possíveis, o produto cartesiano de: todas as palavras geradas com símbolos não-terminais e terminais contendo pelo menos um símbolo não terminal (lado esquerdo da produção); todas as palavras geradas com símbolos não-terminais e terminais. O símbolo inicial deve pertencer ao conunto dos símbolos não terminais. Nas definições a seguir lambda denota a palavra nula.
+Lembrando que as gramáticas são compostas por: um conjunto finito de símbolos não-terminais $N$, um conjunto finito de símbolos terminais $T$, um conjunto de produções $P$ e um símbolo inicial $\sigma$. A intersecção entre os conjuntos de símbolos não terminais e terminais deve ser vazia. O conjuto de produções é um subconjunto de todas as produções possíveis, o produto cartesiano de: todas as palavras geradas com símbolos não-terminais e terminais contendo pelo menos um símbolo não terminal (lado esquerdo da produção); todas as palavras geradas com símbolos não-terminais e terminais. O símbolo inicial deve pertencer ao conunto dos símbolos não terminais. Nas definições a seguir $\lambda$ denota a palavra nula.
 
 \subsection{Gramáticas com Estrutura de Frase}
 A gramática é com Estrutura de Frase se todas as produções são da forma:
@@ -222,3 +222,13 @@ $\alpha \to \delta$, onde $\alpha \in (N \cup T)$* - $T$*, $\delta \in (N \cup T
 A gramática é Sensível ao Contexto se todas as produções são da forma:
 
 $\alpha A\beta \to \alpha \delta \beta$, onde $\alpha,\beta \in (N \cup T)$*$, A \in N, \delta \in (N \cup T)$* - \{$\lambda$\}.
+
+\subsection{Gramáticas Livres de Contexto}
+A gramática é Livre de Contexto se todas as produções são da forma:
+
+$A \to \delta$, onde $A \in N, \delta \in (N \cup T)$*.
+
+\subsection{Gramáticas Regulares}
+A gramática é Regular se todas as produções são da forma:
+
+$A \to a$ ou $A \to aB$ ou $A \to \lambda$.
