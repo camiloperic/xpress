@@ -366,3 +366,20 @@ Para testar o desempenho do algoritmo de avaliação de expressões a função e
 	\end{center}
 	\legend{Fonte: Produzido pelo autor}
 \end{figure}
+
+A diferença nos tempos das séries sem e com soma se devem ao fato de que expressões com subtração tem limitações de rotação. O primeiro gráfico em escala linear mostra o comportamento exponencial da expressão. No gráfico cuja a escala é logarítmica podemos observar com maior clareza como as tempos nas expressões que envolvem subtração variam em um intervalo cujo tempo máximo é o tempo para as árvores que não envolvem subtrações. Isto se deve ao caráter aleatório do algoritmo de geração de expressões. Uma expressão só com somas pode ser gerada mesmo no teste que envolve também subtrações.
+
+\section{Modelo e estruturas de dado}
+Por mais que o experimento não utilize uma aplicação de banco de dados existe um modelo de dados intrínseco expresso no diagrama a seguir.
+
+\begin{figure}[H]
+	\caption{\label{gram_cls}Diagrama sobre rotação de árvores binárias ordenadas}
+	\begin{center}
+	    \includegraphics[scale=0.5]{datamodel.png}
+	\end{center}
+	\legend{Fonte: Produzido pelo autor}
+\end{figure}
+
+O diagrama representa as expressões e suas respectivas soluções. Como a estrutura de dados escolhida para representar as expressões foi a árvore, as expressões são armazenadas podem ser armazenadas da mesma forma. Cada nó (Node) aponta para o seu nó pai e seus nós filhos.
+
+As soluções (Solution) para uma determinada expressão são armazenadas na forma de uma lista ordenada de transformações (Transformation). A lista de ordenada de transformações é representada através da entidade SolutionTransformation.
