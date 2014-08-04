@@ -198,41 +198,6 @@ A seleção da última operação não é pontuada.
 
 As expressões algébricas utilizadas são linguagens formais pois são um subconjunto de todas as palavras existentes para um determinado alfabeto. Para tanto existe pelo menos uma gramática capaz de gerar a linguagem formal envolvida.
 
-	Toda gramática pode ser classificada de acordo com a Classificação de Chomsky onde toda gramática é pelo menos uma Gramática com Estrutura de Frase. A classe seguinte é um subconjunto da anterior e contém as Gramáticas Sensíveis ao Contexto. A classe das Gramáticas Livres de Contexto é novamente um subconjunto da classe anterior, assim como a ultima classe das Gramáticas Regulares é um subconjunto desta. A figura a seguir expressa a hierarquia existente entre as classes.
-	
-\begin{figure}[H]
-	\caption{\label{gram_cls}Classes da Classificação de Chomsky e sua hierarquia}
-	\begin{center}
-	    \includegraphics[scale=0.5]{driagrama_classes_gramaticas.png}
-	\end{center}
-	\legend{Fonte: Produzido pelo autor}
-\end{figure}
-
-A Classificação de Chomsky leva em conta os tipos de produções existentes na gramática. A seguir estão explicadas as classificações.
-
-\section{Classificação de Chomsky}
-Lembrando que as gramáticas são compostas por: um conjunto finito de símbolos não-terminais $N$, um conjunto finito de símbolos terminais $T$, um conjunto de produções $P$ e um símbolo inicial $\sigma$. A intersecção entre os conjuntos de símbolos não terminais e terminais deve ser vazia. O conjuto de produções é um subconjunto de todas as produções possíveis, o produto cartesiano de: todas as palavras geradas com símbolos não-terminais e terminais contendo pelo menos um símbolo não terminal (lado esquerdo da produção); todas as palavras geradas com símbolos não-terminais e terminais. O símbolo inicial deve pertencer ao conunto dos símbolos não terminais. Nas definições a seguir $\lambda$ denota a palavra nula.
-
-\subsection{Gramáticas com Estrutura de Frase}
-A gramática é com Estrutura de Frase se todas as produções são da forma:
-
-$\alpha \to \delta$, onde $\alpha \in (N \cup T)$* - $T$*, $\delta \in (N \cup T)$*.
-
-\subsection{Gramáticas Sensíveis ao Contexto}
-A gramática é Sensível ao Contexto se todas as produções são da forma:
-
-$\alpha A\beta \to \alpha \delta \beta$, onde $\alpha,\beta \in (N \cup T)$*$, A \in N, \delta \in (N \cup T)$* - \{$\lambda$\}.
-
-\subsection{Gramáticas Livres de Contexto}
-A gramática é Livre de Contexto se todas as produções são da forma:
-
-$A \to \delta$, onde $A \in N, \delta \in (N \cup T)$*.
-
-\subsection{Gramáticas Regulares}
-A gramática é Regular se todas as produções são da forma:
-
-$A \to a$ ou $A \to aB$ ou $A \to \lambda$.
-
 \subsection{A linguagem formal envolvida no jogo}
 Vamos partir do conjunto de símbolos terminais que deve conter: as operações de soma, subtração, multiplicação e divisão; um conunto de números dado por um intervalo fechado sobre o conjunto dos inteiros; parênteses. Logo temos T = {+, -, *, /, -2, -1, 0, 1, 2, (, )}. Escolhemos um pequeno intervalo de inteiros neste caso para manter o conjunto pequeno.
 
@@ -310,30 +275,15 @@ A lógica que explica a utilização dos parênteses em operações é a mesma l
 \subsection{Rotação das árvores}
 Como mencionado anteriormente as árvores podem ser rotacionadas tanto no sentido horário como no sentido anti-horário. A lógica que explica a possibilidade de rotação varia entre a rotação horária e a anti-horária já que a consideração que deve ser feita em relação a subtração ocorre apenas quando tentamos fazer uma rotação anti-horária (como no caso anterior da expressão 5-(4+3)).
 
-\begin{figure}[H]
-	\caption{\label{gram_cls}Diagrama sobre rotação de árvores binárias ordenadas}
-	\begin{center}
-	    \includegraphics[scale=0.25]{tree_rotations.png}
-	\end{center}
-	\legend{Fonte: Produzido pelo autor}
-\end{figure}
-
-O diagrama contido na Figura 3 mostra graficamente como as rotações anti-horária e horária acontecem. A rotação anti-horária é explicada no fluxo representado através das setas verdes, que começa na árvore A1 e termina na árvore A2. A rotação horária de uma forma simétrica começa na árvore A2 e termina na árvore A1, as setas marrons representam o fluxo. As setas amarelas mostram o sentido das rotações executadas.
 
 \subsubsection{Rotação horária}
-A rotação horária parte da árvore A2. A árvore seguinte mostra que o nó b, que inicialmente tem como filho direito o nó c, terá em seguida o nó d como seu filho direito. O filho esquerdo do nó d será alterado de nó b para nó c. A possível relação entre o nó d e o seu nó pai será passada para o nó b. Em seguida observamos como linhas contínuas as novas ligações e como tracejadas as antigas. Por fim chegamos a árvore A1 que é o resultado final da rotação horária sobre o nó d da árvore A2.
-
 	A rotação neste sentido é sempre possível para as operações que possuem como filho esquerdo outra operação, já que a única restrição a ser considerada para saber se a rotação pode ser feita se refere apenas ao filho direito do nó a ser rotacionado.
 	
 \subsubsection{Rotação anti-horária}
-A rotação anti-horária é um processo simétrico à rotação horária. A sequência expressa através das setas verdes, de A1 até A2, explica a transformação da mesma forma como a sua transformação inversa explicada no tópico anterior sendo assim não será explicada em detalhes.
-
 	A rotação anti-horária não pode ser feita para toda operação que tem como filho direito outra operação, a operação pai em questão não pode ser uma subtração.
 	
 \subsection{Números de Catalan}
 Como mostrado por Robert Sedgewick e Phillipe Flajolet (2013) os números Catalãos explicam o número de possíveis árvores binárias ordenadas de acordo com o número de nós internos da árvore inicial. O teorema Enumeração de Árvores Binárias enuncia: “O número de árvores binárias com N nós internos e N+1 nós externos é dado pelos números Catalãos” (Robert Sedgewick e Phillipe Flajolet, 2013).
-
-	O n-gésimo número catalão pode ser obtido a partir da seguinte expressão: 1/(n+1)*(2n escolhe n). Os 10 primeiros números da sequência, começando com n = 0, são: 1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862.
 
 	No caso do experimento algumas rotações não são possíveis nas expressões e sendo assim temos como valor máximo para o tamanho do conjunto das possíveis árvores o número Catalão associado ao número de nós internos na árvore. No entanto se dividirmos as árvores aonde existem as retrições de giro, subtrações com operações como filho direito, podemos encontrar o número de possíveis árvores. Depois de dividir a árvore nos pontos de restrição fazemos a análise para cada árvore resultante e multiplicamos os números para encontrar o número de possíveis árvores.
 	

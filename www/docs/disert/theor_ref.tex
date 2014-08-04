@@ -1,12 +1,60 @@
 \part{Referenciais teóricos}
 
-% ----------------------------------------------------------
 \chapter{Gamificação}
 
 \chapter{Linguagens e gramáticas}
 
+\section{Classificação de Chomsky}
+Toda gramática pode ser classificada de acordo com a Classificação de Chomsky onde toda gramática é pelo menos uma Gramática com Estrutura de Frase. A classe seguinte é um subconjunto da anterior e contém as Gramáticas Sensíveis ao Contexto. A classe das Gramáticas Livres de Contexto é novamente um subconjunto da classe anterior, assim como a ultima classe das Gramáticas Regulares é um subconjunto desta. A figura a seguir expressa a hierarquia existente entre as classes. A Classificação de Chomsky leva em conta como são as produções da gramática.
+
+	
+\begin{figure}[H]
+	\caption{\label{gram_cls}Classes da Classificação de Chomsky e sua hierarquia}
+	\begin{center}
+	    \includegraphics[scale=0.5]{driagrama_classes_gramaticas.png}
+	\end{center}
+	\legend{Fonte: Produzido pelo autor}
+\end{figure}
+
+Lembrando que as gramáticas são compostas por: um conjunto finito de símbolos não-terminais $N$, um conjunto finito de símbolos terminais $T$, um conjunto de produções $P$ e um símbolo inicial $\sigma$. A intersecção entre os conjuntos de símbolos não terminais e terminais deve ser vazia. O conjuto de produções é um subconjunto de todas as produções possíveis, o produto cartesiano de: todas as palavras geradas com símbolos não-terminais e terminais contendo pelo menos um símbolo não terminal (lado esquerdo da produção); todas as palavras geradas com símbolos não-terminais e terminais. O símbolo inicial deve pertencer ao conunto dos símbolos não terminais. Nas definições a seguir $\lambda$ denota a palavra nula.
+
+\subsection{Gramáticas com Estrutura de Frase}
+A gramática é com Estrutura de Frase se todas as produções são da forma:
+
+$\alpha \to \delta$, onde $\alpha \in (N \cup T)$* - $T$*, $\delta \in (N \cup T)$*.
+
+\subsection{Gramáticas Sensíveis ao Contexto}
+A gramática é Sensível ao Contexto se todas as produções são da forma:
+
+$\alpha A\beta \to \alpha \delta \beta$, onde $\alpha,\beta \in (N \cup T)$*$, A \in N, \delta \in (N \cup T)$* - \{$\lambda$\}.
+
+\subsection{Gramáticas Livres de Contexto}
+A gramática é Livre de Contexto se todas as produções são da forma:
+
+$A \to \delta$, onde $A \in N, \delta \in (N \cup T)$*.
+
+\subsection{Gramáticas Regulares}
+A gramática é Regular se todas as produções são da forma:
+
+$A \to a$ ou $A \to aB$ ou $A \to \lambda$.
+
 \chapter{Rotação em árvores ordenadas}
+
+\begin{figure}[H]
+	\caption{\label{gram_cls}Diagrama sobre rotação de árvores binárias ordenadas}
+	\begin{center}
+	    \includegraphics[scale=0.25]{tree_rotations.png}
+	\end{center}
+	\legend{Fonte: Produzido pelo autor}
+\end{figure}
+
+O diagrama contido na Figura 3 mostra graficamente como as rotações anti-horária e horária acontecem. A rotação anti-horária é explicada no fluxo representado através das setas verdes, que começa na árvore A1 e termina na árvore A2. A rotação horária de uma forma simétrica começa na árvore A2 e termina na árvore A1, as setas marrons representam o fluxo. As setas amarelas mostram o sentido das rotações executadas.
+
+A rotação horária parte da árvore A2. A árvore seguinte mostra que o nó b, que inicialmente tem como filho direito o nó c, terá em seguida o nó d como seu filho direito. O filho esquerdo do nó d será alterado de nó b para nó c. A possível relação entre o nó d e o seu nó pai será passada para o nó b. Em seguida observamos como linhas contínuas as novas ligações e como tracejadas as antigas. Por fim chegamos a árvore A1 que é o resultado final da rotação horária sobre o nó d da árvore A2.
+
+A rotação anti-horária é um processo simétrico à rotação horária. A sequência expressa através das setas verdes, de A1 até A2, explica a transformação da mesma forma como a sua transformação inversa explicada no tópico anterior sendo assim não será explicada em detalhes.
 
 \chapter{Propriedades das operações}
 
 \chapter{Números de Catalan}
+O n-gésimo número catalão pode ser obtido a partir da seguinte expressão: 1/(n+1)*(2n escolhe n). Os 10 primeiros números da sequência, começando com n = 0, são: 1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862.
