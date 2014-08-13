@@ -1,7 +1,11 @@
 \part{Referenciais teóricos}
 
-\chapter{Linguagens}
-Uma linguagem é um conjunto abitrário de cadeias - palavras - sobre um alfabeto. \cite{lang}
+\chapter{Linguagens e gramáticas}
+Uma linguagem é um conjunto abitrário de cadeias - palavras - sobre um alfabeto \cite{lang}.
+Uma das opções para a representação finita de uma linguagem é a utilização de uma gramática.
+A noção formal de gramática foi introduzida por Noam Chomsky na década de 50. Uma gramática é definida como uma tupla que contém: 
+um conunto finito de símbolos terminais, um conjunto finito de símbolos não-terminais, um estado inicial (pertencente ao conjunto dos símbolos não-terminais) e 
+um conjunto finito de produções. Os conjuntos de símbolos terminais e não-terminais são disjuntos, ou seja, não possuem elementos em comum. \cite{gram}
 
 \section{Classificação de Chomsky}
 Toda gramática pode ser classificada de acordo com a Classificação de Chomsky onde toda gramática é pelo menos uma Gramática com Estrutura de Frase. A classe seguinte é um subconjunto da anterior e contém as Gramáticas Sensíveis ao Contexto. A classe das Gramáticas Livres de Contexto é novamente um subconjunto da classe anterior, assim como a ultima classe das Gramáticas Regulares é um subconjunto desta. A figura a seguir expressa a hierarquia existente entre as classes. A Classificação de Chomsky leva em conta como são as produções da gramática.
@@ -15,7 +19,7 @@ Toda gramática pode ser classificada de acordo com a Classificação de Chomsky
 	\legend{Fonte: Produzido pelo autor}
 \end{figure}
 
-Lembrando que as gramáticas são compostas por: um conjunto finito de símbolos não-terminais $N$, um conjunto finito de símbolos terminais $T$, um conjunto de produções $P$ e um símbolo inicial $\sigma$. A intersecção entre os conjuntos de símbolos não terminais e terminais deve ser vazia. O conjuto de produções é um subconjunto de todas as produções possíveis, o produto cartesiano de: todas as palavras geradas com símbolos não-terminais e terminais contendo pelo menos um símbolo não terminal (lado esquerdo da produção); todas as palavras geradas com símbolos não-terminais e terminais. O símbolo inicial deve pertencer ao conunto dos símbolos não terminais. Nas definições a seguir $\lambda$ denota a palavra nula.
+Lembrando que as gramáticas são compostas por: um conjunto finito de símbolos não-terminais $N$, um conjunto finito de símbolos terminais $T$, um conjunto de produções $P$ e um símbolo inicial $\sigma$. A intersecção entre os conjuntos de símbolos não terminais e terminais deve ser vazia. O conjuto de produções é um subconjunto de todas as produções possíveis, o produto cartesiano de: todas as palavras geradas com símbolos não-terminais e terminais contendo pelo menos um símbolo não terminal (lado esquerdo da produção); todas as palavras geradas com símbolos não-terminais e terminais. O símbolo inicial deve pertencer ao conunto dos símbolos não terminais. Nas definições a seguir $\lambda$ denota a palavra nula. \cite{chomClass}
 
 \subsection{Gramáticas com Estrutura de Frase}
 A gramática é com Estrutura de Frase se todas as produções são da forma:
