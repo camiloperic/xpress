@@ -41,6 +41,29 @@ A gramática é Regular se todas as produções são da forma:
 
 $A \to a$ ou $A \to aB$ ou $A \to \lambda$.
 
+\chapter{Operações no Conjunto dos Números Inteiros}
+
+O Conjunto dos Números Inteiros é fechado sob as operações de soma, subtração e multiplicação, isto significa que para qualquer uma destas operações o resultado é um número inteiro caso os operandos também sejam, mas não somente. A tabela a seguir apresenta exemplos para as propriedades comutativa e associativa das operações de soma e multiplicação.
+
+\begin{table}[htb]
+\IBGEtab{%
+  \caption{Propriedades associativa e comutativa da soma e multiplicação sobre os Números Inteiros.}%
+  \label{tabela-ibge}
+}{%
+  \begin{tabular}{ccc}
+  \toprule
+   Propriedade comutativa (adição/subtração) & $a+b=b+a$ & $ab=ba$ \\
+  \midrule 
+   Propriedade associativa (adição/subtração) & $(a+b)+c=a+(b+c) $ & $(ab)c=a(bc)$ \\
+  \bottomrule
+\end{tabular}%
+}{%
+  \fonte{Produzido pelo autor.}%
+  }
+\end{table}
+
+A propriedade comutativa garante que a alteração da ordem dos operandos da operação não altera o seu resultado. A propriedade associativa diz respeito à mais de uma operação e garante que a ordem em que as operações são resolvidas não altera o resultado final das operações combinadas - na tabela apresentada anteriormente os parênteses não são necessários já que não existe precedência entre as operações (característica da operação associativa) e estão presentes apenas para explicitar a ordem de resolução.
+
 \chapter{Árvores binárias ordenadas e rotações}
 Uma árvore binária é uma coleção de dois tipos de nós, externos e internos, e três tipos de relações entre estes nós: pai, filho à esquerda e filho à direita. Todos os nós têm um nó pai, exceto um que é chamado de raíz. Os nós externos não possuem nós filhos, ao contrário dos nós internos que possuem dois nós filhos, um à esquerda e o outro da direita.
 
@@ -61,8 +84,6 @@ A rotação é uma operação que transforma uma árvore binária em outra mante
 A rotação horária parte da árvore A2. A árvore seguinte mostra que o nó b, que inicialmente tem como filho direito o nó c, terá em seguida o nó d como seu filho direito. O filho esquerdo do nó d será alterado de nó b para nó c. A possível relação entre o nó d e o seu nó pai será passada para o nó b. Em seguida observamos como linhas contínuas as novas ligações e como tracejadas as antigas. Por fim chegamos a árvore A1 que é o resultado final da rotação horária sobre o nó d da árvore A2.
 
 A rotação anti-horária é um processo simétrico à rotação horária. A sequência expressa através das setas verdes, de A1 até A2, explica a transformação da mesma forma como a sua transformação inversa explicada no tópico anterior sendo assim não será explicada em detalhes.
-
-\chapter{Propriedades das operações}
 
 \chapter{Números de Catalan}
 Os números de Catalan é um conjunto de números que aparece em probelmas de enumeração de árvores como no problema de divisão dos polígonos de Euler. O $n$-ésimo número de Catalan pode ser obtido através da expressão $\frac{1}{n+1} \binom{2n}{n} $ \cite{wolfram}. Os dez primeiros números da sequência, começando com $n = 0$, são: 1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862.
