@@ -4,28 +4,41 @@
 
 \section{Objetivo}
 O objetivo deste trabalho é fazer um experimento cujo tema é Tecnologias da Informação e Educação. O experimento consiste no desenvolvimento de um sistema que possa servir como uma ferramenta de ensino de um determinado conteúdo escolar. O sistema proposto é um jogo de expressões algébricas desenvolvido utilizando a tecnologia HTML5, a quinta versão do padrão HTML.
+
 	O jogo consiste em apresentar expressões algébricas para o jogador resolver.
 Assim que o sistema apresentar uma expressão ao usuário este deve selecionar uma das operações contidas na expressão para resolvê-la e então o fazer. Caso a expressão resultante ainda possuir operações para serem resolvidas os passos anteriores se repetem, até que não existam mais operações na expressão resultante significando que o usuário chegou ao resultado final daquela expressão.
+
 	O jogo deve possuir um conjunto de expressões em sua base de dados, que devem envolver as operações de soma, subtração, multiplicação e divisão, além de ser capaz de gerar expressões aleatórias. As expressões geradas não devem involver multiplicações e divisões para que o escopo do experimento não seja extenso.
 
 \section{Motivação}
 A motivação deste trabalho é explorar a possibilidade de melhorar a educação através da utilização de Tecnologias da Informação. Com sistema capazes de gerar problemas, permitir o desenvolvimento da resolução de tais problemas e avaliar a resolução feita pelo aluno existe a possibilidade de guardar informações que podem ser relevantes para uma análise do professor, tanto sobre as dificuldades dos alunos quanto sobre possíveis pontos falhos em sua metodologia e/ou didática.
-	As informações relevantes que podem ser armazenadas devem estar estruturadas para que a possibiliade de análise dos dados seja maior. Tais informações podem incluir erros mais comuns, quantidade de exercícios feitos, aproveitamento para um determninado tópico, entre muitos outros. Tais informações geradas ainda podem retroalimentar o sistema, por exemplo, o jogo pode escolher o  nível de dificuldade do problema para determinado aluno ou escolher determinados tipos de problemas que o aluno tenha menor aproveitamento, entre outras possibilidades.
-	O ensino a distância já demonstra um esforço no sentido de utilizar Tecnologias da Informação na educação. De acordo com o AbraEAD (Anuário Brasileiro Estatístico de Educação Aberta a Distância) o número de estudantes que fizeram cursos com metodologia a distância em 2007 foi dois milhões e meio. O número de instituições credenciadas pelo Sistema de Educação em 2008 foi 972.826. As instituições credenciadas incluem desde ensino fundamental até pós-graduação. (ABRAED)
-	A plataforma online de ensino Code School1 que ensina diversas habilidades em programação e web design já implementa cursos2 que contém funcionalidades semelhantes às do experimento proposto. Os exercícios não são criados aleatóriamente pela plataforma mas a mesma permite o desenvolvimento da solução e é capaz de avaliar a solução dada pelo usuário, o que possibilita que alunos façam o curso e sejam avaliados sem a necessidade de alocar uma pessoa para fazer a avaliação.
+	
+	O ensino a distância já demonstra um esforço no sentido de utilizar Tecnologias da Informação na educação. De acordo com o AbraEAD (Anuário Brasileiro Estatístico de Educação Aberta a Distância) o número de estudantes que fizeram cursos com metodologia a distância em 2007 foi dois milhões e meio. O número de instituições credenciadas pelo Sistema de Educação em 2008 foi 972.826. As instituições credenciadas incluem desde ensino fundamental até pós-graduação. \cite{eadBr}
+
+	A plataforma online de ensino Code School\footnote{Disponível em: <https://www.codeschool.com/>. Acessado em 25, jun. 2014} que ensina diversas habilidades em programação e web design já implementa cursos\footnote{O curso “Shpaing up with Angular.JS” é um exemplo de tais cursos e por ser gratuito pode ser acessado sem a necessidade de inscrição na plataforma. Disponível em: <https://www.codeschool.com/courses/shaping-up-with-angular-js/>. Acessado em: 25, jun. 2014.} que contém funcionalidades semelhantes às do experimento proposto. Os exercícios não são criados aleatóriamente pela plataforma mas a mesma permite o desenvolvimento da solução e é capaz de avaliar a solução dada pelo usuário, o que possibilita que alunos façam o curso e sejam avaliados sem a necessidade de alocar uma pessoa para fazer a avaliação.
+	
 	O site Edudemic3 cujo slogan em português é “conectando educação e tecnologia” e tem como meta conectar as melhores tecnologias no planeta a professores, administradores e alunos, entre outros possui uma lista (EDUDEMIC) de 50 ferramentas educacionais tecnológicas. Entre elas vale a pena destacar o site fundado por Salman Khan, Khan Academy4. O site conta com diversos cursos em vídeo-aula que vão desde exatas, como matemática e ciências, até humanidades e artes, como história e música respectivamente.
+	
 	A escolha da tecnologia HTML5 foi motivada pela gama de dispositivos que possuem suporte para a mesma, que vai de PCs a Smart Tvs, incluindo Smartphones. O amplo suporte à tecnologia utilizada permite que o jogo desenvolvido seja acessível em um número maior de dispositivos além de, por exemplo, permitir que os usuários possam fazer exercícios em qualquer lugar caso posssuam um Smartphone, sem depender de um PC.
 	
 \section{Organização}
 No primeiro capítulo a tecnologia HTML5, a principal utilizada neste trabalho, é abordada. No capítulo seguinte as outras tecnologias utilizadas são introduzidas. Por último o texto que explica o experimento desenvolvido neste trabalho.
+
 	No capítulo 1 a tecnologia HTML5 é apresentada. Além de uma explicação da versão 5 do padrão HTML (HTML5) e suas características o padrão HTML em sí é abordado históricamente mostrando sua evlução desde seu surgimento.
+	
 	Em Tecnologias Utilizadas as tecnologias complementares ao HTML5, utilizadas no experimento, são  explicadas em âmbitos gerais. Tais tecnologias envolvem CSS3 e JavaScript para a apresentação e dinamicidade respeticamente, o framework PhoneGap utilizado para construir a aplicação móvel, a ferramenta de controle de versão Git entre outras.
+	
 	Na parte final do texto o experimento é explicado partindo da visão geral. O principal problema envolvido é abordado em detalhes nos tópicos Criação de expressões e Análise de soluções.
 	
 \section{Metodologia}
 O primeiro passo na elaboração deste trabalho foi escolher o conteúdo educacional que seria abordado levando em consideração o tamanho do escopo que o trabalho deve ter. O conteúdo escolhido a ser trabalhado é expressões algébricas.
+
 	A plataforma escolhida para o desenvolvimento inclui HTML5, CSS3, JavaScript, Queue.js, Highcharts e PhoneGap.
+	
 	A análise do problema envolvido no experimento foi feita com fim de compreender a natureza do mesmo. A criação de expressões e a avaliação de soluções para expressões são os pontos críticos envolvidos no problema. Uma pesquisa sobre criação de expressões algébricas esclarece que tais expressões algébricas podem ser obtidas através da utilização de uma gramática formal.
+	
 	Além de gerar expressões algébricas o sistema deve ser capaz de conhecer suas possíveis soluções. A forma escolhida para encontrar soluções partiu de estudos sobre pequenas expressões algébricas e suas possíveis soluções, os quais expuseram semelhanças entre as expressões, representadas como árvores, e árvores binárias ordenadas.
+	
 	O desenvolvimento do jogo foi orientado a comportamento, de tal forma que a diretriz estabelecida para o desenvolvimento foi o comportamento esperado da aplicação. O comportamento da aplicação se espelha na forma como os alunos resolvem expressões algébricas.
+	
 	Os testes da aplicação foram feitos tanto de maneira manual quanto automatizada. Os testes automatizados foram utilizados apenas sobre a função de avaliação de soluções no sentido de conhecer o tempo de avaliação das árvores. Os demais testes, funcionais, foram todos feitos manualmente.
