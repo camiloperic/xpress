@@ -1,6 +1,21 @@
 \part{Experimento}
 O experimento desenvolvido neste trabalho consiste na criação de um jogo educacional utilizando a tecnologia HTML5. Como tecnologias complementares foram utilizadas: Javascript, CSS3, Queue.js, Highcharts e PhoneGap. O conteúdo educacional escolhido para ser trabalhado no jogo foi expressões algébricas. O jogo consiste em apresentar uma expressão ao jogador e pedir para que ele selecione e resolva cada uma das operações até chegar ao resultado final.
 
+\chapter{Modelo de dados}
+Por mais que o experimento não utilize uma aplicação de banco de dados existe um modelo de dados intrínseco expresso no diagrama a seguir.
+
+\begin{figure}[H]
+	\caption{\label{gram_cls}Modelo de Dados}
+	\begin{center}
+	    \includegraphics[scale=0.9]{datamodel.png}
+	\end{center}
+	\legend{Fonte: Produzido pelo autor}
+\end{figure}
+
+O diagrama representa as expressões e suas respectivas soluções. Como a estrutura de dados escolhida para representar as expressões foi a árvore, as expressões são armazenadas podem ser armazenadas da mesma forma. Cada nó (Node) aponta para o seu nó pai e seus nós filhos.
+
+As soluções (Solution) para uma determinada expressão são armazenadas na forma de uma lista ordenada de transformações (Transformation). A lista de ordenada de transformações é representada através da entidade SolutionTransformation.
+
 \chapter{Visão geral do fluxo}
 O fluxo tem início quando o usuário acessa o jogo – como página de internet ou aplicativo para dispositivo móvel. O jogo inicializa e apresenta o botão “Play” para que o jogador comece os testes. Quando iniciados os testes o jogo escolhe uma expressão e a apresenta ao usuário para que ele selecione uma operação para resolver.
 
@@ -254,10 +269,10 @@ Embora o algoritmo criado seja capaz de criar expressões com todas as operaçõ
 
 	A restrição foi feita para limitar o escopo deste trabalho pois como requerimento todos os números envolvidos nas expressões, inclusive aqueles que são a solução de uma operação, devem ser inteiros. Neste caso se as expressões possuem divisão o algoritmo na expressão fillWithInts deveria levar tal fato em conta e garantir que os resultados das divisões sejam números inteiros.
 	
-\section{Análise de soluções}
+\chapter{Análise de soluções}
 As expressões algébricas envolvidas no experimento podem ter mais de uma forma de solução e para que o jogo possa avaliar corretamente a resolução da expressão feita pelo usuário é necessário fazer a avaliação da expressão a fim de encontrar todas as ordens de resolução possível.
 
-\subsection{Ambiguidade}
+\section{Ambiguidade}
 A possibilidade de mais de uma solução para uma mesma expressão se dá pelo fato de que esta expressão pode ser gerada de mais de uma forma utilizando as produções. Por exemplo, 3+4+5 é uma expressão ambigua pois existem duas árvores que podem representá-la:
 
 ARVORE
@@ -272,22 +287,22 @@ ARVORE
            
 A lógica que explica a utilização dos parênteses em operações é a mesma lógica que explica  a possibilidade de rotação na árvore sem perder o significado, ou seja, como a soma é o operando direito da subtração esta deve estar entre parênteses e por sua vez a subtração não pode ser rotacionada no sentido. Além da lógica anterior que explica os parênteses a rotação só pode ocorrer se o nó a ser rotacionado e aquele que toma o seu lugar são operações.
 
-\subsection{Rotação das árvores}
+\section{Rotação das árvores}
 Como mencionado anteriormente as árvores podem ser rotacionadas tanto no sentido horário como no sentido anti-horário. A lógica que explica a possibilidade de rotação varia entre a rotação horária e a anti-horária já que a consideração que deve ser feita em relação a subtração ocorre apenas quando tentamos fazer uma rotação anti-horária (como no caso anterior da expressão 5-(4+3)).
 
 
-\subsubsection{Rotação horária}
+\subsection{Rotação horária}
 	A rotação neste sentido é sempre possível para as operações que possuem como filho esquerdo outra operação, já que a única restrição a ser considerada para saber se a rotação pode ser feita se refere apenas ao filho direito do nó a ser rotacionado.
 	
-\subsubsection{Rotação anti-horária}
+\subsection{Rotação anti-horária}
 	A rotação anti-horária não pode ser feita para toda operação que tem como filho direito outra operação, a operação pai em questão não pode ser uma subtração.
 	
-\subsection{Números de Catalan}
+\section{Números de Catalan}
 Como mostrado por Robert Sedgewick e Phillipe Flajolet (2013) os números Catalãos explicam o número de possíveis árvores binárias ordenadas de acordo com o número de nós internos da árvore inicial. O teorema Enumeração de Árvores Binárias enuncia: “O número de árvores binárias com N nós internos e N+1 nós externos é dado pelos números Catalãos” (Robert Sedgewick e Phillipe Flajolet, 2013).
 
 	No caso do experimento algumas rotações não são possíveis nas expressões e sendo assim temos como valor máximo para o tamanho do conjunto das possíveis árvores o número Catalão associado ao número de nós internos na árvore. No entanto se dividirmos as árvores aonde existem as retrições de giro, subtrações com operações como filho direito, podemos encontrar o número de possíveis árvores. Depois de dividir a árvore nos pontos de restrição fazemos a análise para cada árvore resultante e multiplicamos os números para encontrar o número de possíveis árvores.
 	
-\subsection{Algoritmo para análise de soluções}
+\section{Algoritmo para análise de soluções}
 A criação de expressões é um ponto importante no experimento desenvolvido neste tabalho pois evita a necessidade da criação manual de expressões e cria um potencial repositório infinito de expressões. Para tanto é necessário que a aplicação seja capaz de avaliar a expressão criada para encontrar todas as soluções possíveis.
 
 	O algoritmo utilizado para a análise de soluções analisa a árvore que representa a expressão dos nós mais distantes da raíz até os mais próximos. Desta forma cada nó pai conhece todas as transformações possíveis para seus nós filhos. A partir do produto cartesiano de todas as transformações possíveis o nó é testado para rotações sobre todas as transformações contidas no produto cartesiano de soluções dos filhos.
@@ -295,58 +310,6 @@ A criação de expressões é um ponto importante no experimento desenvolvido ne
 	Quando o nó a ser avaliado for raíz o algoritmo testa para conhecer se as soluções avaliadas já existem em um conjunto final de soluções ou não, caso não o algoritmo adiciona tal soluções a este conjunto.
 	
 	Caso uma nova solução seja encontrada esta é colocada em uma fila para que seja analisada em seguida, assim como a árvore inicial foi. O pseudo-código a seguir explica em mais detalhes o funcionamento do algoritmo para uma dereminada árvore:
-	
-novo Mapa Soluções;
-adicionar árvore a Soluções;
-nova Fila Soluções a avaliar;
-enfilar árvore em Soluções a avaliar;
-enquanto Soluções a avaliar não é vazia {
-	nova Solução S1;
-	tirar a primeira Solução da fila e atribuir à S1;
-	transformar arvore utilizando as transformações de S1;
-	nova Lista Nós a avaliar;
-	criar Lista de nós para a raíz de S1 e atribuir à Nós a avaliar;
-	novo Mapa Soluções por nó;
-	para cada Nó N em Nós a avaliar {
-		Soluções por nó recebe uma nova Lista em N;
-		nova Lista Pré-soluções;
-		combinar soluções dos filhos direito e esquerdo de N
-			e atribuir a Pré-soluções;
-		para cada Solução P em Pré-soluções {
-			nova Solução S2 recebe a combinação de S1 e P;
-			adicionar S2 à Lista no Soluções por nó em N;
-			se N é raiz e a chave de S2 não está em Soluções {
-				adicionar S2 a Soluções e Soluções a avaliar;
-			}
-			novo Nó H recebe N;
-			nova Solução SH recebe S2;
-			enaquanto H pode ser rotacionado no sentido horário {
-				rotacionar H no sentido horário;
-				adicionar transformação feita às transformações de SH;
-				adicionar SH à Lista no Soluções por nó em N;
-				se o pai de H é raiz e a chave de SH não está em Soluções {
-					adicionar SH a Soluções e Soluções a avaliar;
-				}
-				atribuir o pai de H a H;
-			}
-			desfazer todas as rotações feitas no sentido horário;
-			novo Nó AH recebe N;
-			nova Solução SAH recebe S2;
-			enaquanto AH pode ser rotacionado no sentido anti-horário {
-				rotacionar AH no sentido anti-horário;
-				adicionar transformação feita às transformações de SAH;
-				adicionar SAH à Lista no Soluções por nó em N;
-				se o pai de AH é raiz e a chave de SAH não está em Soluções {
-					adicionar SAH a Soluções e Soluções a avaliar;
-				}
-				atribuir o pai de AH a AH;
-			}
-			desfazer todas as rotações feitas no sentido anti-horário;
-			desfazer as transformações de P;
-		}
-	}
-	desfazer as trasnformações de S1;
-}	
 
 \subsection{Desempenho do algoritmo}
 Para testar o desempenho do algoritmo de avaliação de expressões a função evaluateTreeItTest foi criada. A função recebe quatro parâmetros de teste. Os dois primeiros são os limites de um intervalo de números inteiro que representam os tamanhos de árvores a serem testadas. O parâmetro seguinte se refere ao número de testes por tamanho de árvore. O ultimo parâmetro é opcional, uma lista de possíveis operações a serem utilizadas na criação das expressões que serão testadas.
@@ -354,18 +317,3 @@ Para testar o desempenho do algoritmo de avaliação de expressões a função e
 	Nos gráficos a seguir podemos observar os resultados dos testes. Os teste foram feitos 10 vezes para árvores de 3 a 9 nós, onde no primeiro teste somente operações de soma foram utilizadas diferente so segundo que também utiliza subtrações.
 
 A diferença nos tempos das séries sem e com soma se devem ao fato de que expressões com subtração tem limitações de rotação. O primeiro gráfico em escala linear mostra o comportamento exponencial da expressão. No gráfico cuja a escala é logarítmica podemos observar com maior clareza como as tempos nas expressões que envolvem subtração variam em um intervalo cujo tempo máximo é o tempo para as árvores que não envolvem subtrações. Isto se deve ao caráter aleatório do algoritmo de geração de expressões. Uma expressão só com somas pode ser gerada mesmo no teste que envolve também subtrações.
-
-\section{Modelo e estruturas de dado}
-Por mais que o experimento não utilize uma aplicação de banco de dados existe um modelo de dados intrínseco expresso no diagrama a seguir.
-
-\begin{figure}[H]
-	\caption{\label{gram_cls}Modelo de Dados}
-	\begin{center}
-	    \includegraphics[scale=0.5]{datamodel.png}
-	\end{center}
-	\legend{Fonte: Produzido pelo autor}
-\end{figure}
-
-O diagrama representa as expressões e suas respectivas soluções. Como a estrutura de dados escolhida para representar as expressões foi a árvore, as expressões são armazenadas podem ser armazenadas da mesma forma. Cada nó (Node) aponta para o seu nó pai e seus nós filhos.
-
-As soluções (Solution) para uma determinada expressão são armazenadas na forma de uma lista ordenada de transformações (Transformation). A lista de ordenada de transformações é representada através da entidade SolutionTransformation.
