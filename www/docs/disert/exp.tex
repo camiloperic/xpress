@@ -1,5 +1,5 @@
 \part{Experimento}
-O experimento desenvolvido neste trabalho consiste na criação de um jogo educacional utilizando a tecnologia HTML5. Como tecnologias complementares foram utilizadas: Javascript, CSS3, Queue.js, Highcharts e PhoneGap. O conteúdo educacional escolhido para ser trabalhado no jogo foi expressões algébricas. O jogo consiste em apresentar uma expressão ao jogador e pedir para que ele selecione e resolva cada uma das operações até chegar ao resultado final.
+O experimento desenvolvido neste trabalho consiste na criação de um jogo educacional utilizando a tecnologia HTML5. Como tecnologias complementares foram utilizadas: Queue.js, Highcharts e PhoneGap. O conteúdo educacional escolhido para ser trabalhado no jogo foi expressões algébricas. O jogo consiste em apresentar uma expressão ao jogador e pedir para que ele selecione e resolva cada uma das operações até chegar ao resultado final.
 
 \chapter{Modelo de dados}
 Por mais que o experimento não utilize uma aplicação de banco de dados existe um modelo de dados intrínseco expresso no diagrama a seguir.
@@ -12,7 +12,7 @@ Por mais que o experimento não utilize uma aplicação de banco de dados existe
 	\legend{Fonte: Produzido pelo autor}
 \end{figure}
 
-O diagrama representa as expressões e suas respectivas soluções. Como a estrutura de dados escolhida para representar as expressões foi a árvore, as expressões são armazenadas podem ser armazenadas da mesma forma. Cada nó (Node) aponta para o seu nó pai e seus nós filhos.
+O diagrama representa as expressões e suas respectivas soluções. Como a estrutura de dados escolhida para representar as expressões foi a árvore, as expressões podem ser armazenadas da mesma forma. Cada nó (Node) aponta para o seu nó pai e seus nós filhos.
 
 As soluções (Solution) para uma determinada expressão são armazenadas na forma de uma lista ordenada de transformações (Transformation). A lista ordenada de transformações é representada pela entidade SolutionTransformation.
 
@@ -29,7 +29,7 @@ A função start é responsável pela inicialização da aplicação, recebe com
 \section{Escolha da expressão}
 A escolha da expressão é feita por meio da função newXp. Inicialmente a rotina seleciona uma expressão, escolhendo uma das disponibilizadas pelo método startDB (executado no início dos testes) ou gerando uma com a função makeExp. Em seguida a expressão selecionada é passada para o contexto do jogo junto de suas soluções.
 
-A criação de novas expressões leva em conta duas variáveis: número de operações e um conjunto de possíveis operações a serem utilizadas. As expressões são criadas de forma aleatória. A probabilidade para cada operação ser sorteada é 1 em n, onde n é o tamanho do conjunto de operações passado. 	Não existe restrição de unicidade para o conjunto de operações que são passadas para a função makeExp possibilitando alterar a probabilidade de que uma determinada operação seja escolhida.
+A criação de novas expressões leva em conta duas variáveis: número de operações e um conjunto de possíveis operações a serem utilizadas. As expressões são criadas de forma aleatória. A probabilidade para cada operação ser sorteada é 1 em $n$, onde $n$ é o tamanho do conjunto de operações passado. 	Não existe restrição de unicidade para o conjunto de operações que são passadas para a função makeExp possibilitando alterar a probabilidade de que uma determinada operação seja escolhida.
 
 Caso a expressão escolhida tenha sido gerada a fase de passar a expressão para o contexto do jogo envolve a avaliação da expressão para conhecer todas as soluções possíveis para a expressão. A avaliação da expressão é feita utilizando um algoritmo iterativo implementado pela função evaluateTreeIt.
 
@@ -40,9 +40,9 @@ A expressão é apresentada utilizando a função appendXp que recebe como parâ
 A seleção da operação é acionada por um clique simples com o botão esquerdo do mouse ou toque (no caso de dispositivos móveis) sobre a operação. A função opClick é responsável por tratar tais eventos recebendo como parâmetro o identificador da operação. Internamente a função opClick faz uso da função select que é responsável por avaliar se a operação pode ou não ser resolvida.
 
 \section{Pontuação}
-Sempre que houver uma seleção ou tentativa resolver uma operação o jogo avalia se a ação está correta e então apresenta a pontuação por meio da função spanWarn que recebe como parâmetros o tipo de pontuação, perda ou ganho, e o respectivo valor.
+Sempre que houver uma seleção ou tentativa de resolver uma operação o jogo avalia se a ação está correta e então apresenta a pontuação por meio da função spanWarn que recebe como parâmetros o tipo de pontuação, perda ou ganho, e o respectivo valor.
 
-Quando o jogador acerta uma seleção ou resolução na primeira tentavia ele recebe 1 ponto inteiro. Para cada erro o ponto é divido ao meio, assim que se o acerto ocorrer na segunda tentativa o jogador recebe meio ponto. A seleção da última operação não é pontuada por ser uma opção única.
+Quando o jogador acerta uma seleção ou resolução na primeira tentavia ele recebe um ponto inteiro. Para cada erro o ponto é divido ao meio, assim se o acerto ocorrer na segunda tentativa o jogador recebe meio ponto. A seleção da última operação não é pontuada por ser uma opção única.
 
 \section{Pedido de solução}
 Sempre que uma operação for selecionada corretamente o jogo pede ao usuário a solução utilizando a função askForSolution que apresenta ao usuário a operação isolada seguida de uma caixa de texto, para que o usuário insira a solução daquela operação. Os elementos HTML apresentados contém aqueles retornados pela função htmlfy.
@@ -71,7 +71,7 @@ O jogador seleciona uma operação que não pode ser resolvida e perde metade da
 	\legend{Fonte: Produzido pelo autor}
 \end{figure}
 
-Em seguida o usuário seleciona a uma operação que pode ser resolvida e ganha a pontuação da seleção.
+Em seguida o usuário seleciona uma operação que pode ser resolvida e ganha a pontuação da seleção.
 
 \begin{figure}[H]
 	\caption{\label{score_0_5_1}Jogador ganha a pontuação da seleção}
@@ -184,7 +184,7 @@ A seleção da última operação não é pontuada.
 \end{figure}
 
 \begin{figure}[H]
-	\caption{\label{xp_10}O jogador insere a última solução a que está correta}
+	\caption{\label{xp_10}O jogador insere a última solução que está correta}
 	\begin{center}
 	    \includegraphics[scale=1]{xp_4_10_rightans_3.png}
 	\end{center}
