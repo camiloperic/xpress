@@ -213,12 +213,12 @@ A seleção da última operação não é pontuada.
 
 As expressões algébricas utilizadas são linguagens formais pois são um subconjunto de todas as palavras existentes para um determinado alfabeto. Para tanto existe pelo menos uma gramática capaz de gerar a linguagem formal envolvida.
 
-\subsection{A linguagem formal envolvida no jogo}
+\section{A linguagem formal envolvida no jogo}
 Vamos partir do conjunto de símbolos terminais que deve conter:
 
 \begin{alineas}
 \item as operações de soma, subtração, multiplicação e divisão;
-\item um conunto de números dado por um intervalo fechado sobre o conjunto dos inteiros; 
+\item um conunto de números dado por um intervalo fechado sobre $\mathbb{Z}$; 
 \item parênteses.
 \end{alineas}
 
@@ -226,14 +226,20 @@ Logo temos $T = \{+, -, *, /, -2, -1, 0, 1, 2, (, )\}$. Escolhemos um pequeno in
 
 	As expressões que fazem da linguagem formal envolvida são do tipo infixa, ou seja, a operação é posicionada no meio de dois elementos que podem ser outras uma outra operação ou um inteiro. Esta escolha se dá por ser o formato que os alunos estão acostumados a ver.
 	
-\subsubsection{Prefixo, infixo, pósfixo}
+\subsection{Prefixo, infixo, pósfixo}
 Podemos representar uma operação matemática utilizando os três seguintes formatos: prefixo, infixo e pósfixo. No primeiro formato a operação é posicionada em primeiro, antes dos dois operandos. O formato pósfixo é simétrico ao formato anterior, ou seja, a operação é posicionada em último depois dos operandos. Uma vantagem da utilização dos formatos anteriores é a não necessidade de utilizar parênteses para expressar precedência entre as operações. Já no formato infixo a operação é posicionada entre os operandos e necessita utilizar parênteses para expressar precedência entre as operações.
 
-\subsubsection{Parênteses}
-A necessidade de utilizar parênteses para expressar precedência entre operações na forma infixa não ocorre para todas as operações na expressão. Os casos são os seguintes: quando uma subtração tem como operando direito outra operação que seja uma soma ou subtração; quando o operando de uma multiplicação ou divisão for uma operação de soma ou subtração; quando um número negativo é operando direito de uma operação.
+\subsection{Parênteses}
+A necessidade de utilizar parênteses para expressar precedência entre operações na forma infixa não ocorre para todas as operações na expressão. Os casos são os seguintes: 
 
-\subsubsection{Gramática referência}
-Tendo em conta os pontos apresentados anteriormente é possível criar uma gramática que seja capaz de gerar as expressões que serão utilizadas no jogo. Algumas simplificações serão feitas a seguir nas produções. Os terminais o e i representam os seguintes conjuntos de terminais respecitvamente o conjunto das operações evolvidas e o conjunto expresso por um intervalo fechado  e contínuo sobre os números inteiros.
+\begin{alineas}
+\item quando uma subtração tem como operando direito outra operação que seja uma soma ou subtração;
+\item quando o operando de uma multiplicação ou divisão for uma operação de soma ou subtração;
+\item quando um número negativo é operando direito de uma operação.
+\end{alineas}
+
+\subsection{Gramática referência}
+Tendo em conta os pontos apresentados anteriormente é possível criar uma gramática que seja capaz de gerar as expressões que são utilizadas no jogo. Algumas simplificações serão feitas a seguir nas produções: os terminais $o$ e $i$ representam os seguintes conjuntos de terminais respecitvamente as operações envolvidas e um intervalo fechado sobre $\mathbb{Z}$.
 
 	Com a simplificação anterior não existe necessidade de criar uma regra de produção para cada operação e para cada inteiro. Subentende-se que estes terminais, que representam conjuntos, poderiam se desdrobrar em um símbolo não-terminal que produz cada um dos elementos do conjunto que representam sozinho.
 	
@@ -255,57 +261,52 @@ $\sigma = S$.
 
 Note que a linguagem possui parênteses para todas as operações e inteiros. A linguagem foi pensada assim pois a forma ecolhida para representar suas palavras não foi um texto simples mas sim uma árvore que por natureza já expressa as precedências entre as operações além da necessidade dos parênteses para alguns números inteiros negativos. A lógica de apresentação de parênteses está encapsulada na função htmlfy.
 
-	De acordo com a Classificação de Chomsky, apresentada anteriormente, tal gramática é Livre de Contexto.
+	De acordo com a Classificação de Chomsky\footnote{Apresentada no tópico 1.1 Classificação de Chomsky} tal gramática é Livre de Contexto.
 	
-\subsection{Algoritmo para criação de expressões}
+\section{Algoritmo para criação de expressões}
 No código Javascript contido no arquivo xpress.js temos a função makeExp responsável pela criação das expressões. A função recebe como parâmetros o número de operações que a expressão deve conter e um conjunto contendo quais operações deversão fazer parte da expressão. A lógica da função makExp está encapsulada em duas funções, makeOps e fillWithInts, onde a primeira gera uma árvore de operações apenas e a segunda preenche a árvore com inteiros, lembrando que a árvore utilizada para representar as expressões é do tipo binária já que cada operação possui dois operandos.
 
-\subsubsection{makeOps}
+\subsection{makeOps}
 A função makeOps tem os mesmos parâmetros da função makeExp. Caso as operações não sejam passadas a função utiliza todas as operações (soma, subtração, multiplicação e divisão). A rotina começa com a criação de: uma lista de possíveis operações pai iniciada vazia; uma referência para a raíz da árvore de operações que começa com o valor nulo.
 
 	O passo seguinte é uma iteração sobre o número de operações a serem criadas. Uma operação daquelas passadas como parâmetro é sorteada e passada como parâmetro para a função criadora dos nós que retorna um nó com aquela determinada operação. Se a referência a raíz feita fora da iteração ainda possuir o valor nulo a referência apontará então para o nó criado. No caso contrário o programa sorteia um possível pai da lista, remove da mesma, definindo este como pai do nó criado. 
 	
 	No final da iteração o programa adiciona novas entradas na lista de possíveis pais. Estas entradas representam a ideia de que o ultimo nó criado pode ser pai a esquerda e pai a direita. Quando não existem mais iterações para acontecer a função retorna o nó referenciado como raíz.
 	
-\subsubsection{fillWithInts}
+\subsection{fillWithInts}
 No caso de uma árvore incompleta, ou seja, existe pelo menos um operando de uma operação que não foi definido a função fillWithInts pode torná-la completa. A função recebe como parâmetro a raíz da árvore a ser preenchida com inteiros. A função faz uma busca em profundida na árvore para encontrar todas as operações que possuem operandos não definidos e então os define.
 
 	A busca em profundidade é feita utilizando uma pilha de nós a serem analisados. A pilha começa com a raíz que foi passada como parâmetro. Enquanto houver nós na pilha o programa tira o último nó da pilha testando se seus operandos, esquerdo e direito, são nós ou se estão vazios. No caso de o operando ser uma operação o programa o empilha para ser futuramente analisado, se não a rotina cria um nó com um número inteiro e o define como o operando que falta.
 	
-\subsubsection{Restrição}
+\subsection{Restrição}
 Embora o algoritmo criado seja capaz de criar expressões com todas as operações (soma, subtração, multiplicação e divisão) no experimento este é utilizado somente para criar expressões com somas e subtrações, as duas com a mesma probabilidade.
 
 	A restrição foi feita para limitar o escopo deste trabalho pois como requerimento todos os números envolvidos nas expressões, inclusive aqueles que são a solução de uma operação, devem ser inteiros. Neste caso se as expressões possuem divisão o algoritmo na expressão fillWithInts deveria levar tal fato em conta e garantir que os resultados das divisões sejam números inteiros.
-	
+
 \chapter{Análise de soluções}
 As expressões algébricas envolvidas no experimento podem ter mais de uma forma de solução e para que o jogo possa avaliar corretamente a resolução da expressão feita pelo usuário é necessário fazer a avaliação da expressão a fim de encontrar todas as ordens de resolução possível.
 
 \section{Ambiguidade}
 A possibilidade de mais de uma solução para uma mesma expressão se dá pelo fato de que esta expressão pode ser gerada de mais de uma forma utilizando as produções. Por exemplo, 3+4+5 é uma expressão ambigua pois existem duas árvores que podem representá-la:
-
-ARVORE
      
 Como vemos a precedência entre as operações varia de uma árvore para a outra. Na primeira a operação 3+4 não tem nenhuma dependência e pode ser resolvida, na segunda isto ocorre com a operação 4+5. A transformação que explica a mudança da primeira árvore para a segunda é uma rotação no sentido horário feita na raíz da árvore. A possibilidade da rotação no sentido horário se dá pois não existe precedência real entre as operações envolvidas significando que as duas podem ser resolvidas no primeiro passo de resolução.
 
 	A rotação utilizada não muda o significado da expressão. Tal fato também ocorre em árvores binárias ordenadas as quais podem ter seus nós rotacionados indeterminadamente sem perder a ordenação de seus elementos. Embora exista tal semelhança as árvores que respresentam as expressões neste experimento não podem ser rotacionadas livremente sem que o significado se altere.
 	
 	A subtração de uma soma é um caso onde a rotação das operações não pode ocorrer. Por exemplo, 5-(4+3). Existe uma precedência lógica nesta expressão que representa a necessidade de primeiro somar para depois subtrair. A árvore que representa tal expressão é esta:
-	
-ARVORE
            
 A lógica que explica a utilização dos parênteses em operações é a mesma lógica que explica  a possibilidade de rotação na árvore sem perder o significado, ou seja, como a soma é o operando direito da subtração esta deve estar entre parênteses e por sua vez a subtração não pode ser rotacionada no sentido. Além da lógica anterior que explica os parênteses a rotação só pode ocorrer se o nó a ser rotacionado e aquele que toma o seu lugar são operações.
 
-\section{Rotação das árvores}
+\subsection{Rotação das árvores}
 Como mencionado anteriormente as árvores podem ser rotacionadas tanto no sentido horário como no sentido anti-horário. A lógica que explica a possibilidade de rotação varia entre a rotação horária e a anti-horária já que a consideração que deve ser feita em relação a subtração ocorre apenas quando tentamos fazer uma rotação anti-horária (como no caso anterior da expressão 5-(4+3)).
 
-
-\subsection{Rotação horária}
+\subsubsection{Rotação horária}
 	A rotação neste sentido é sempre possível para as operações que possuem como filho esquerdo outra operação, já que a única restrição a ser considerada para saber se a rotação pode ser feita se refere apenas ao filho direito do nó a ser rotacionado.
 	
-\subsection{Rotação anti-horária}
+\subsubsection{Rotação anti-horária}
 	A rotação anti-horária não pode ser feita para toda operação que tem como filho direito outra operação, a operação pai em questão não pode ser uma subtração.
 	
-\section{Números de Catalan}
+\subsection{Números de Catalan}
 Como mostrado por Robert Sedgewick e Phillipe Flajolet (2013) os números Catalãos explicam o número de possíveis árvores binárias ordenadas de acordo com o número de nós internos da árvore inicial. O teorema Enumeração de Árvores Binárias enuncia: “O número de árvores binárias com N nós internos e N+1 nós externos é dado pelos números Catalãos” (Robert Sedgewick e Phillipe Flajolet, 2013).
 
 	No caso do experimento algumas rotações não são possíveis nas expressões e sendo assim temos como valor máximo para o tamanho do conjunto das possíveis árvores o número Catalão associado ao número de nós internos na árvore. No entanto se dividirmos as árvores aonde existem as retrições de giro, subtrações com operações como filho direito, podemos encontrar o número de possíveis árvores. Depois de dividir a árvore nos pontos de restrição fazemos a análise para cada árvore resultante e multiplicamos os números para encontrar o número de possíveis árvores.
