@@ -287,18 +287,30 @@ Embora o algoritmo criado seja capaz de criar expressões com todas as operaçõ
 As expressões algébricas envolvidas no experimento podem ter mais de uma forma de solução e para que o jogo possa avaliar corretamente a resolução da expressão feita pelo usuário é necessário fazer a avaliação da expressão a fim de encontrar todas as ordens de resolução possível.
 
 \section{Ambiguidade}
-A possibilidade de mais de uma solução para uma mesma expressão se dá pelo fato de que esta expressão pode ser gerada de mais de uma forma utilizando as produções. Por exemplo, 3+4+5 é uma expressão ambigua pois existem duas árvores que podem representá-la:
-     
-Como vemos a precedência entre as operações varia de uma árvore para a outra. Na primeira a operação 3+4 não tem nenhuma dependência e pode ser resolvida, na segunda isto ocorre com a operação 4+5. A transformação que explica a mudança da primeira árvore para a segunda é uma rotação no sentido horário feita na raíz da árvore. A possibilidade da rotação no sentido horário se dá pois não existe precedência real entre as operações envolvidas significando que as duas podem ser resolvidas no primeiro passo de resolução.
+A possibilidade de mais de uma solução para uma mesma expressão pode ser explicada por meio da propriedade associativa das operações\footnote{Explicada em 2. Operações no Conjunto dos Números Inteiros}. Por exemplo, $3+4+5$ é uma expressão ambigua pois poderia ser resolvida em duas ordens:
 
-	A rotação utilizada não muda o significado da expressão. Tal fato também ocorre em árvores binárias ordenadas as quais podem ter seus nós rotacionados indeterminadamente sem perder a ordenação de seus elementos. Embora exista tal semelhança as árvores que respresentam as expressões neste experimento não podem ser rotacionadas livremente sem que o significado se altere.
-	
-	A subtração de uma soma é um caso onde a rotação das operações não pode ocorrer. Por exemplo, 5-(4+3). Existe uma precedência lógica nesta expressão que representa a necessidade de primeiro somar para depois subtrair. A árvore que representa tal expressão é esta:
-           
-A lógica que explica a utilização dos parênteses em operações é a mesma lógica que explica  a possibilidade de rotação na árvore sem perder o significado, ou seja, como a soma é o operando direito da subtração esta deve estar entre parênteses e por sua vez a subtração não pode ser rotacionada no sentido. Além da lógica anterior que explica os parênteses a rotação só pode ocorrer se o nó a ser rotacionado e aquele que toma o seu lugar são operações.
+$3+(4+5)=$ 
+
+$3+9=$
+
+$12$
+
+, ou,
+
+$(3+4)+5=$
+
+$7+5=$
+
+$12$
+     
+As duas expressões iniciais são equivalentes a expressão apresentada $3+(4+5)=(3+4)+5=3+4+5$. A ausência de parênteses na última expressão mostra que não há precedência obrigatória entre as duas operações de soma, ou seja, que ela pode ser resolvida em diferentes ordens. Já a expressão $5-(4+3)$ não é ambigua em relação à ordem de resolução e possui apenas uma forma de ser resolvida. Isto acontece pois a propriedade associativa não é valida para as operações envolvidas ($+,-$). Os parênteses expressam uma ordem de precedência existente e desta forma são obrigatórios, se retirados o valor da expressão será alterado.
 
 \subsection{Rotação das árvores}
-Como mencionado anteriormente as árvores podem ser rotacionadas tanto no sentido horário como no sentido anti-horário. A lógica que explica a possibilidade de rotação varia entre a rotação horária e a anti-horária já que a consideração que deve ser feita em relação a subtração ocorre apenas quando tentamos fazer uma rotação anti-horária (como no caso anterior da expressão 5-(4+3)).
+Para as expressões envolvidas no jogo a ordem dos símbolos não pode ser alterada, o jogo não lida com a propriedade comutativa na análise de soluções. A ordem dos símbolos das expressões é dada pela ordem transversal dos nós\footnote{Explicada em 3. Árvores binárias ordenadas e rotações}. Os parênteses não são nós da árvore que representa a expressão e estão implicitos na estrutura da seguinte forma, se uma operação de multiplicação tem como um de seus operandos o resultado de uma operação de soma, a operação de soma envolvida deve estar dentro de parênteses para expressar a precedência existente entre as operações.
+
+Como apresentado no capítulo 3, a operação de rotação sobre uma árvore binária não altera a ordem transversal dos nós. No caso de uma expressão sem precedência entre as operações podemos rotacionar a árvore, que representa a expressão, indeterminadamente alterando sua estrutura mas não o significado (operadores e operandos em sua ordem original). Porém, no caso de expressões com parênteses necessáriosa árvore não pode ser rotacionada livremente e as restrições em relação à estas rotações é dada pela lógica que explica a necessidade dos parênteses.
+
+Observando os exemplos de expressões dados anteriormente ($3+4+5$ e $5-(4+3)$) podemos entender melhor as rotações e suas restrições. No caso da primeira expressão, devido a propriedade associativa da soma sobre o conjunto dos números inteiros, uma soma pode ser o operando da outra e vice-versa. Na expressão seguinte a soma é operando da subtração apenas (precedência expressa na árvore através da relação de pai e filho existente entre a subtração e a soma).
 
 \subsubsection{Rotação horária}
 	A rotação neste sentido é sempre possível para as operações que possuem como filho esquerdo outra operação, já que a única restrição a ser considerada para saber se a rotação pode ser feita se refere apenas ao filho direito do nó a ser rotacionado.
@@ -349,9 +361,11 @@ Em seguida as pré-soluções são analisadas. O número de pré-soluções $p$ 
 
 $C = g + hc + icn + jcnp + ...$
 
+Os dois laços seguintes, testes de rotações, tem como o número total de iterações (somadas) $r$, onde $r \in \mathbb{Z}$ e $0 \leqslant r \leqslant n-1$. Como os dois laços têm o mesmo número de operações, $k$, a quantidade de instruções executadas nestes laços durante todo o algoritmo é dada por $kcnpr$. Sendo assim temos como consumo total:
 
+$C = g + hc + icn + jcnp + kcnpr$
 
-Para testar o desempenho do algoritmo de avaliação de expressões a função evaluateTreeItTest foi criada. A função recebe quatro parâmetros de teste. Os dois primeiros são os limites de um intervalo de números inteiro que representam os tamanhos de árvores a serem testadas. O parâmetro seguinte se refere ao número de testes por tamanho de árvore. O ultimo parâmetro é opcional, uma lista de possíveis operações a serem utilizadas na criação das expressões que serão testadas.
+O algoritmo tem como característica então o consumo de tempo polinomial expresso pela fórmula apresentada anteriormente. Para testar o desempenho do algoritmo de avaliação de soluções a função evaluateTreeItTest foi criada. A função recebe quatro parâmetros de teste. Os dois primeiros são os limites de um intervalo de números inteiro que representam os tamanhos de árvores a serem testadas. O parâmetro seguinte se refere ao número de testes por tamanho de árvore. O ultimo parâmetro é opcional, uma lista de possíveis operações a serem utilizadas na criação das expressões que serão testadas.
 
 	Nos gráficos a seguir podemos observar os resultados dos testes. Os teste foram feitos 10 vezes para árvores de 3 a 9 nós, onde no primeiro teste somente operações de soma foram utilizadas diferente so segundo que também utiliza subtrações.
 
