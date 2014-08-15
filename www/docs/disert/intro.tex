@@ -8,7 +8,7 @@ O objetivo deste trabalho é fazer um experimento cujo tema é Tecnologias da In
 	O jogo consiste em apresentar expressões algébricas para o jogador resolver.
 Assim que o sistema apresentar uma expressão ao usuário este deve selecionar uma das operações contidas na expressão para resolvê-la e então o fazer. Caso a expressão resultante ainda possuir operações para serem resolvidas os passos anteriores se repetem, até que não existam mais operações na expressão resultante significando que o usuário chegou ao resultado final daquela expressão.
 
-	O jogo deve possuir um conjunto de expressões em sua base de dados, que devem envolver as operações de soma, subtração, multiplicação e divisão, além de ser capaz de gerar expressões aleatórias. As expressões geradas não devem involver multiplicações e divisões para que o escopo do experimento não seja extenso.
+	O jogo deve possuir um conjunto de expressões em sua base de dados, que devem envolver as operações de soma, subtração, multiplicação e divisão, além de ser capaz de gerar expressões aleatórias. As expressões geradas não devem envolver multiplicações e divisões para que o escopo do experimento não seja extenso.
 
 \section{Motivação}
 A motivação deste trabalho é explorar a possibilidade de melhorar a educação utilizando Tecnologias da Informação. Com sistema capazes de gerar problemas, permitir o desenvolvimento da resolução de tais problemas e avaliar a resolução feita pelo aluno existe a possibilidade de guardar informações que podem ser relevantes para uma análise do professor, tanto sobre as dificuldades dos alunos quanto sobre possíveis pontos falhos em sua metodologia e/ou didática. Um sistema capaz de gerar problemas educacionais tem um conjunto infinito de problemas em potencial e não requer um recurso humano para a produção de problemas.
@@ -22,7 +22,7 @@ A motivação deste trabalho é explorar a possibilidade de melhorar a educaçã
 \section{Organização}
 O trabalho foi divido em três seções nesta ordem: Referencial Teórico, Tecnologias e Experimento. Na primeira seção são apresentados os referenciais teóricos referentes aos conteúdos envolvidos nos principais problemas apresentados no experimento. A seção Tecnologias apresenta as tecnologias utilizadas no desenvolvimento da aplicação do experimento. Experimento, a última seção, explica o experimento desenvolvido neste trabalho. 
 
-Em Referencial Teórico a teoria relativa aos principais conteúdos envolvidos nos dois grandes problemas explorados no experimento. A criação das expressões algébricas foi baseada no conhecimento de linguagens e gramáticas. As propriedades das operações explicam porque pode existir mais de uma ordem de resolução para cada expressão algébrica. Algumas características do conjunto de ordens de resolução são esclarecidas por meio do conhecimento sobre árvores binárias - que envolve os números de Catalan.
+Em Referencial Teórico é explicada a teoria relativa aos principais conteúdos envolvidos nos dois grandes problemas explorados no experimento. A criação das expressões algébricas foi baseada no conhecimento de linguagens e gramáticas. As propriedades das operações explicam porque pode existir mais de uma ordem de resolução para cada expressão algébrica. Algumas características do conjunto de ordens de resolução são esclarecidas por meio do conhecimento sobre árvores binárias - que envolve os números de Catalan.
 
 Na seção Tecnologias um conjunto de tecnologias são apresentadas. A tecnologia HTML5 é abordada separadamente e em mais profundidade por ser a principal tecnologia envolvida - as outras tecnologias ou são baseadas em HTML5 ou são utilizadas como complementares (e.g. controle de versão).
 
@@ -35,6 +35,6 @@ O primeiro passo na elaboração deste trabalho foi escolher o conteúdo educaci
 	
 	Além de gerar expressões algébricas o sistema deve ser capaz de conhecer suas possíveis soluções. A forma escolhida para encontrar soluções partiu de estudos sobre pequenas expressões algébricas e suas possíveis soluções, os quais expuseram semelhanças entre as expressões, representadas como árvores, e árvores binárias ordenadas.
 	
-	O desenvolvimento do jogo foi orientado a comportamento, de tal forma que a diretriz estabelecida para o desenvolvimento foi o comportamento esperado da aplicação. O comportamento da aplicação se espelha na forma como os alunos resolvem expressões algébricas.
+	O desenvolvimento do jogo foi orientado a comportamento, de tal forma que a diretriz estabelecida para o desenvolvimento foi o comportamento esperado da aplicação. O comportamento da aplicação se espelha na forma como os alunos resolvem expressões algébricas no papel.
 	
 	Os testes da aplicação foram feitos tanto de maneira manual quanto automatizada. Os testes automatizados foram utilizados apenas sobre a função de avaliação de soluções no sentido de conhecer o tempo de avaliação das árvores. Os demais testes, funcionais, foram todos feitos manualmente.
