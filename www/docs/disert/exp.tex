@@ -14,7 +14,7 @@ Por mais que o experimento não utilize uma aplicação de banco de dados existe
 
 O diagrama representa as expressões e suas respectivas soluções. Como a estrutura de dados escolhida para representar as expressões foi a árvore, as expressões são armazenadas podem ser armazenadas da mesma forma. Cada nó (Node) aponta para o seu nó pai e seus nós filhos.
 
-As soluções (Solution) para uma determinada expressão são armazenadas na forma de uma lista ordenada de transformações (Transformation). A lista de ordenada de transformações é representada através da entidade SolutionTransformation.
+As soluções (Solution) para uma determinada expressão são armazenadas na forma de uma lista ordenada de transformações (Transformation). A lista ordenada de transformações é representada pela entidade SolutionTransformation.
 
 \chapter{Visão geral do fluxo}
 O fluxo tem início quando o usuário acessa o jogo – como página de internet ou aplicativo para dispositivo móvel. O jogo inicializa e apresenta o botão “Play” para que o jogador comece os testes. Quando iniciados os testes o jogo escolhe uma expressão e a apresenta ao usuário para que ele selecione uma operação para resolver.
@@ -27,28 +27,28 @@ Enquanto houver operações não resolvidas o fluxo se repete desde a seleção 
 A função start é responsável pela inicialização da aplicação, recebe como parâmetro o identificador do elemento HTML que irá conter a tela do jogo e insere os principais elementos HTML do jogo, inclusive a tela inicial para que o usuário possa iniciar o jogo.
 
 \section{Escolha da expressão}
-A escolha da expressão é feita através da função newXp. Inicialmente a rotina seleciona uma expressão, escolhendo uma das disponibilizadas através do método startDB (executado no início dos testes) ou gerando uma com a função makeExp. Em seguida a expressão selecionada é passada para o contexto do jogo junto de suas soluções.
+A escolha da expressão é feita por meio da função newXp. Inicialmente a rotina seleciona uma expressão, escolhendo uma das disponibilizadas pelo método startDB (executado no início dos testes) ou gerando uma com a função makeExp. Em seguida a expressão selecionada é passada para o contexto do jogo junto de suas soluções.
 
 A criação de novas expressões leva em conta duas variáveis: número de operações e um conjunto de possíveis operações a serem utilizadas. As expressões são criadas de forma aleatória. A probabilidade para cada operação ser sorteada é 1 em n, onde n é o tamanho do conjunto de operações passado. 	Não existe restrição de unicidade para o conjunto de operações que são passadas para a função makeExp possibilitando alterar a probabilidade de que uma determinada operação seja escolhida.
 
-Caso a expressão escolhida tenha sido gerada a fase de passar a expressão para o contexto do jogo envolve a avaliação da expressão para conhecer todas as soluções possíveis para a expressão. A avaliação da expressão é feita através de um algoritmo iterativo implementado na função evaluateTreeIt.
+Caso a expressão escolhida tenha sido gerada a fase de passar a expressão para o contexto do jogo envolve a avaliação da expressão para conhecer todas as soluções possíveis para a expressão. A avaliação da expressão é feita utilizando um algoritmo iterativo implementado pela função evaluateTreeIt.
 
 \section{Apresentação da expressão}
 A expressão é apresentada utilizando a função appendXp que recebe como parâmetro a expressão e a imprime na tela utilizando a função htmlfy, uma função recursiva que retorna os elementos HTML que representam visualmente a expressão.
 
 \section{Selecão da operação}
-A seleção da operação é acionada através de um clique simples com o botão esquerdo do mouse ou toque (no caso de dispositivos móveis) sobre a operação. A função opClick é responsável por tratar tais eventos recebendo como parâmetro o identificador da operação. Internamente a função opClick faz uso da função select que é responsável por avaliar se a operação pode ou não ser resolvida.
+A seleção da operação é acionada por um clique simples com o botão esquerdo do mouse ou toque (no caso de dispositivos móveis) sobre a operação. A função opClick é responsável por tratar tais eventos recebendo como parâmetro o identificador da operação. Internamente a função opClick faz uso da função select que é responsável por avaliar se a operação pode ou não ser resolvida.
 
 \section{Pontuação}
-Sempre que houver uma seleção ou tentativa resolver uma operação o jogo avalia se a ação está correta e então apresenta a pontuação através da função spanWarn que recebe como parâmetros o tipo de pontuação, perda ou ganho, e o respectivo valor.
+Sempre que houver uma seleção ou tentativa resolver uma operação o jogo avalia se a ação está correta e então apresenta a pontuação por meio da função spanWarn que recebe como parâmetros o tipo de pontuação, perda ou ganho, e o respectivo valor.
 
 Quando o jogador acerta uma seleção ou resolução na primeira tentavia ele recebe 1 ponto inteiro. Para cada erro o ponto é divido ao meio, assim que se o acerto ocorrer na segunda tentativa o jogador recebe meio ponto. A seleção da última operação não é pontuada por ser uma opção única.
 
 \section{Pedido de solução}
-Sempre que uma operação for selecionada corretamente o jogo pede ao usuário a solução através da função askForSolution que apresenta ao usuário a operação isolada seguida de uma caixa de texto, para que o usuário insira a solução daquela operação. Os elementos HTML apresentados contém aqueles retornados pela função htmlfy.
+Sempre que uma operação for selecionada corretamente o jogo pede ao usuário a solução utilizando a função askForSolution que apresenta ao usuário a operação isolada seguida de uma caixa de texto, para que o usuário insira a solução daquela operação. Os elementos HTML apresentados contém aqueles retornados pela função htmlfy.
 
 \section{Passagem da solução}
-Depois que o usuário inserir a solução na caixa de texto e apertar a tecla ENTER ou tirar o foco da caixa de texto o programa faz uma avaliação da solução passada através da função solSubmit. Caso a solução esteja correta a caixa de texto é transformada em texto simples. Se houver mais de uma possível solução apenas aquela que foi resolvida permanece na tela, as outras são eliminadas da tela.
+Depois que o usuário inserir a solução na caixa de texto e apertar a tecla ENTER ou tirar o foco da caixa de texto o programa faz uma avaliação da solução passada pela função solSubmit. Caso a solução esteja correta a caixa de texto é transformada em texto simples. Se houver mais de uma possível solução apenas aquela que foi resolvida permanece na tela, as outras são eliminadas da tela.
 
 \section{Exemplo}
 O exemplo a seguir exemplifica como o fluxo do jogo é percebido pelo usuário através da interface. Após inicializar a aplicação o usuário vê a tela inicial e o botão “Play”. Após apertar o botão “Play” o jogo apresenta uma expressão para o jogador resolver.
@@ -310,7 +310,7 @@ Para as expressões envolvidas no jogo a ordem dos símbolos não pode ser alter
 
 Como apresentado no capítulo 3, a operação de rotação sobre uma árvore binária não altera a ordem transversal dos nós. No caso de uma expressão sem precedência entre as operações podemos rotacionar a árvore, que representa a expressão, indeterminadamente alterando sua estrutura mas não o significado (operadores e operandos em sua ordem original). Porém, no caso de expressões com parênteses necessáriosa árvore não pode ser rotacionada livremente e as restrições em relação à estas rotações é dada pela lógica que explica a necessidade dos parênteses.
 
-Observando os exemplos de expressões dados anteriormente ($3+4+5$ e $5-(4+3)$) podemos entender melhor as rotações e suas restrições. No caso da primeira expressão, devido a propriedade associativa da soma sobre o conjunto dos números inteiros, uma soma pode ser o operando da outra e vice-versa. Na expressão seguinte a soma é operando da subtração apenas (precedência expressa na árvore através da relação de pai e filho existente entre a subtração e a soma).
+Observando os exemplos de expressões dados anteriormente ($3+4+5$ e $5-(4+3)$) podemos entender melhor as rotações e suas restrições. No caso da primeira expressão, devido a propriedade associativa da soma sobre o conjunto dos números inteiros, uma soma pode ser o operando da outra e vice-versa. Na expressão seguinte a soma é operando da subtração apenas (precedência expressa na árvore pela relação de pai e filho existente entre a subtração e a soma).
 
 \subsubsection{Rotação horária}
 	A rotação neste sentido é sempre possível para as operações que possuem como filho esquerdo outra operação, já que a única restrição a ser considerada para saber se a rotação pode ser feita se refere apenas ao filho direito do nó a ser rotacionado.
@@ -336,7 +336,7 @@ No começo do laço sobre as operações uma lista é criada a partir do produto
 
 Para cada pré-solução iterada a árvore inicial é alterada de acordo e então N é testado para possíveis rotações horárias e anti-horárias, primeiro no sentido horário e depois no sentido anti-horário. Estas sequências de testes são os dois próximos laços (um para cada sentido de rotação), laços que estão na mesma linha de execução (dentro da iteração das pré-soluções). No pseudocódigo estes laços podem ser observados nas linhas 24 e 36. Já no mapa de execução cada rotação está representada pelas células amarelas e vermelhas (possíveis rotações horárias e anti-horárias respectivamente).
 
-Caso N seja raíz cada possível rotação, horária ou anti-horária, será testata como uma possível nova solução. O teste de novas soluções é feito através da comparação de uma chave que representa cada possível árvore através de uma determinada ordem dos nós. No pseudocódigo o mapa "Soluções" contém o conjunto de chaves para as soluções já encontradas e os testes para novas soluções estão nas linhas 28 e 40. Cada possível rotação contém a subárvore resultante no mapa de execução (e.g. a primeira rotação possível - anti-horária - ocorre no nó b da solução S0 e seu resultado é dado pela subárvore da solução S4 que começa em c).
+Caso N seja raíz cada possível rotação, horária ou anti-horária, será testata como uma possível nova solução. O teste de novas soluções é feito por meio da comparação de uma chave que representa cada possível árvore como uma determinada ordem dos nós. No pseudocódigo o mapa "Soluções" contém o conjunto de chaves para as soluções já encontradas e os testes para novas soluções estão nas linhas 28 e 40. Cada possível rotação contém a subárvore resultante no mapa de execução (e.g. a primeira rotação possível - anti-horária - ocorre no nó b da solução S0 e seu resultado é dado pela subárvore da solução S4 que começa em c).
 
 % 	O algoritmo utilizado para a análise de soluções analisa a árvore que representa a expressão dos nós mais distantes da raíz até os mais próximos. Desta forma cada nó pai conhece todas as transformações possíveis para seus nós filhos. A partir do produto cartesiano de todas as transformações possíveis o nó é testado para rotações sobre todas as transformações contidas no produto cartesiano de soluções dos filhos.
 	
