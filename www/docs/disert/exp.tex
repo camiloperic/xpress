@@ -312,15 +312,21 @@ Como mostrado por Robert Sedgewick e Phillipe Flajolet (2013) os números Catal�
 	No caso do experimento algumas rotações não são possíveis nas expressões e sendo assim temos como valor máximo para o tamanho do conjunto das possíveis árvores o número Catalão associado ao número de nós internos na árvore. No entanto se dividirmos as árvores aonde existem as retrições de giro, subtrações com operações como filho direito, podemos encontrar o número de possíveis árvores. Depois de dividir a árvore nos pontos de restrição fazemos a análise para cada árvore resultante e multiplicamos os números para encontrar o número de possíveis árvores.
 	
 \section{Algoritmo para análise de soluções}
-A criação de expressões é um ponto importante no experimento desenvolvido neste tabalho pois evita a necessidade da criação manual de expressões e cria um potencial repositório infinito de expressões. Para tanto é necessário que a aplicação seja capaz de avaliar a expressão criada para encontrar todas as soluções possíveis.
+A criação de expressões é um ponto importante no experimento desenvolvido neste tabalho pois evita a necessidade da criação manual de expressões e cria um potencial repositório infinito de expressões. Para tanto é necessário que a aplicação seja capaz de avaliar a expressão criada para encontrar todas as possíveis soluções.
 
-	O algoritmo utilizado para a análise de soluções analisa a árvore que representa a expressão dos nós mais distantes da raíz até os mais próximos. Desta forma cada nó pai conhece todas as transformações possíveis para seus nós filhos. A partir do produto cartesiano de todas as transformações possíveis o nó é testado para rotações sobre todas as transformações contidas no produto cartesiano de soluções dos filhos.
-	
-	Quando o nó a ser avaliado for raíz o algoritmo testa para conhecer se as soluções avaliadas já existem em um conjunto final de soluções ou não, caso não o algoritmo adiciona tal soluções a este conjunto.
-	
-	Caso uma nova solução seja encontrada esta é colocada em uma fila para que seja analisada em seguida, assim como a árvore inicial foi. O pseudo-código a seguir explica em mais detalhes o funcionamento do algoritmo para uma dereminada árvore:
+  Para facitilar a explicação do algoritmo um pseudocódigo e um mapa de execução do algoritmo estão disponíveis como ANEXO A e ANEXO B respectivamente. O pseudocódigo explica a lógica geral envolvida e não entra em detalhes mais específicos de funcionamento do algoritmo. O mapa de execução é um exemplo de uma instancia de execução do algoritmo para uma árvore com 3 nós internos.
 
-\subsection{Desempenho do algoritmo}
+O ponto de partida do algoritmo é uma expressão (lembrando que as expressões são representadas por árvores binárias), esta é a expressão avaliada pelo algoritmo. O primeiro laço que ocorre no algoritmo é a iteração de uma fila de soluções, que inicialmente possui apenas a expressão passada inicialmente ao algoritmo. No pseudocódigo este laço está na linha 5 - controlado na linha 7 quando a primeira solução saí da fila iterada -, a fila de soluções é representada por "Soluções a avaliar" e a expressão inicial por "Árvore" . No mapa de soluções a fila pode ser vista como a primeira linha da tabela que contém as árvores que representam as soluções (S0, S1, S2, S3, S4), S0 é a solução inicial (ou expressão inicial) e a iteração ocorre da esquerda para a direita.
+
+O laço seguinte , que está dentro do anterior, itera uma lista que contém as operações contidas na solução corrente (em relação ao laço no qual este está contido) S na ordem inversa da ordem que resulta da passagem de um algoritmo de busca em largura sobre S. Esta lista está representada no pseudocódigo por "Nós a avaliar"
+
+% 	O algoritmo utilizado para a análise de soluções analisa a árvore que representa a expressão dos nós mais distantes da raíz até os mais próximos. Desta forma cada nó pai conhece todas as transformações possíveis para seus nós filhos. A partir do produto cartesiano de todas as transformações possíveis o nó é testado para rotações sobre todas as transformações contidas no produto cartesiano de soluções dos filhos.
+	
+% 	Quando o nó a ser avaliado for raíz o algoritmo testa para conhecer se as soluções avaliadas já existem em um conjunto final de soluções ou não, caso não o algoritmo adiciona tal soluções a este conjunto.
+	
+% 	Caso uma nova solução seja encontrada esta é colocada em uma fila para que seja analisada em seguida, assim como a árvore inicial foi. O pseudo-código a seguir explica em mais detalhes o funcionamento do algoritmo para uma dereminada árvore:
+
+\subsection{Análise de complexidade e desempenho}
 Para testar o desempenho do algoritmo de avaliação de expressões a função evaluateTreeItTest foi criada. A função recebe quatro parâmetros de teste. Os dois primeiros são os limites de um intervalo de números inteiro que representam os tamanhos de árvores a serem testadas. O parâmetro seguinte se refere ao número de testes por tamanho de árvore. O ultimo parâmetro é opcional, uma lista de possíveis operações a serem utilizadas na criação das expressões que serão testadas.
 
 	Nos gráficos a seguir podemos observar os resultados dos testes. Os teste foram feitos 10 vezes para árvores de 3 a 9 nós, onde no primeiro teste somente operações de soma foram utilizadas diferente so segundo que também utiliza subtrações.
