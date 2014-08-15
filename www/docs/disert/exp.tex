@@ -333,6 +333,24 @@ Caso N seja raíz cada possível rotação, horária ou anti-horária, será tes
 % 	Caso uma nova solução seja encontrada esta é colocada em uma fila para que seja analisada em seguida, assim como a árvore inicial foi. O pseudo-código a seguir explica em mais detalhes o funcionamento do algoritmo para uma dereminada árvore:
 
 \subsection{Análise de complexidade e desempenho}
+Para a análise de complexidade do algoritmo vamos partir das instruções que são executadas menos vezes e chegar até as instruções que são executadas o maior número de vezes. As instruções que estão fora dos laços são executadas uma vez apenas e a constante $g$ representa a quantidade destas instruções. $C$ representa o número total de instruções executadas para uma árvore com $n$ operações:
+
+$C = g + ...$
+
+Como esclarecido no tópico anterior a estrutura do algoritmo contém cinco laços principais. Seja $n$ o número de operações envolvidas na expressão ($n \in \mathbb{Z}*$) o primeiro laço é executado $s$ vezes, onde $s \in \mathbb{Z}$ e $1 \leqslant s \leqslant C(n)$ ($C(n)$ representa o $n$-ésimo número de Catalan). Sendo $h$ o número de instruções executadas dentro deste primeiro laço apenas $hc$ representa o total de instruções executadas dentro do laço em todas as suas iterações.
+
+$C = g + hc + ...$
+
+O laço imediamente seguinte é a iteração sobre as operações envolvidas na expressão e é executado $n$ vezes para cada iteração do laço anterior, quantidade que pode ser expressa como $cn$. Seja $i$ uma constante que representa o número de instruções que estão imediatamente abaixo do laço sobre as operações a quantidade dessas instruções executadas durante uma availação é dada por $icn$.
+
+$C = g + hc + icn + ...$
+
+Em seguida as pré-soluções são analisadas. O número de pré-soluções $p$ varia de acordo com a subárvore testada sendo que $1 \leqslant p \leqslant C(n-1)$. A constante $j$ representa as instruções diretamente ligadas ao laço que itera as pré-soluções e $jcnp$ o quantidade total de execução destas instruções.
+
+$C = g + hc + icn + jcnp + ...$
+
+
+
 Para testar o desempenho do algoritmo de avaliação de expressões a função evaluateTreeItTest foi criada. A função recebe quatro parâmetros de teste. Os dois primeiros são os limites de um intervalo de números inteiro que representam os tamanhos de árvores a serem testadas. O parâmetro seguinte se refere ao número de testes por tamanho de árvore. O ultimo parâmetro é opcional, uma lista de possíveis operações a serem utilizadas na criação das expressões que serão testadas.
 
 	Nos gráficos a seguir podemos observar os resultados dos testes. Os teste foram feitos 10 vezes para árvores de 3 a 9 nós, onde no primeiro teste somente operações de soma foram utilizadas diferente so segundo que também utiliza subtrações.
